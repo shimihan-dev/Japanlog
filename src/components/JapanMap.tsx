@@ -47,10 +47,21 @@ export const JapanMap: React.FC<JapanMapProps> = ({
       });
   }, []);
 
-  // Process GeoJSON features: filter Tokyo remote islands (Izu/Ogasawara) and Okinawa minor islands
+  // Process GeoJSON features: filter Hokkaido/Tokyo/Okinawa minor remote islands
   const processedGeoFeatures = useMemo(() => {
     return geoFeatures.map((feat) => {
       const code = feat.properties.id;
+      if (code === 1) {
+        // Hokkaido: keep Hokkaido Main Island only
+        const filteredCoords = feat.geometry.coordinates.filter((poly: any) => {
+          const area = d3Geo.geoArea({ type: "Polygon", coordinates: poly });
+          return area > 0.0005;
+        });
+        return {
+          ...feat,
+          geometry: { ...feat.geometry, coordinates: filteredCoords },
+        };
+      }
       if (code === 13) {
         // Tokyo: keep mainland Kanto area only (latitude >= 35.0 N)
         const filteredCoords = feat.geometry.coordinates.filter((poly: any) => {
