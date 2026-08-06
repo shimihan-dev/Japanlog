@@ -11,14 +11,14 @@ export const StatusSelector: React.FC<StatusSelectorProps> = ({
   onChangeStatus,
 }) => {
   return (
-    <div className="bg-slate-100 p-1 rounded-xl flex items-center gap-1">
+    <div className="bg-slate-100 dark:bg-slate-800 p-1 rounded-xl flex items-center gap-1 transition-colors">
       <button
         type="button"
         onClick={() => onChangeStatus("unvisited")}
         className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-semibold transition-all ${
           status === "unvisited"
-            ? "bg-white text-slate-700 shadow-sm"
-            : "text-slate-500 hover:text-slate-800"
+            ? "bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-100 shadow-sm"
+            : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
         }`}
       >
         미방문
@@ -29,8 +29,8 @@ export const StatusSelector: React.FC<StatusSelectorProps> = ({
         onClick={() => onChangeStatus("transit")}
         className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-semibold transition-all ${
           status === "transit"
-            ? "bg-white text-emerald-700 shadow-sm"
-            : "text-slate-500 hover:text-slate-800"
+            ? "bg-white dark:bg-slate-700 text-emerald-700 dark:text-emerald-300 shadow-sm"
+            : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
         }`}
       >
         경유
@@ -41,8 +41,8 @@ export const StatusSelector: React.FC<StatusSelectorProps> = ({
         onClick={() => onChangeStatus("visited")}
         className={`flex-1 py-1.5 px-2 rounded-lg text-xs font-semibold transition-all ${
           status === "visited"
-            ? "bg-white text-blue-700 shadow-sm"
-            : "text-slate-500 hover:text-slate-800"
+            ? "bg-white dark:bg-slate-700 text-blue-700 dark:text-cyan-300 shadow-sm"
+            : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
         }`}
       >
         방문

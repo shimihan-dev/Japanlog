@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useTravelRecords } from "./hooks/useTravelRecords";
 import { calculateTravelStats } from "./utils/statistics";
 import { Header } from "./components/Header";
@@ -25,6 +25,21 @@ export const App: React.FC = () => {
   } = useTravelRecords();
 
   const [showResetModal, setShowResetModal] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
+    const saved = localStorage.getItem("japan-travel-map-theme");
+    if (saved) return saved === "dark";
+    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+  });
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+      localStorage.setItem("japan-travel-map-theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      localStorage.setItem("japan-travel-map-theme", "light");
+    }
+  }, [isDarkMode]);
 
   const stats = calculateTravelStats(records);
 
@@ -33,9 +48,11 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F6F8FA] text-slate-800 font-sans">
+    <div className="min-h-screen flex flex-col bg-[#F6F8FA] dark:bg-[#0B0F17] text-slate-800 dark:text-slate-100 font-sans transition-colors duration-200">
       {/* App Header */}
       <Header
+        isDarkMode={isDarkMode}
+        onToggleDarkMode={() => setIsDarkMode((prev) => !prev)}
         onLoadSample={loadSample}
         onReset={() => setShowResetModal(true)}
       />
@@ -66,6 +83,7 @@ export const App: React.FC = () => {
               records={records}
               selectedCode={selectedCode}
               onSelectPrefecture={handleSelectPrefecture}
+              isDarkMode={isDarkMode}
             />
           </div>
 
@@ -85,8 +103,8 @@ export const App: React.FC = () => {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-200/80 bg-white py-4 mt-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-400">
+      <footer className="border-t border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#111827] py-4 mt-8 transition-colors duration-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-400 dark:text-slate-500">
           <p>© 2026 Japanlog — 일본 47개 도도부현 여행 방문 및 경유 시각화 웹앱</p>
         </div>
       </footer>

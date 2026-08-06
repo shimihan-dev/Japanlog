@@ -9,6 +9,7 @@ interface JapanMapProps {
   records: TravelRecordsMap;
   selectedCode: number | null;
   onSelectPrefecture: (code: number) => void;
+  isDarkMode?: boolean;
 }
 
 interface GeoFeature {
@@ -25,6 +26,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
   records,
   selectedCode,
   onSelectPrefecture,
+  isDarkMode = false,
 }) => {
   const [geoFeatures, setGeoFeatures] = useState<GeoFeature[]>([]);
   const [loading, setLoading] = useState(true);
@@ -162,10 +164,16 @@ export const JapanMap: React.FC<JapanMapProps> = ({
 
   const getFillStyle = (status: VisitStatus, isHovered: boolean) => {
     if (status === "visited") {
+      if (isDarkMode) {
+        return isHovered ? "#0284C7" : "#38BDF8"; // Electric Cyan / Neon Blue
+      }
       return isHovered ? "#2563EB" : "#3B82F6"; // Rich Blue / Vibrant Blue
     }
     if (status === "transit") {
-      return "url(#transit-stripe-pattern)";
+      return isDarkMode ? "url(#transit-stripe-pattern-dark)" : "url(#transit-stripe-pattern)";
+    }
+    if (isDarkMode) {
+      return isHovered ? "#334155" : "#1E293B"; // Dark Slate Hover / Base
     }
     return isHovered ? "#CBD5E1" : "#EEF2F6"; // Slate hover / Soft crisp grey
   };
@@ -177,15 +185,15 @@ export const JapanMap: React.FC<JapanMapProps> = ({
 
   if (loading) {
     return (
-      <div className="w-full h-[600px] bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col items-center justify-center text-slate-400 space-y-3">
-        <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+      <div className="w-full h-[600px] bg-white dark:bg-[#151D2A] rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col items-center justify-center text-slate-400 space-y-3">
+        <div className="w-8 h-8 border-4 border-blue-500 dark:border-cyan-400 border-t-transparent rounded-full animate-spin" />
         <span className="text-sm font-medium">일본 47개 도도부현 지도 데이터를 불러오는 중...</span>
       </div>
     );
   }
 
   return (
-    <div className="relative w-full bg-slate-50/50 rounded-2xl border border-slate-200/80 shadow-sm p-4 overflow-hidden flex flex-col items-center space-y-3">
+    <div className="relative w-full bg-slate-50/50 dark:bg-[#111827]/80 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm p-4 overflow-hidden flex flex-col items-center space-y-3 transition-colors duration-200">
       {/* Main SVG Container */}
       <div className="w-full max-w-[850px] aspect-[4/3.4] relative">
         <svg
@@ -193,7 +201,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
           className="w-full h-full select-none"
         >
           <defs>
-            {/* Transit status diagonal stripe pattern */}
+            {/* Light Mode Transit status diagonal stripe pattern */}
             <pattern
               id="transit-stripe-pattern"
               width="10"
@@ -212,9 +220,28 @@ export const JapanMap: React.FC<JapanMapProps> = ({
               />
             </pattern>
 
-            {/* Subtle Drop Shadow for Prefectures */}
+            {/* Dark Mode Transit status diagonal stripe pattern */}
+            <pattern
+              id="transit-stripe-pattern-dark"
+              width="10"
+              height="10"
+              patternUnits="userSpaceOnUse"
+              patternTransform="rotate(45)"
+            >
+              <rect width="10" height="10" fill="#064E3B" />
+              <line
+                x1="0"
+                y1="0"
+                x2="0"
+                y2="10"
+                stroke="#34D399"
+                strokeWidth="3.5"
+              />
+            </pattern>
+
+            {/* Drop Shadows */}
             <filter id="map-drop-shadow" x="-10%" y="-10%" width="130%" height="130%">
-              <feDropShadow dx="1" dy="2" stdDeviation="2.5" floodColor="#0F172A" floodOpacity="0.08" />
+              <feDropShadow dx="1" dy="2" stdDeviation="2.5" floodColor={isDarkMode ? "#000000" : "#0F172A"} floodOpacity={isDarkMode ? "0.4" : "0.08"} />
             </filter>
           </defs>
 
@@ -223,7 +250,8 @@ export const JapanMap: React.FC<JapanMapProps> = ({
           <path
             d="M 40 330 L 360 330 L 360 40"
             fill="none"
-            stroke="#94A3B8"
+            stroke={isDarkMode ? "#38BDF8" : "#94A3B8"}
+            strokeOpacity={isDarkMode ? "0.4" : "1"}
             strokeWidth="1.2"
           />
 
@@ -231,7 +259,8 @@ export const JapanMap: React.FC<JapanMapProps> = ({
           <path
             d="M 500 670 L 500 520 L 780 520"
             fill="none"
-            stroke="#94A3B8"
+            stroke={isDarkMode ? "#38BDF8" : "#94A3B8"}
+            strokeOpacity={isDarkMode ? "0.4" : "1"}
             strokeWidth="1.2"
           />
 
@@ -249,13 +278,24 @@ export const JapanMap: React.FC<JapanMapProps> = ({
                   <path
                     d={d}
                     fill={getFillStyle(status, isHovered)}
-                    stroke={isSelected ? "#1D4ED8" : isHovered ? "#64748B" : "#FFFFFF"}
+                    stroke={
+                      isSelected
+                        ? (isDarkMode ? "#00F0FF" : "#1D4ED8")
+                        : isHovered
+                        ? (isDarkMode ? "#94A3B8" : "#64748B")
+                        : (isDarkMode ? "#0F172A" : "#FFFFFF")
+                    }
                     strokeWidth={isSelected ? 3 : 1.2}
                     strokeLinejoin="round"
-                    className="transition-all duration-150 cursor-pointer hover:brightness-95"
+                    className="transition-all duration-150 cursor-pointer hover:brightness-110"
                     onClick={() => onSelectPrefecture(code)}
                     onMouseMove={(e) => handleMouseMove(e, code)}
                     onMouseLeave={handleMouseLeave}
+                    style={
+                      isDarkMode && status === "visited"
+                        ? { filter: "drop-shadow(0 0 6px rgba(56, 189, 248, 0.4))" }
+                        : undefined
+                    }
                   />
 
                   {/* Prefecture Label */}
@@ -269,12 +309,16 @@ export const JapanMap: React.FC<JapanMapProps> = ({
                       className={`text-[10px] font-semibold transition-all ${
                         status === "visited"
                           ? "fill-white"
+                          : isDarkMode
+                          ? "fill-slate-200"
                           : "fill-slate-700"
-                      } ${isSelected ? "text-[11px] font-extrabold fill-blue-900" : ""}`}
+                      } ${isSelected ? "text-[11px] font-extrabold fill-blue-900 dark:fill-cyan-200" : ""}`}
                       style={{
                         paintOrder: "stroke fill",
-                        stroke: status === "visited" ? "rgba(30, 64, 175, 0.4)" : "#FFFFFF",
-                        strokeWidth: status === "visited" ? "1.5px" : "2.5px",
+                        stroke: status === "visited"
+                          ? (isDarkMode ? "rgba(2, 132, 199, 0.9)" : "rgba(30, 64, 175, 0.4)")
+                          : (isDarkMode ? "#0F172A" : "#FFFFFF"),
+                        strokeWidth: status === "visited" ? "2px" : "2.5px",
                         strokeLinejoin: "round",
                       }}
                     >
