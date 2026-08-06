@@ -48,36 +48,48 @@ export const JapanMap: React.FC<JapanMapProps> = ({
       });
   }, []);
 
-  // Configure Mercator projections for Japan mainland & Okinawa inset
+  // Configure Mercator projections for Hokkaido inset, Mainland, and Okinawa inset
   const { featurePaths } = useMemo(() => {
     const width = 800;
     const height = 700;
 
-    // Mercator centered around Japan mainland [138.2, 38.0]
+    // 1. Hokkaido Inset Projection (Code 1) -> Top Left
+    const hokkaidoProjection = d3Geo
+      .geoMercator()
+      .center([142.6, 43.4])
+      .scale(2300 * zoomLevel)
+      .translate([260, 200]);
+
+    // 2. Mainland Projection (Codes 2 to 46) -> Center/Right
     const mainlandProjection = d3Geo
       .geoMercator()
-      .center([138.2, 38.0])
-      .scale(2100 * zoomLevel)
-      .translate([width / 2 + 40, height / 2]);
+      .center([137.2, 36.4])
+      .scale(3100 * zoomLevel)
+      .translate([width / 2 + 100, height / 2 + 10]);
 
-    // Dedicated enlarged projection for Okinawa (prefecture code 47)
+    // 3. Okinawa Inset Projection (Code 47) -> Bottom Center
     const okinawaProjection = d3Geo
       .geoMercator()
       .center([127.8, 26.4])
-      .scale(3200 * zoomLevel)
-      .translate([130, 580]);
+      .scale(3600 * zoomLevel)
+      .translate([460, 600]);
 
+    const hokkaidoPath = d3Geo.geoPath().projection(hokkaidoProjection);
     const mainlandPath = d3Geo.geoPath().projection(mainlandProjection);
     const okinawaPath = d3Geo.geoPath().projection(okinawaProjection);
 
     const paths = geoFeatures.map((feat) => {
       const code = feat.properties.id;
-      const isOkinawa = code === 47;
-      const pathGenerator = isOkinawa ? okinawaPath : mainlandPath;
+      let pathGenerator = mainlandPath;
+      if (code === 1) {
+        pathGenerator = hokkaidoPath;
+      } else if (code === 47) {
+        pathGenerator = okinawaPath;
+      }
 
       const d = pathGenerator(feat as any) || "";
       const centroid = pathGenerator.centroid(feat as any);
-      return { code, feature: feat, d, centroid, isOkinawa };
+      return { code, feature: feat, d, centroid };
     });
 
     return { featurePaths: paths };
@@ -103,12 +115,12 @@ export const JapanMap: React.FC<JapanMapProps> = ({
 
   const getFillStyle = (status: VisitStatus, isHovered: boolean) => {
     if (status === "visited") {
-      return isHovered ? "#1D4ED8" : "#3B82F6"; // Dark Blue / Blue
+      return isHovered ? "#2563EB" : "#3B82F6"; // Rich Blue / Vibrant Blue
     }
     if (status === "transit") {
       return "url(#transit-stripe-pattern)";
     }
-    return isHovered ? "#CBD5E1" : "#E2E8F0"; // Slate hover / Slate light
+    return isHovered ? "#CBD5E1" : "#EEF2F6"; // Slate hover / Soft crisp grey
   };
 
   if (loading) {
@@ -156,7 +168,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
       <div className="w-full max-w-[850px] aspect-[4/3.4] relative cursor-grab active:cursor-grabbing">
         <svg
           viewBox="0 0 800 700"
-          className="w-full h-full drop-shadow-sm select-none"
+          className="w-full h-full select-none"
         >
           <defs>
             {/* Transit status diagonal stripe pattern */}
@@ -177,45 +189,34 @@ export const JapanMap: React.FC<JapanMapProps> = ({
                 strokeWidth="3.5"
               />
             </pattern>
+
+            {/* Subtle Drop Shadow for Prefectures */}
+            <filter id="map-drop-shadow" x="-10%" y="-10%" width="130%" height="130%">
+              <feDropShadow dx="1" dy="2" stdDeviation="2.5" floodColor="#0F172A" floodOpacity="0.08" />
+            </filter>
           </defs>
 
-          {/* Okinawa Inset Frame Box */}
-          <g className="okinawa-inset-frame pointer-events-none">
-            <rect
-              x="20"
-              y="470"
-              width="230"
-              height="200"
-              rx="12"
-              fill="#FFFFFF"
-              fillOpacity="0.6"
-              stroke="#CBD5E1"
-              strokeWidth="1.5"
-              strokeDasharray="4 4"
-            />
-            <rect
-              x="32"
-              y="458"
-              width="76"
-              height="22"
-              rx="6"
-              fill="#F1F5F9"
-              stroke="#94A3B8"
-              strokeWidth="1"
-            />
-            <text
-              x="70"
-              y="472"
-              textAnchor="middle"
-              dominantBaseline="middle"
-              className="text-[10px] font-bold fill-slate-700"
-            >
-              오키나와현
-            </text>
-          </g>
+          {/* Inset Frame Lines matching Image 2 */}
+          {/* 1. Hokkaido Top-Left Inset Line */}
+          <path
+            d="M 40 330 L 360 330 L 360 50"
+            fill="none"
+            stroke="#94A3B8"
+            strokeWidth="1.2"
+            strokeDasharray="none"
+          />
+
+          {/* 2. Okinawa Bottom-Center Inset Line */}
+          <path
+            d="M 330 670 L 330 540 L 530 540"
+            fill="none"
+            stroke="#94A3B8"
+            strokeWidth="1.2"
+            strokeDasharray="none"
+          />
 
           {/* Prefectures Path Layers */}
-          <g>
+          <g filter="url(#map-drop-shadow)">
             {featurePaths.map(({ code, d, centroid }) => {
               const pref = PREFECTURE_MAP_BY_CODE.get(code);
               const record = records[code];
@@ -228,16 +229,16 @@ export const JapanMap: React.FC<JapanMapProps> = ({
                   <path
                     d={d}
                     fill={getFillStyle(status, isHovered)}
-                    stroke={isSelected ? "#1D4ED8" : isHovered ? "#475569" : "#FFFFFF"}
-                    strokeWidth={isSelected ? 3 : 1}
+                    stroke={isSelected ? "#1D4ED8" : isHovered ? "#64748B" : "#FFFFFF"}
+                    strokeWidth={isSelected ? 3 : 1.2}
                     strokeLinejoin="round"
-                    className="transition-colors duration-150 cursor-pointer hover:filter hover:brightness-95"
+                    className="transition-all duration-150 cursor-pointer hover:brightness-95"
                     onClick={() => onSelectPrefecture(code)}
                     onMouseMove={(e) => handleMouseMove(e, code)}
                     onMouseLeave={handleMouseLeave}
                   />
 
-                  {/* Optional label for larger prefectures */}
+                  {/* Prefecture Label */}
                   {pref && centroid && !isNaN(centroid[0]) && !isNaN(centroid[1]) && (
                     <text
                       x={centroid[0]}
@@ -245,11 +246,17 @@ export const JapanMap: React.FC<JapanMapProps> = ({
                       textAnchor="middle"
                       dominantBaseline="middle"
                       pointerEvents="none"
-                      className={`text-[9px] font-medium transition-all ${
+                      className={`text-[10px] font-semibold transition-all ${
                         status === "visited"
-                          ? "fill-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.5)] font-bold"
-                          : "fill-slate-700 drop-shadow-[0_1px_1px_rgba(255,255,255,0.8)]"
+                          ? "fill-white"
+                          : "fill-slate-700"
                       } ${isSelected ? "text-[11px] font-extrabold fill-blue-900" : ""}`}
+                      style={{
+                        paintOrder: "stroke fill",
+                        stroke: status === "visited" ? "rgba(30, 64, 175, 0.4)" : "#FFFFFF",
+                        strokeWidth: status === "visited" ? "1.5px" : "2.5px",
+                        strokeLinejoin: "round",
+                      }}
                     >
                       {pref.nameKo.replace(/현|부|도$/, "")}
                     </text>
