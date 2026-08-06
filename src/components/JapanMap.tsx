@@ -47,6 +47,43 @@ export const JapanMap: React.FC<JapanMapProps> = ({
       });
   }, []);
 
+  // Process GeoJSON features: filter Tokyo remote islands (Izu/Ogasawara) and Okinawa minor islands
+  const processedGeoFeatures = useMemo(() => {
+    return geoFeatures.map((feat) => {
+      const code = feat.properties.id;
+      if (code === 13) {
+        // Tokyo: keep mainland Kanto area only (latitude >= 35.0 N)
+        const filteredCoords = feat.geometry.coordinates.filter((poly: any) => {
+          const bounds = d3Geo.geoBounds({ type: "Polygon", coordinates: poly });
+          return bounds[0][1] >= 35.0;
+        });
+        return {
+          ...feat,
+          geometry: { ...feat.geometry, coordinates: filteredCoords },
+        };
+      }
+      if (code === 47) {
+        // Okinawa: keep Okinawa Main Island only
+        const filteredCoords = feat.geometry.coordinates.filter((poly: any) => {
+          const bounds = d3Geo.geoBounds({ type: "Polygon", coordinates: poly });
+          const area = d3Geo.geoArea({ type: "Polygon", coordinates: poly });
+          return (
+            bounds[0][0] >= 127.5 &&
+            bounds[1][0] <= 128.4 &&
+            bounds[0][1] >= 26.0 &&
+            bounds[1][1] <= 26.9 &&
+            area > 0.000005
+          );
+        });
+        return {
+          ...feat,
+          geometry: { ...feat.geometry, coordinates: filteredCoords },
+        };
+      }
+      return feat;
+    });
+  }, [geoFeatures]);
+
   // Configure Mercator projections for Hokkaido inset, Mainland, and Okinawa inset
   const { featurePaths } = useMemo(() => {
     const width = 800;
@@ -66,18 +103,18 @@ export const JapanMap: React.FC<JapanMapProps> = ({
       .scale(3100)
       .translate([width / 2 + 100, height / 2 + 10]);
 
-    // 3. Okinawa Inset Projection (Code 47) -> Shifted Right (Bottom Center/Right)
+    // 3. Okinawa Inset Projection (Code 47) -> Bottom Right Corner
     const okinawaProjection = d3Geo
       .geoMercator()
-      .center([127.8, 26.4])
-      .scale(3600)
-      .translate([530, 600]);
+      .center([127.98, 26.47])
+      .scale(4200)
+      .translate([640, 600]);
 
     const hokkaidoPath = d3Geo.geoPath().projection(hokkaidoProjection);
     const mainlandPath = d3Geo.geoPath().projection(mainlandProjection);
     const okinawaPath = d3Geo.geoPath().projection(okinawaProjection);
 
-    const paths = geoFeatures.map((feat) => {
+    const paths = processedGeoFeatures.map((feat) => {
       const code = feat.properties.id;
       let pathGenerator = mainlandPath;
       if (code === 1) {
@@ -92,7 +129,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
     });
 
     return { featurePaths: paths };
-  }, [geoFeatures]);
+  }, [processedGeoFeatures]);
 
   // Handle tooltip positioning
   const handleMouseMove = (e: React.MouseEvent, code: number) => {
@@ -179,9 +216,9 @@ export const JapanMap: React.FC<JapanMapProps> = ({
             strokeWidth="1.2"
           />
 
-          {/* 2. Okinawa Bottom-Right Inset Line (Shifted Right) */}
+          {/* 2. Okinawa Bottom-Right Corner Inset Line */}
           <path
-            d="M 390 670 L 390 540 L 630 540"
+            d="M 500 670 L 500 520 L 780 520"
             fill="none"
             stroke="#94A3B8"
             strokeWidth="1.2"
