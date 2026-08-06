@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useTravelRecords } from "./hooks/useTravelRecords";
 import { calculateTravelStats } from "./utils/statistics";
 import { Header } from "./components/Header";
+import { SmartQuickAddBar } from "./components/SmartQuickAddBar";
 import { StatsCards } from "./components/StatsCards";
 import { JapanMap } from "./components/JapanMap";
 import { PrefectureList } from "./components/PrefectureList";
@@ -59,6 +60,12 @@ export const App: React.FC = () => {
 
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* AI Smart Quick City Add Bar */}
+        <SmartQuickAddBar
+          onAddCity={addCity}
+          onSelectPrefecture={handleSelectPrefecture}
+        />
+
         {/* Top Statistics Cards */}
         <StatsCards stats={stats} />
 
