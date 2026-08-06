@@ -48,25 +48,36 @@ export const JapanMap: React.FC<JapanMapProps> = ({
       });
   }, []);
 
-  // Configure main Mercator projection for Japan mainland
+  // Configure Mercator projections for Japan mainland & Okinawa inset
   const { featurePaths } = useMemo(() => {
     const width = 800;
     const height = 700;
 
-    // Mercator centered around Japan [137.5, 37.5]
-    const projection = d3Geo
+    // Mercator centered around Japan mainland [138.2, 38.0]
+    const mainlandProjection = d3Geo
       .geoMercator()
-      .center([137.5, 37.5])
-      .scale(1800 * zoomLevel)
-      .translate([width / 2, height / 2]);
+      .center([138.2, 38.0])
+      .scale(2100 * zoomLevel)
+      .translate([width / 2 + 40, height / 2]);
 
-    const path = d3Geo.geoPath().projection(projection);
+    // Dedicated enlarged projection for Okinawa (prefecture code 47)
+    const okinawaProjection = d3Geo
+      .geoMercator()
+      .center([127.8, 26.4])
+      .scale(3200 * zoomLevel)
+      .translate([130, 580]);
+
+    const mainlandPath = d3Geo.geoPath().projection(mainlandProjection);
+    const okinawaPath = d3Geo.geoPath().projection(okinawaProjection);
 
     const paths = geoFeatures.map((feat) => {
       const code = feat.properties.id;
-      const d = path(feat as any) || "";
-      const centroid = path.centroid(feat as any);
-      return { code, feature: feat, d, centroid };
+      const isOkinawa = code === 47;
+      const pathGenerator = isOkinawa ? okinawaPath : mainlandPath;
+
+      const d = pathGenerator(feat as any) || "";
+      const centroid = pathGenerator.centroid(feat as any);
+      return { code, feature: feat, d, centroid, isOkinawa };
     });
 
     return { featurePaths: paths };
@@ -168,6 +179,41 @@ export const JapanMap: React.FC<JapanMapProps> = ({
             </pattern>
           </defs>
 
+          {/* Okinawa Inset Frame Box */}
+          <g className="okinawa-inset-frame pointer-events-none">
+            <rect
+              x="20"
+              y="470"
+              width="230"
+              height="200"
+              rx="12"
+              fill="#FFFFFF"
+              fillOpacity="0.6"
+              stroke="#CBD5E1"
+              strokeWidth="1.5"
+              strokeDasharray="4 4"
+            />
+            <rect
+              x="32"
+              y="458"
+              width="76"
+              height="22"
+              rx="6"
+              fill="#F1F5F9"
+              stroke="#94A3B8"
+              strokeWidth="1"
+            />
+            <text
+              x="70"
+              y="472"
+              textAnchor="middle"
+              dominantBaseline="middle"
+              className="text-[10px] font-bold fill-slate-700"
+            >
+              오키나와현
+            </text>
+          </g>
+
           {/* Prefectures Path Layers */}
           <g>
             {featurePaths.map(({ code, d, centroid }) => {
@@ -212,23 +258,6 @@ export const JapanMap: React.FC<JapanMapProps> = ({
               );
             })}
           </g>
-
-          {/* Okinawa Inset Box Line */}
-          <path
-            d="M 50 560 L 220 560 L 250 670"
-            fill="none"
-            stroke="#94A3B8"
-            strokeWidth="1"
-            strokeDasharray="3 3"
-          />
-          {/* Hokkaido Inset Box Line */}
-          <path
-            d="M 160 30 L 380 30 L 380 230"
-            fill="none"
-            stroke="#94A3B8"
-            strokeWidth="1"
-            strokeDasharray="3 3"
-          />
         </svg>
 
         {/* Hover Tooltip Overlay */}
