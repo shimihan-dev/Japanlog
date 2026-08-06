@@ -108,6 +108,9 @@ const JAPAN_LANDMARKS: LandmarkEntry[] = [
 
   // 17. 이시카와현 (Ishikawa) - Code 17
   { names: ["가나자와", "kanazawa", "金沢", "켄로쿠엔"], cityNameKo: "가나자와시", cityNameJa: "金沢市", prefectureCode: 17, category: "주요 도시" },
+  { names: ["고마쓰", "고마츠", "komatsu", "小松", "고마쓰 공항", "고마츠 공항"], cityNameKo: "고마쓰시", cityNameJa: "小松市", prefectureCode: 17, category: "주요 도시/공항" },
+  { names: ["카가", "가가", "kaga", "加賀", "카가 온천", "가가 온천"], cityNameKo: "카가시", cityNameJa: "加賀市", prefectureCode: 17, category: "온천" },
+  { names: ["와지마", "wajima", "輪島", "노토", "noto", "能登"], cityNameKo: "와지마시", cityNameJa: "輪島市", prefectureCode: 17, category: "관광지" },
 
   // 18. 후쿠이현 (Fukui) - Code 18
   { names: ["후쿠이", "fukui", "福井"], cityNameKo: "후쿠이시", cityNameJa: "福井市", prefectureCode: 18, category: "주요 도시" },
