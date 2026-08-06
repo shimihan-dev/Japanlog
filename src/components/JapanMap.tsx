@@ -3,7 +3,7 @@ import * as d3Geo from "d3-geo";
 import type { TravelRecordsMap, VisitStatus } from "../types/travel";
 import { PREFECTURE_MAP_BY_CODE } from "../data/prefectures";
 import { MapLegend } from "./MapLegend";
-import { ZoomIn, ZoomOut, RotateCcw } from "lucide-react";
+
 
 interface JapanMapProps {
   records: TravelRecordsMap;
@@ -30,7 +30,6 @@ export const JapanMap: React.FC<JapanMapProps> = ({
   const [loading, setLoading] = useState(true);
   const [hoveredCode, setHoveredCode] = useState<number | null>(null);
   const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(null);
-  const [zoomLevel, setZoomLevel] = useState(1);
 
   // Fetch GeoJSON on mount
   useEffect(() => {
@@ -57,22 +56,22 @@ export const JapanMap: React.FC<JapanMapProps> = ({
     const hokkaidoProjection = d3Geo
       .geoMercator()
       .center([142.6, 43.4])
-      .scale(2300 * zoomLevel)
-      .translate([260, 200]);
+      .scale(2300)
+      .translate([260, 190]);
 
     // 2. Mainland Projection (Codes 2 to 46) -> Center/Right
     const mainlandProjection = d3Geo
       .geoMercator()
       .center([137.2, 36.4])
-      .scale(3100 * zoomLevel)
+      .scale(3100)
       .translate([width / 2 + 100, height / 2 + 10]);
 
-    // 3. Okinawa Inset Projection (Code 47) -> Bottom Center
+    // 3. Okinawa Inset Projection (Code 47) -> Shifted Right (Bottom Center/Right)
     const okinawaProjection = d3Geo
       .geoMercator()
       .center([127.8, 26.4])
-      .scale(3600 * zoomLevel)
-      .translate([460, 600]);
+      .scale(3600)
+      .translate([530, 600]);
 
     const hokkaidoPath = d3Geo.geoPath().projection(hokkaidoProjection);
     const mainlandPath = d3Geo.geoPath().projection(mainlandProjection);
@@ -93,7 +92,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
     });
 
     return { featurePaths: paths };
-  }, [geoFeatures, zoomLevel]);
+  }, [geoFeatures]);
 
   // Handle tooltip positioning
   const handleMouseMove = (e: React.MouseEvent, code: number) => {
@@ -123,6 +122,11 @@ export const JapanMap: React.FC<JapanMapProps> = ({
     return isHovered ? "#CBD5E1" : "#EEF2F6"; // Slate hover / Soft crisp grey
   };
 
+  const getPrefNameLabel = (code: number, nameKo: string) => {
+    if (code === 1) return "홋카이도";
+    return nameKo.replace(/현|부|도$/, "");
+  };
+
   if (loading) {
     return (
       <div className="w-full h-[600px] bg-white rounded-2xl border border-slate-200 shadow-sm flex flex-col items-center justify-center text-slate-400 space-y-3">
@@ -133,39 +137,9 @@ export const JapanMap: React.FC<JapanMapProps> = ({
   }
 
   return (
-    <div className="relative w-full bg-slate-50/50 rounded-2xl border border-slate-200/80 shadow-sm p-4 overflow-hidden flex flex-col items-center">
-      {/* Top Map Controls */}
-      <div className="absolute top-4 right-4 z-10 flex items-center space-x-1.5 bg-white p-1 rounded-xl border border-slate-200 shadow-sm">
-        <button
-          onClick={() => setZoomLevel((z) => Math.min(z + 0.3, 2.5))}
-          className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
-          title="확대"
-        >
-          <ZoomIn className="w-4 h-4" />
-        </button>
-        <button
-          onClick={() => setZoomLevel((z) => Math.max(z - 0.3, 0.7))}
-          className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
-          title="축소"
-        >
-          <ZoomOut className="w-4 h-4" />
-        </button>
-        <button
-          onClick={() => setZoomLevel(1)}
-          className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
-          title="초기화"
-        >
-          <RotateCcw className="w-4 h-4" />
-        </button>
-      </div>
-
-      {/* Legend Box at top-left */}
-      <div className="absolute top-4 left-4 z-10 hidden sm:block">
-        <MapLegend />
-      </div>
-
+    <div className="relative w-full bg-slate-50/50 rounded-2xl border border-slate-200/80 shadow-sm p-4 overflow-hidden flex flex-col items-center space-y-3">
       {/* Main SVG Container */}
-      <div className="w-full max-w-[850px] aspect-[4/3.4] relative cursor-grab active:cursor-grabbing">
+      <div className="w-full max-w-[850px] aspect-[4/3.4] relative">
         <svg
           viewBox="0 0 800 700"
           className="w-full h-full select-none"
@@ -196,23 +170,21 @@ export const JapanMap: React.FC<JapanMapProps> = ({
             </filter>
           </defs>
 
-          {/* Inset Frame Lines matching Image 2 */}
+          {/* Inset Frame Lines matching design */}
           {/* 1. Hokkaido Top-Left Inset Line */}
           <path
-            d="M 40 330 L 360 330 L 360 50"
+            d="M 40 330 L 360 330 L 360 40"
             fill="none"
             stroke="#94A3B8"
             strokeWidth="1.2"
-            strokeDasharray="none"
           />
 
-          {/* 2. Okinawa Bottom-Center Inset Line */}
+          {/* 2. Okinawa Bottom-Right Inset Line (Shifted Right) */}
           <path
-            d="M 330 670 L 330 540 L 530 540"
+            d="M 390 670 L 390 540 L 630 540"
             fill="none"
             stroke="#94A3B8"
             strokeWidth="1.2"
-            strokeDasharray="none"
           />
 
           {/* Prefectures Path Layers */}
@@ -258,7 +230,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
                         strokeLinejoin: "round",
                       }}
                     >
-                      {pref.nameKo.replace(/현|부|도$/, "")}
+                      {getPrefNameLabel(code, pref.nameKo)}
                     </text>
                   )}
                 </g>
@@ -302,10 +274,11 @@ export const JapanMap: React.FC<JapanMapProps> = ({
         )}
       </div>
 
-      {/* Legend below for mobile view */}
-      <div className="mt-4 sm:hidden w-full">
+      {/* Legend below the map container */}
+      <div className="w-full pt-1">
         <MapLegend />
       </div>
     </div>
   );
 };
+
