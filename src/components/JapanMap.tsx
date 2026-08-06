@@ -103,12 +103,12 @@ export const JapanMap: React.FC<JapanMapProps> = ({
       .scale(3100)
       .translate([width / 2 + 100, height / 2 + 10]);
 
-    // 3. Okinawa Inset Projection (Code 47) -> Bottom Right Corner
+    // 3. Okinawa Inset Projection (Code 47) -> Bottom Right Corner (Enlarged)
     const okinawaProjection = d3Geo
       .geoMercator()
       .center([127.98, 26.47])
-      .scale(4200)
-      .translate([640, 600]);
+      .scale(6200)
+      .translate([635, 595]);
 
     const hokkaidoPath = d3Geo.geoPath().projection(hokkaidoProjection);
     const mainlandPath = d3Geo.geoPath().projection(mainlandProjection);
