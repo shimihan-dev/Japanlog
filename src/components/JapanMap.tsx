@@ -102,12 +102,12 @@ export const JapanMap: React.FC<JapanMapProps> = ({
     const width = 800;
     const height = 700;
 
-    // 1. Hokkaido Inset Projection (Code 1) -> Top Left
+    // 1. Hokkaido Inset Projection (Code 1) -> Top Left (Shifted Left)
     const hokkaidoProjection = d3Geo
       .geoMercator()
       .center([142.6, 43.4])
       .scale(2300)
-      .translate([260, 190]);
+      .translate([195, 190]);
 
     // 2. Mainland Projection (Codes 2 to 46) -> Center/Right
     const mainlandProjection = d3Geo
@@ -175,7 +175,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
     if (isDarkMode) {
       return isHovered ? "#334155" : "#1E293B"; // Dark Slate Hover / Base
     }
-    return isHovered ? "#CBD5E1" : "#EEF2F6"; // Slate hover / Soft crisp grey
+    return isHovered ? "#94A3B8" : "#E2E8F0"; // Crisp Slate 200 / Hover Slate 400 for high contrast
   };
 
   const getPrefNameLabel = (code: number, nameKo: string) => {
@@ -193,7 +193,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
   }
 
   return (
-    <div className="relative w-full bg-slate-50/50 dark:bg-[#111827]/80 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm p-4 overflow-hidden flex flex-col items-center space-y-3 transition-colors duration-200">
+    <div className="relative w-full bg-slate-100/70 dark:bg-[#111827]/80 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-4 overflow-hidden flex flex-col items-center space-y-3 transition-colors duration-200">
       {/* Main SVG Container */}
       <div className="w-full max-w-[850px] aspect-[4/3.4] relative">
         <svg
@@ -248,7 +248,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
           {/* Inset Frame Lines matching design */}
           {/* 1. Hokkaido Top-Left Inset Line */}
           <path
-            d="M 40 330 L 360 330 L 360 40"
+            d="M 30 330 L 340 330 L 340 40"
             fill="none"
             stroke={isDarkMode ? "#38BDF8" : "#94A3B8"}
             strokeOpacity={isDarkMode ? "0.4" : "1"}
