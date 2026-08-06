@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    background-color: #f6f8fa;
+    color: #1e293b;
+    font-family: Pretendard, "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+  }
+}
+
+/* Diagonal Stripe Pattern for Transit Status */
+.pattern-transit {
+  background-color: #d1fae5;
+  background-image: repeating-linear-gradient(
+    45deg,
+    #10b981 0,
+    #10b981 3px,
+    transparent 0,
+    transparent 8px
+  );
+}
+
+/* Custom scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
