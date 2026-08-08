@@ -6,8 +6,9 @@ import { Header } from "./components/Header";
 import { SmartQuickAddBar } from "./components/SmartQuickAddBar";
 import { StatsCards } from "./components/StatsCards";
 import { JapanMap } from "./components/JapanMap";
-import { PrefectureList } from "./components/PrefectureList";
-import { TravelTimeline } from "./components/TravelTimeline";
+import { LeftSidebarTabs } from "./components/LeftSidebarTabs";
+import { RegionOverview } from "./components/RegionOverview";
+import { TravelInsights } from "./components/TravelInsights";
 import { PrefectureDetailPanel } from "./components/PrefectureDetailPanel";
 import { ConfirmModal } from "./components/ConfirmModal";
 import { AuthModal } from "./components/AuthModal";
@@ -73,7 +74,7 @@ export const App: React.FC = () => {
       />
 
       {/* Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
         {/* AI Smart Quick City Add Bar */}
         <SmartQuickAddBar
           onAddCity={addCity}
@@ -85,21 +86,16 @@ export const App: React.FC = () => {
 
         {/* Responsive Dashboard Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* Left Column: Prefecture List & Travel Timeline (3 cols) */}
+          {/* Left Column: Integrated Sidebar Sub-tabs (3 cols) */}
           <div className="lg:col-span-3 order-2 lg:order-1 flex flex-col">
-            <PrefectureList
-              records={records}
-              selectedCode={selectedCode}
-              onSelectPrefecture={handleSelectPrefecture}
-            />
-            <TravelTimeline
+            <LeftSidebarTabs
               records={records}
               selectedCode={selectedCode}
               onSelectPrefecture={handleSelectPrefecture}
             />
           </div>
 
-          {/* Center Column: Japan Map (6 cols) */}
+          {/* Center Column: Japan Map & Region Overview (6 cols) */}
           <div className="lg:col-span-6 order-1 lg:order-2 flex flex-col items-center">
             <JapanMap
               records={records}
@@ -107,10 +103,14 @@ export const App: React.FC = () => {
               onSelectPrefecture={handleSelectPrefecture}
               isDarkMode={isDarkMode}
             />
+            <RegionOverview
+              records={records}
+              onSelectPrefecture={handleSelectPrefecture}
+            />
           </div>
 
-          {/* Right Column: Prefecture Detail Panel (3 cols) */}
-          <div className="lg:col-span-3 order-3 lg:order-3">
+          {/* Right Column: Prefecture Detail Panel & Travel Insights (3 cols) */}
+          <div className="lg:col-span-3 order-3 lg:order-3 flex flex-col">
             <PrefectureDetailPanel
               selectedCode={selectedCode}
               record={selectedCode ? records[selectedCode] : undefined}
@@ -119,6 +119,10 @@ export const App: React.FC = () => {
               onUpdateCity={updateCity}
               onDeleteCity={deleteCity}
               onUpdateDetails={updatePrefectureDetails}
+            />
+            <TravelInsights
+              records={records}
+              onSelectPrefecture={handleSelectPrefecture}
             />
           </div>
         </div>
