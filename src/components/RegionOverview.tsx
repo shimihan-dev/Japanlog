@@ -99,7 +99,7 @@ export const RegionOverview: React.FC<RegionOverviewProps> = ({
               onClick={() => onSelectRegion(stat.name)}
               className={`p-3 rounded-xl border cursor-pointer transition-all flex flex-col justify-between space-y-2 group ${
                 isSelected
-                  ? "bg-blue-50 dark:bg-cyan-950/60 border-blue-500 dark:border-cyan-400 ring-2 ring-blue-500/30 dark:ring-cyan-400/30 shadow-md scale-[1.02]"
+                  ? "bg-blue-50 dark:bg-cyan-950/70 border-blue-500 dark:border-cyan-400 ring-2 ring-blue-500/40 dark:ring-cyan-400/60 shadow-md dark:shadow-[0_0_18px_rgba(6,182,212,0.4)] scale-[1.02]"
                   : "bg-slate-50/80 dark:bg-[#1A2332] border-slate-100 dark:border-slate-800 hover:border-blue-300 dark:hover:border-cyan-500/50 hover:bg-blue-50/40 dark:hover:bg-cyan-950/30"
               }`}
             >

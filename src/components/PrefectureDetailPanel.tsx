@@ -65,7 +65,7 @@ export const PrefectureDetailPanel: React.FC<PrefectureDetailPanelProps> = ({
   };
 
   return (
-    <div className="bg-white dark:bg-[#0E1628] rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm p-5 flex flex-col space-y-4 transition-colors duration-200">
+    <div className="bg-white dark:bg-[#0E1628] rounded-2xl border border-blue-200/80 dark:border-cyan-500/40 ring-1 ring-blue-500/20 dark:ring-cyan-400/30 shadow-sm dark:shadow-[0_0_20px_rgba(6,182,212,0.2)] p-5 flex flex-col space-y-4 transition-all duration-200">
       {/* Header Info */}
       <div className="flex items-start justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
         <div>
