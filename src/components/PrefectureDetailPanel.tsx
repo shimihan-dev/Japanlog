@@ -305,7 +305,7 @@ const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) =>
       </div>
 
       {/* Flight Cards List */}
-      <div className="space-y-1.5 max-h-[160px] overflow-y-auto pr-1">
+      <div className="space-y-1.5 max-h-[220px] overflow-y-auto pr-1">
         {schedules.length === 0 ? (
           <div className="text-center py-3 text-[10px] text-slate-400">
             선택한 출발 공항에서 직항 노선 정보가 없습니다.
