@@ -3,11 +3,14 @@ import * as d3Geo from "d3-geo";
 import type { TravelRecordsMap, VisitStatus } from "../types/travel";
 import { PREFECTURE_MAP_BY_CODE } from "../data/prefectures";
 import { MapLegend } from "./MapLegend";
+import { X } from "lucide-react";
 
 interface JapanMapProps {
   records: TravelRecordsMap;
   selectedCode: number | null;
+  selectedRegion?: string | null;
   onSelectPrefecture: (code: number) => void;
+  onClearRegion?: () => void;
   isDarkMode?: boolean;
 }
 
@@ -24,7 +27,9 @@ interface GeoFeature {
 export const JapanMap: React.FC<JapanMapProps> = ({
   records,
   selectedCode,
+  selectedRegion = null,
   onSelectPrefecture,
+  onClearRegion,
   isDarkMode = false,
 }) => {
   const [geoFeatures, setGeoFeatures] = useState<GeoFeature[]>([]);
@@ -46,8 +51,8 @@ export const JapanMap: React.FC<JapanMapProps> = ({
 
   // Process GeoJSON features & filter out distant territorial island polygons
   const processedGeoFeatures = useMemo(() => {
-    return geoFeatures.map((feat) => {
-      let code = feat.properties.id || (feat as any).id;
+    return geoFeatures.map((feat: any) => {
+      let code = feat.properties.id || feat.id;
       if (typeof code === "string") {
         code = parseInt(code, 10);
       }
@@ -112,7 +117,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
     const mainlandPath = d3Geo.geoPath().projection(mainlandProjection);
     const okinawaPath = d3Geo.geoPath().projection(okinawaProjection);
 
-    const paths = processedGeoFeatures.map((feat) => {
+    const paths = processedGeoFeatures.map((feat: any) => {
       const code = feat.properties.id;
       let pathGenerator = mainlandPath;
       if (code === 1) {
@@ -157,12 +162,15 @@ export const JapanMap: React.FC<JapanMapProps> = ({
     setTooltipPos(null);
   };
 
-  const getFillStyle = (status: VisitStatus, isHovered: boolean) => {
+  const getFillStyle = (status: VisitStatus, isHovered: boolean, isRegionSelected: boolean) => {
     if (status === "visited") {
       return isDarkMode ? "url(#neon-visited-gradient)" : "url(#light-visited-gradient)";
     }
     if (status === "transit") {
       return isDarkMode ? "#065F46" : "#A7F3D0";
+    }
+    if (isRegionSelected) {
+      return isDarkMode ? "#1E3A8A" : "#DBEAFE";
     }
     return isHovered
       ? (isDarkMode ? "#334155" : "#CBD5E1")
@@ -177,9 +185,26 @@ export const JapanMap: React.FC<JapanMapProps> = ({
       ref={mapContainerRef}
       className="relative w-full bg-white dark:bg-[#151D2A] rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm p-4 transition-colors duration-200"
     >
-      {/* Map Legend Overlay */}
-      <div className="absolute top-4 left-4 z-10 pointer-events-auto">
-        <MapLegend />
+      {/* Map Legend & Active Region Indicator */}
+      <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10 pointer-events-none">
+        <div className="pointer-events-auto">
+          <MapLegend />
+        </div>
+
+        {selectedRegion && (
+          <div className="pointer-events-auto flex items-center space-x-2 px-3 py-1.5 bg-blue-600 dark:bg-cyan-500 text-white dark:text-slate-900 rounded-xl text-xs font-bold shadow-md animate-in fade-in duration-150">
+            <span>단일 권역 강조: {selectedRegion}</span>
+            {onClearRegion && (
+              <button
+                onClick={onClearRegion}
+                className="p-0.5 rounded-full hover:bg-white/20 dark:hover:bg-slate-900/20 transition-colors"
+                title="범위 선택 해제"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       {/* SVG Container */}
@@ -226,33 +251,36 @@ export const JapanMap: React.FC<JapanMapProps> = ({
 
         {/* Prefectures Path Layers */}
         <g filter="url(#map-drop-shadow)">
-          {featurePaths.map(({ code, d, centroid }) => {
+          {featurePaths.map(({ code, d, centroid }: { code: number; d: string; centroid: [number, number] }) => {
             const pref = PREFECTURE_MAP_BY_CODE.get(code);
             const record = records[code];
             const status: VisitStatus = record?.status || "unvisited";
             const isSelected = selectedCode === code;
+            const isRegionSelected = Boolean(selectedRegion && pref?.region === selectedRegion);
             const isHovered = hoveredCode === code;
 
             return (
               <g key={`pref-group-${code}`}>
                 <path
                   d={d}
-                  fill={getFillStyle(status, isHovered)}
+                  fill={getFillStyle(status, isHovered, isRegionSelected)}
                   stroke={
                     isSelected
                       ? (isDarkMode ? "#00F0FF" : "#1D4ED8")
+                      : isRegionSelected
+                      ? (isDarkMode ? "#38BDF8" : "#2563EB")
                       : isHovered
                       ? (isDarkMode ? "#94A3B8" : "#64748B")
                       : (isDarkMode ? "#0F172A" : "#FFFFFF")
                   }
-                  strokeWidth={isSelected ? 3 : 1.2}
+                  strokeWidth={isSelected ? 3.5 : isRegionSelected ? 2.5 : 1.2}
                   strokeLinejoin="round"
                   className="transition-all duration-150 cursor-pointer hover:brightness-110"
                   onClick={() => onSelectPrefecture(code)}
                   onMouseMove={(e) => handleMouseMove(e, code)}
                   onMouseLeave={handleMouseLeave}
                   style={
-                    isDarkMode && status === "visited"
+                    isDarkMode && (status === "visited" || isRegionSelected)
                       ? { filter: "drop-shadow(0 0 6px rgba(56, 189, 248, 0.4))" }
                       : undefined
                   }

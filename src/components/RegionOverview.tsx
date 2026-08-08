@@ -5,7 +5,8 @@ import { Compass, CheckCircle2, Navigation } from "lucide-react";
 
 interface RegionOverviewProps {
   records: TravelRecordsMap;
-  onSelectPrefecture?: (code: number) => void;
+  selectedRegion: string | null;
+  onSelectRegion: (regionName: string) => void;
 }
 
 interface RegionStat {
@@ -31,7 +32,8 @@ const REGION_ORDER = [
 
 export const RegionOverview: React.FC<RegionOverviewProps> = ({
   records,
-  onSelectPrefecture,
+  selectedRegion,
+  onSelectRegion,
 }) => {
   const regionStats = React.useMemo(() => {
     const map = new Map<string, { total: number; visited: number; transit: number; codes: number[] }>();
@@ -83,51 +85,65 @@ export const RegionOverview: React.FC<RegionOverviewProps> = ({
           <Compass className="w-4 h-4 text-blue-600 dark:text-cyan-400" />
           <h3 className="text-xs font-bold text-slate-900 dark:text-slate-100">일본 9개 권역/지방별 달성 현황</h3>
         </div>
-        <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">지역별 클릭 시 이동</span>
+        <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">권역 클릭 시 전체 범위 강조</span>
       </div>
 
       {/* Region Cards Grid (3x3 grid for 9 regions) */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-2.5">
-        {regionStats.map((stat) => (
-          <div
-            key={stat.name}
-            onClick={() => onSelectPrefecture && onSelectPrefecture(stat.prefectureCodes[0])}
-            className="p-3 rounded-xl bg-slate-50/80 dark:bg-[#1A2332] border border-slate-100 dark:border-slate-800 hover:border-blue-300 dark:hover:border-cyan-500/50 hover:bg-blue-50/40 dark:hover:bg-cyan-950/30 cursor-pointer transition-all flex flex-col justify-between space-y-2 group"
-          >
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-extrabold text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-cyan-400 transition-colors whitespace-nowrap">
-                {stat.name}
-              </span>
-              <span className="px-1.5 py-0.5 rounded-md bg-blue-100/80 dark:bg-cyan-950 text-[10px] font-extrabold text-blue-700 dark:text-cyan-300 whitespace-nowrap">
-                {stat.percentage}%
-              </span>
-            </div>
+        {regionStats.map((stat) => {
+          const isSelected = selectedRegion === stat.name;
 
-            <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
-              <div className="flex items-center space-x-1.5">
-                <span className="flex items-center space-x-0.5 text-blue-600 dark:text-cyan-400 font-bold">
-                  <CheckCircle2 className="w-3 h-3 shrink-0" />
-                  <span>{stat.visited}현</span>
+          return (
+            <div
+              key={stat.name}
+              onClick={() => onSelectRegion(stat.name)}
+              className={`p-3 rounded-xl border cursor-pointer transition-all flex flex-col justify-between space-y-2 group ${
+                isSelected
+                  ? "bg-blue-50 dark:bg-cyan-950/60 border-blue-500 dark:border-cyan-400 ring-2 ring-blue-500/30 dark:ring-cyan-400/30 shadow-md scale-[1.02]"
+                  : "bg-slate-50/80 dark:bg-[#1A2332] border-slate-100 dark:border-slate-800 hover:border-blue-300 dark:hover:border-cyan-500/50 hover:bg-blue-50/40 dark:hover:bg-cyan-950/30"
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <span className={`text-xs font-extrabold transition-colors whitespace-nowrap ${
+                  isSelected ? "text-blue-700 dark:text-cyan-300" : "text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-cyan-400"
+                }`}>
+                  {stat.name}
                 </span>
-                {stat.transit > 0 && (
-                  <span className="flex items-center space-x-0.5 text-emerald-600 dark:text-emerald-400 font-semibold">
-                    <Navigation className="w-3 h-3 shrink-0" />
-                    <span>{stat.transit}</span>
-                  </span>
-                )}
+                <span className={`px-1.5 py-0.5 rounded-md text-[10px] font-extrabold whitespace-nowrap ${
+                  isSelected
+                    ? "bg-blue-600 text-white dark:bg-cyan-400 dark:text-slate-900"
+                    : "bg-blue-100/80 dark:bg-cyan-950 text-blue-700 dark:text-cyan-300"
+                }`}>
+                  {stat.percentage}%
+                </span>
               </div>
-              <span className="text-[10px] text-slate-400 font-medium shrink-0">총 {stat.total}개 현</span>
-            </div>
 
-            {/* Progress Bar */}
-            <div className="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
-              <div
-                className="bg-gradient-to-r from-blue-500 to-cyan-400 h-full rounded-full transition-all duration-300"
-                style={{ width: `${stat.percentage}%` }}
-              />
+              <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
+                <div className="flex items-center space-x-1.5">
+                  <span className="flex items-center space-x-0.5 text-blue-600 dark:text-cyan-400 font-bold">
+                    <CheckCircle2 className="w-3 h-3 shrink-0" />
+                    <span>{stat.visited}현</span>
+                  </span>
+                  {stat.transit > 0 && (
+                    <span className="flex items-center space-x-0.5 text-emerald-600 dark:text-emerald-400 font-semibold">
+                      <Navigation className="w-3 h-3 shrink-0" />
+                      <span>{stat.transit}</span>
+                    </span>
+                  )}
+                </div>
+                <span className="text-[10px] text-slate-400 font-medium shrink-0">총 {stat.total}개 현</span>
+              </div>
+
+              {/* Progress Bar */}
+              <div className="w-full bg-slate-200 dark:bg-slate-700 h-1.5 rounded-full overflow-hidden">
+                <div
+                  className="bg-gradient-to-r from-blue-500 to-cyan-400 h-full rounded-full transition-all duration-300"
+                  style={{ width: `${stat.percentage}%` }}
+                />
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

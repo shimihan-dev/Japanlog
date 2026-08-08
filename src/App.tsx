@@ -13,6 +13,8 @@ import { PrefectureDetailPanel } from "./components/PrefectureDetailPanel";
 import { ConfirmModal } from "./components/ConfirmModal";
 import { AuthModal } from "./components/AuthModal";
 
+import { PREFECTURES } from "./data/prefectures";
+
 export const App: React.FC = () => {
   const {
     user,
@@ -38,6 +40,7 @@ export const App: React.FC = () => {
 
   const [showResetModal, setShowResetModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
     const saved = localStorage.getItem("japan-travel-map-theme");
     if (saved) return saved === "dark";
@@ -60,6 +63,16 @@ export const App: React.FC = () => {
 
   const handleSelectPrefecture = (code: number) => {
     setSelectedCode(code);
+  };
+
+  const handleSelectRegion = (regionName: string) => {
+    if (selectedRegion === regionName) {
+      setSelectedRegion(null);
+    } else {
+      setSelectedRegion(regionName);
+      const firstPref = PREFECTURES.find((p) => p.region === regionName);
+      if (firstPref) setSelectedCode(firstPref.code);
+    }
   };
 
   return (
@@ -93,7 +106,9 @@ export const App: React.FC = () => {
             <LeftSidebarTabs
               records={records}
               selectedCode={selectedCode}
+              selectedRegion={selectedRegion}
               onSelectPrefecture={handleSelectPrefecture}
+              onClearRegion={() => setSelectedRegion(null)}
             />
           </div>
 
@@ -102,12 +117,15 @@ export const App: React.FC = () => {
             <JapanMap
               records={records}
               selectedCode={selectedCode}
+              selectedRegion={selectedRegion}
               onSelectPrefecture={handleSelectPrefecture}
+              onClearRegion={() => setSelectedRegion(null)}
               isDarkMode={isDarkMode}
             />
             <RegionOverview
               records={records}
-              onSelectPrefecture={handleSelectPrefecture}
+              selectedRegion={selectedRegion}
+              onSelectRegion={handleSelectRegion}
             />
           </div>
 

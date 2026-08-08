@@ -7,13 +7,17 @@ import { ListFilter, Clock } from "lucide-react";
 interface LeftSidebarTabsProps {
   records: TravelRecordsMap;
   selectedCode: number | null;
+  selectedRegion?: string | null;
   onSelectPrefecture: (code: number) => void;
+  onClearRegion?: () => void;
 }
 
 export const LeftSidebarTabs: React.FC<LeftSidebarTabsProps> = ({
   records,
   selectedCode,
+  selectedRegion = null,
   onSelectPrefecture,
+  onClearRegion,
 }) => {
   const [activeSubTab, setActiveSubTab] = useState<"list" | "timeline">("list");
 
@@ -53,7 +57,9 @@ export const LeftSidebarTabs: React.FC<LeftSidebarTabsProps> = ({
         <PrefectureList
           records={records}
           selectedCode={selectedCode}
+          selectedRegion={selectedRegion}
           onSelectPrefecture={onSelectPrefecture}
+          onClearRegion={onClearRegion}
         />
       ) : (
         <TravelTimeline

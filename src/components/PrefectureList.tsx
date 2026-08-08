@@ -1,18 +1,22 @@
 import React, { useState, useMemo } from "react";
 import type { TravelRecordsMap, VisitStatus, SortOption } from "../types/travel";
 import { PREFECTURES } from "../data/prefectures";
-import { MapPin, Navigation, ArrowUpDown, ChevronRight } from "lucide-react";
+import { MapPin, Navigation, ArrowUpDown, ChevronRight, X } from "lucide-react";
 
 interface PrefectureListProps {
   records: TravelRecordsMap;
   selectedCode: number | null;
+  selectedRegion?: string | null;
   onSelectPrefecture: (code: number) => void;
+  onClearRegion?: () => void;
 }
 
 export const PrefectureList: React.FC<PrefectureListProps> = ({
   records,
   selectedCode,
+  selectedRegion = null,
   onSelectPrefecture,
+  onClearRegion,
 }) => {
   const [activeTab, setActiveTab] = useState<VisitStatus>("visited");
   const [sortBy, setSortBy] = useState<SortOption>("code");
@@ -57,6 +61,22 @@ export const PrefectureList: React.FC<PrefectureListProps> = ({
 
   return (
     <div className="bg-white dark:bg-[#151D2A] rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm p-4 flex flex-col h-full transition-colors duration-200">
+      {/* Active Region Banner */}
+      {selectedRegion && (
+        <div className="flex items-center justify-between p-2 bg-blue-50 dark:bg-cyan-950/60 rounded-xl border border-blue-200/80 dark:border-cyan-800/80 text-xs font-semibold text-blue-900 dark:text-cyan-200 mb-2.5">
+          <span>🗾 {selectedRegion} 권역 강조</span>
+          {onClearRegion && (
+            <button
+              onClick={onClearRegion}
+              className="p-1 text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 rounded-md transition-colors"
+              title="권역 강조 해제"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
+      )}
+
       {/* Header Tabs */}
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-3 mb-3">
         <div className="flex items-center space-x-1 p-1 bg-slate-100/80 dark:bg-slate-800/80 rounded-xl">
@@ -120,6 +140,7 @@ export const PrefectureList: React.FC<PrefectureListProps> = ({
             const record = records[pref.code];
             const cityCount = record?.cities?.length || 0;
             const isSelected = selectedCode === pref.code;
+            const isRegionSelected = Boolean(selectedRegion && pref.region === selectedRegion);
 
             return (
               <button
@@ -128,6 +149,8 @@ export const PrefectureList: React.FC<PrefectureListProps> = ({
                 className={`w-full flex items-center justify-between p-2.5 rounded-xl border text-left transition-all ${
                   isSelected
                     ? "bg-blue-50/70 dark:bg-cyan-950/40 border-blue-300 dark:border-cyan-500/50 ring-1 ring-blue-500/20 dark:ring-cyan-400/20 text-blue-900 dark:text-cyan-200"
+                    : isRegionSelected
+                    ? "bg-blue-50/40 dark:bg-cyan-950/20 border-blue-200 dark:border-cyan-800/40 text-blue-900 dark:text-cyan-200 font-bold"
                     : "bg-white dark:bg-[#1A2332] border-slate-100 dark:border-slate-800/80 hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-200"
                 }`}
               >
