@@ -86,37 +86,37 @@ export const RegionOverview: React.FC<RegionOverviewProps> = ({
         <span className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">지역별 클릭 시 이동</span>
       </div>
 
-      {/* Region Cards Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-9 gap-2">
+      {/* Region Cards Grid (3x3 grid for 9 regions) */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-2.5">
         {regionStats.map((stat) => (
           <div
             key={stat.name}
             onClick={() => onSelectPrefecture && onSelectPrefecture(stat.prefectureCodes[0])}
-            className="p-2.5 rounded-xl bg-slate-50/80 dark:bg-[#1A2332] border border-slate-100 dark:border-slate-800 hover:border-blue-200 dark:hover:border-slate-700 hover:bg-blue-50/40 dark:hover:bg-cyan-950/30 cursor-pointer transition-all flex flex-col justify-between space-y-1.5 group"
+            className="p-3 rounded-xl bg-slate-50/80 dark:bg-[#1A2332] border border-slate-100 dark:border-slate-800 hover:border-blue-300 dark:hover:border-cyan-500/50 hover:bg-blue-50/40 dark:hover:bg-cyan-950/30 cursor-pointer transition-all flex flex-col justify-between space-y-2 group"
           >
-            <div>
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-cyan-400 transition-colors">
-                  {stat.name}
-                </span>
-                <span className="text-[10px] font-extrabold text-blue-600 dark:text-cyan-400">
-                  {stat.percentage}%
-                </span>
-              </div>
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-extrabold text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-cyan-400 transition-colors whitespace-nowrap">
+                {stat.name}
+              </span>
+              <span className="px-1.5 py-0.5 rounded-md bg-blue-100/80 dark:bg-cyan-950 text-[10px] font-extrabold text-blue-700 dark:text-cyan-300 whitespace-nowrap">
+                {stat.percentage}%
+              </span>
+            </div>
 
-              <div className="flex items-center space-x-1.5 text-[10px] text-slate-500 dark:text-slate-400 mt-1">
-                <span className="flex items-center space-x-0.5 text-blue-600 dark:text-cyan-400 font-semibold">
-                  <CheckCircle2 className="w-2.5 h-2.5" />
-                  <span>{stat.visited}</span>
+            <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
+              <div className="flex items-center space-x-1.5">
+                <span className="flex items-center space-x-0.5 text-blue-600 dark:text-cyan-400 font-bold">
+                  <CheckCircle2 className="w-3 h-3 shrink-0" />
+                  <span>{stat.visited}현</span>
                 </span>
                 {stat.transit > 0 && (
                   <span className="flex items-center space-x-0.5 text-emerald-600 dark:text-emerald-400 font-semibold">
-                    <Navigation className="w-2.5 h-2.5" />
+                    <Navigation className="w-3 h-3 shrink-0" />
                     <span>{stat.transit}</span>
                   </span>
                 )}
-                <span>/ {stat.total}현</span>
               </div>
+              <span className="text-[10px] text-slate-400 font-medium shrink-0">총 {stat.total}개 현</span>
             </div>
 
             {/* Progress Bar */}
