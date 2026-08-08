@@ -211,11 +211,13 @@ const FLIGHT_DATABASE: FlightSchedule[] = [
 export async function fetchLiveAirportFlights(airportCode: string, depFilter: string = "ALL"): Promise<FlightSchedule[]> {
   let liveItems: FlightSchedule[] = [];
 
-  // Try Open API fetch if API key present
-  if (icnApiKey) {
+  // 1. Try Incheon Airport & KAC Open API via proxy
+  if (icnApiKey || korApiKey) {
+    const keyToUse = icnApiKey || korApiKey;
     try {
-      const url = `https://apis.data.go.kr/B551177/StatusOfFlightInfoGG/getFlightsStatusInfo?serviceKey=${icnApiKey}&type=json&searchtype=O`;
-      const res = await fetch(url, { signal: AbortSignal.timeout(3000) });
+      // Use Vite dev proxy /api/data-go to bypass browser CORS
+      const proxyUrl = `/api/data-go/B551177/StatusOfFlightInfoGG/getFlightsStatusInfo?serviceKey=${keyToUse}&type=json&searchtype=O`;
+      const res = await fetch(proxyUrl, { signal: AbortSignal.timeout(3500) });
       if (res.ok) {
         const data = await res.json();
         const items = data?.response?.body?.items || [];
@@ -233,18 +235,18 @@ export async function fetchLiveAirportFlights(airportCode: string, depFilter: st
               arrAirportCode: arrCode,
               departureTime: depTimeFormatted,
               arrivalTime: "직항",
-              days: "실시간",
+              days: "실시간 API",
               isLive: true,
             });
           }
         });
       }
     } catch (err) {
-      // Ignore CORS/Network error and fallback
+      // Ignore CORS or network error and seamlessly rely on Database
     }
   }
 
-  // Filter matching entries from Database
+  // 2. Filter matching entries from Database
   const matchedDb = FLIGHT_DATABASE.filter((item) => {
     const isAirportMatch = item.arrAirportCode === airportCode;
     const isDepMatch = depFilter === "ALL" || item.depAirportCode === depFilter;
