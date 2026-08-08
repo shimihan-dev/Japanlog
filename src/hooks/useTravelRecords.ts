@@ -5,11 +5,52 @@ import { PREFECTURES } from "../data/prefectures";
 import { supabase, isSupabaseConfigured } from "../lib/supabase";
 import type { User } from "@supabase/supabase-js";
 
+function mergeRecords(local: TravelRecordsMap, cloud: TravelRecordsMap): TravelRecordsMap {
+  const merged: TravelRecordsMap = { ...cloud };
+
+  Object.values(local).forEach((localPref) => {
+    const code = localPref.prefectureCode;
+    const cloudPref = merged[code];
+
+    if (!cloudPref) {
+      merged[code] = localPref;
+      return;
+    }
+
+    // Status Priority: visited > transit > unvisited
+    let status = cloudPref.status;
+    if (localPref.status === "visited" || cloudPref.status === "visited") {
+      status = "visited";
+    } else if (localPref.status === "transit" || cloudPref.status === "transit") {
+      status = "transit";
+    }
+
+    // Merge cities by city name
+    const cityMap = new Map<string, CityVisit>();
+    (cloudPref.cities || []).forEach((c: CityVisit) => cityMap.set(c.cityNameKo, c));
+    (localPref.cities || []).forEach((c: CityVisit) => {
+      if (!cityMap.has(c.cityNameKo)) {
+        cityMap.set(c.cityNameKo, c);
+      }
+    });
+
+    merged[code] = {
+      ...cloudPref,
+      status,
+      cities: Array.from(cityMap.values()),
+      notes: cloudPref.notes || localPref.notes,
+      updatedAt: new Date().toISOString(),
+    };
+  });
+
+  return merged;
+}
+
 export function useTravelRecords(user: User | null = null) {
   const [records, setRecords] = useState<TravelRecordsMap>(() => loadTravelRecords());
   const [selectedCode, setSelectedCode] = useState<number | null>(40); // default selection: Fukuoka (40)
 
-  // Sync with Supabase Cloud on User Login / Session Change
+  // Sync & Merge with Supabase Cloud on User Login / Session Change
   useEffect(() => {
     if (!isSupabaseConfigured || !user) return;
 
@@ -27,20 +68,27 @@ export function useTravelRecords(user: User | null = null) {
           console.error("Failed to fetch cloud records:", error);
         }
 
-        if (data && data.records && Object.keys(data.records).length > 0) {
-          if (isMounted) {
-            setRecords(data.records as TravelRecordsMap);
-          }
-        } else {
+        const localData = loadTravelRecords();
+        const cloudData = (data?.records || {}) as TravelRecordsMap;
+
+        if (Object.keys(cloudData).length > 0) {
+          // Merge local and cloud records seamlessly
+          const merged = mergeRecords(localData, cloudData);
+          if (isMounted) setRecords(merged);
+
+          // Save merged data back to cloud
+          await supabase.from("user_travel_records").upsert({
+            user_id: user!.id,
+            records: merged,
+            updated_at: new Date().toISOString(),
+          });
+        } else if (Object.keys(localData).length > 0) {
           // First time cloud sync for this user: Upload current local records
-          const localData = loadTravelRecords();
-          if (Object.keys(localData).length > 0) {
-            await supabase.from("user_travel_records").upsert({
-              user_id: user!.id,
-              records: localData,
-              updated_at: new Date().toISOString(),
-            });
-          }
+          await supabase.from("user_travel_records").upsert({
+            user_id: user!.id,
+            records: localData,
+            updated_at: new Date().toISOString(),
+          });
         }
       } catch (err) {
         console.error("Cloud sync error:", err);
