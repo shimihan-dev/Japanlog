@@ -6,7 +6,7 @@ import { SmartQuickAddBar } from "./components/SmartQuickAddBar";
 import { StatsCards } from "./components/StatsCards";
 import { JapanMap } from "./components/JapanMap";
 import { PrefectureList } from "./components/PrefectureList";
-import { RecentVisits } from "./components/RecentVisits";
+import { TravelTimeline } from "./components/TravelTimeline";
 import { PrefectureDetailPanel } from "./components/PrefectureDetailPanel";
 import { ConfirmModal } from "./components/ConfirmModal";
 
@@ -22,7 +22,6 @@ export const App: React.FC = () => {
     updatePrefectureDetails,
     loadSample,
     resetAll,
-    recentVisits,
   } = useTravelRecords();
 
   const [showResetModal, setShowResetModal] = useState(false);
@@ -71,15 +70,16 @@ export const App: React.FC = () => {
 
         {/* Responsive Dashboard Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* Left Column: Prefecture List & Recent Visits (3 cols) */}
+          {/* Left Column: Prefecture List & Travel Timeline (3 cols) */}
           <div className="lg:col-span-3 order-2 lg:order-1 flex flex-col">
             <PrefectureList
               records={records}
               selectedCode={selectedCode}
               onSelectPrefecture={handleSelectPrefecture}
             />
-            <RecentVisits
-              recentVisits={recentVisits}
+            <TravelTimeline
+              records={records}
+              selectedCode={selectedCode}
               onSelectPrefecture={handleSelectPrefecture}
             />
           </div>

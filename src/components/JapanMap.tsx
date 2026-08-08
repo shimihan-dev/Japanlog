@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useRef } from "react";
 import * as d3Geo from "d3-geo";
 import type { TravelRecordsMap, VisitStatus } from "../types/travel";
 import { PREFECTURE_MAP_BY_CODE } from "../data/prefectures";
@@ -32,54 +32,45 @@ export const JapanMap: React.FC<JapanMapProps> = ({
   const [loading, setLoading] = useState(true);
   const [hoveredCode, setHoveredCode] = useState<number | null>(null);
   const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(null);
+  const mapContainerRef = useRef<HTMLDivElement>(null);
 
-  // Fetch GeoJSON on mount
+  // Load GeoJSON data for 47 prefectures
   useEffect(() => {
-    fetch("/japan.geojson")
+    fetch("/japan-prefectures.geojson")
       .then((res) => res.json())
       .then((data) => {
-        if (data && data.features) {
-          setGeoFeatures(data.features);
-        }
+        setGeoFeatures(data.features || []);
         setLoading(false);
       })
       .catch((err) => {
-        console.error("Failed to load Japan GeoJSON map data:", err);
+        console.error("Failed to load Japan map GeoJSON:", err);
         setLoading(false);
       });
   }, []);
 
-  // Process GeoJSON features: filter Hokkaido/Tokyo/Okinawa minor remote islands
+  // Filter remote islands for Hokkaido, Tokyo, and Okinawa to optimize map presentation
   const processedGeoFeatures = useMemo(() => {
     return geoFeatures.map((feat) => {
       const code = feat.properties.id;
-      if (code === 1) {
-        // Hokkaido: keep Hokkaido Main Island only
-        const filteredCoords = feat.geometry.coordinates.filter((poly: any) => {
-          const area = d3Geo.geoArea({ type: "Polygon", coordinates: poly });
-          return area > 0.0005;
+
+      // 1. Tokyo (code 13): Filter out remote Izu and Ogasawara Islands
+      if (code === 13 && feat.geometry.type === "MultiPolygon") {
+        const filteredCoords = feat.geometry.coordinates.filter((polygon: any) => {
+          const bounds = d3Geo.geoBounds({ type: "Polygon", coordinates: polygon });
+          return bounds[0][1] >= 35.0; // Keep Kanto mainland Tokyo only
         });
         return {
           ...feat,
           geometry: { ...feat.geometry, coordinates: filteredCoords },
         };
       }
-      if (code === 13) {
-        // Tokyo: keep mainland Kanto area only (latitude >= 35.0 N)
-        const filteredCoords = feat.geometry.coordinates.filter((poly: any) => {
-          const bounds = d3Geo.geoBounds({ type: "Polygon", coordinates: poly });
-          return bounds[0][1] >= 35.0;
-        });
-        return {
-          ...feat,
-          geometry: { ...feat.geometry, coordinates: filteredCoords },
-        };
-      }
-      if (code === 47) {
-        // Okinawa: keep Okinawa Main Island only
-        const filteredCoords = feat.geometry.coordinates.filter((poly: any) => {
-          const bounds = d3Geo.geoBounds({ type: "Polygon", coordinates: poly });
-          const area = d3Geo.geoArea({ type: "Polygon", coordinates: poly });
+
+      // 2. Okinawa (code 47): Filter out remote islands, keep Okinawa Main Island
+      if (code === 47 && feat.geometry.type === "MultiPolygon") {
+        const filteredCoords = feat.geometry.coordinates.filter((polygon: any) => {
+          const polyFeature: any = { type: "Polygon", coordinates: polygon };
+          const bounds = d3Geo.geoBounds(polyFeature);
+          const area = d3Geo.geoArea(polyFeature);
           return (
             bounds[0][0] >= 127.5 &&
             bounds[1][0] <= 128.4 &&
@@ -87,6 +78,19 @@ export const JapanMap: React.FC<JapanMapProps> = ({
             bounds[1][1] <= 26.9 &&
             area > 0.000005
           );
+        });
+        return {
+          ...feat,
+          geometry: { ...feat.geometry, coordinates: filteredCoords },
+        };
+      }
+
+      // 3. Hokkaido (code 1): Keep main island only, filter out outlying Kuril/Okushiri/Rishiri islands
+      if (code === 1 && feat.geometry.type === "MultiPolygon") {
+        const filteredCoords = feat.geometry.coordinates.filter((polygon: any) => {
+          const polyFeature: any = { type: "Polygon", coordinates: polygon };
+          const area = d3Geo.geoArea(polyFeature);
+          return area > 0.0005; // Keep Hokkaido Main Island
         });
         return {
           ...feat,
@@ -144,13 +148,20 @@ export const JapanMap: React.FC<JapanMapProps> = ({
     return { featurePaths: paths };
   }, [processedGeoFeatures]);
 
-  // Handle tooltip positioning
+  // Handle tooltip positioning accurately relative to map container
   const handleMouseMove = (e: React.MouseEvent, code: number) => {
-    const bounds = e.currentTarget.getBoundingClientRect();
-    setTooltipPos({
-      x: e.clientX - bounds.left,
-      y: e.clientY - bounds.top - 40,
-    });
+    if (!mapContainerRef.current) return;
+    const containerBounds = mapContainerRef.current.getBoundingClientRect();
+    
+    // Relative coordinates
+    const rawX = e.clientX - containerBounds.left;
+    const rawY = e.clientY - containerBounds.top;
+
+    // Clamp coordinates to prevent clipping at edges
+    const clampedX = Math.max(90, Math.min(containerBounds.width - 90, rawX));
+    const clampedY = Math.max(50, rawY - 12);
+
+    setTooltipPos({ x: clampedX, y: clampedY });
     setHoveredCode(code);
   };
 
@@ -195,7 +206,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
   return (
     <div className="relative w-full bg-slate-100/70 dark:bg-[#111827]/80 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-4 overflow-hidden flex flex-col items-center space-y-3 transition-colors duration-200">
       {/* Main SVG Container */}
-      <div className="w-full max-w-[850px] aspect-[4/3.4] relative">
+      <div ref={mapContainerRef} className="w-full max-w-[850px] aspect-[4/3.4] relative">
         <svg
           viewBox="0 0 800 700"
           className="w-full h-full select-none"
