@@ -212,27 +212,27 @@ const FLIGHT_DATABASE: FlightSchedule[] = [
 export async function fetchLiveAirportFlights(airportCode: string, depFilter: string = "ALL"): Promise<FlightSchedule[]> {
   let liveItems: FlightSchedule[] = [];
 
-  // 1. Try Incheon Airport & KAC Open API via proxy
+  // 1. Try Korea Airports Corporation & Incheon Airport Open API via proxy
   if (icnApiKey || korApiKey) {
-    const keyToUse = icnApiKey || korApiKey;
+    const keyToUse = korApiKey || icnApiKey;
     try {
-      // Use Vite dev proxy /api/data-go to bypass browser CORS
-      const proxyUrl = `/api/data-go/B551177/StatusOfFlightInfoGG/getFlightsStatusInfo?serviceKey=${keyToUse}&type=json&searchtype=O`;
+      // Use Vite dev proxy /api/data-go to bypass browser CORS to active endpoint B551178/flight-status/info
+      const proxyUrl = `/api/data-go/B551178/flight-status/info?serviceKey=${keyToUse}&type=json`;
       const res = await fetch(proxyUrl, { signal: AbortSignal.timeout(3500) });
       if (res.ok) {
         const data = await res.json();
-        const items = data?.response?.body?.items || [];
+        const items = data?.response?.body?.items || data?.item || [];
         items.forEach((item: any) => {
-          const arrCode = item.airportCode || item.airport;
+          const arrCode = item.arrAirportCode || item.airportCode || item.airport;
           if (arrCode === airportCode) {
-            const depTimeRaw = item.scheduleDateTime || item.estimatedDateTime || "";
+            const depTimeRaw = item.std || item.scheduleDateTime || item.estimatedDateTime || "";
             const depTimeFormatted = depTimeRaw.length >= 4 ? `${depTimeRaw.slice(-4, -2)}:${depTimeRaw.slice(-2)}` : "실시간";
             liveItems.push({
-              airline: item.airline || "대한항공/아시아나",
-              flightNo: item.flightId || item.flightNo || "LIVE",
-              depAirport: "인천",
-              depAirportCode: "ICN",
-              arrAirport: item.airport || arrCode,
+              airline: item.airlineKorean || item.airline || "대한항공/아시아나",
+              flightNo: item.airFln || item.flightId || item.flightNo || "LIVE",
+              depAirport: item.boardAirportKor || "한국 출발",
+              depAirportCode: item.boardAirportCode || "ICN",
+              arrAirport: item.arrivedAirportKor || arrCode,
               arrAirportCode: arrCode,
               departureTime: depTimeFormatted,
               arrivalTime: "직항",
