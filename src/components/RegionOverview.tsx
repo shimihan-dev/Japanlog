@@ -99,13 +99,13 @@ export const RegionOverview: React.FC<RegionOverviewProps> = ({
               onClick={() => onSelectRegion(stat.name)}
               className={`p-3 rounded-xl border cursor-pointer transition-all flex flex-col justify-between space-y-2 group ${
                 isSelected
-                  ? "bg-purple-50 dark:bg-purple-950/70 border-purple-500 dark:border-purple-400 ring-2 ring-purple-500/40 dark:ring-purple-400/60 shadow-md dark:shadow-[0_0_18px_rgba(168,85,247,0.45)] scale-[1.02]"
-                  : "bg-slate-50/80 dark:bg-[#1A2332] border-slate-100 dark:border-slate-800 hover:border-purple-300 dark:hover:border-purple-500/50 hover:bg-purple-50/40 dark:hover:bg-purple-950/30"
+                  ? "bg-blue-50 dark:bg-slate-800/90 border-blue-500 dark:border-blue-500/70 ring-1 ring-blue-500/30 dark:ring-blue-400/30 shadow-xs"
+                  : "bg-slate-50/80 dark:bg-[#151D2A] border-slate-100 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 hover:bg-slate-50/40 dark:hover:bg-slate-800/50"
               }`}
             >
               <div className="flex items-center justify-between">
                 <span className={`text-xs font-extrabold transition-colors whitespace-nowrap ${
-                  isSelected ? "text-purple-700 dark:text-purple-300" : "text-slate-800 dark:text-slate-200 group-hover:text-purple-600 dark:group-hover:text-purple-400"
+                  isSelected ? "text-blue-700 dark:text-blue-300" : "text-slate-800 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400"
                 }`}>
                   {stat.name}
                 </span>

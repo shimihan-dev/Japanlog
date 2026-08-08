@@ -148,10 +148,10 @@ export const PrefectureList: React.FC<PrefectureListProps> = ({
                 onClick={() => onSelectPrefecture(pref.code)}
                 className={`w-full flex items-center justify-between p-2.5 rounded-xl border text-left transition-all ${
                   isSelected
-                    ? "bg-purple-50/90 dark:bg-purple-950/60 border-purple-500 dark:border-purple-400 ring-2 ring-purple-500/30 dark:ring-purple-400/60 shadow-[0_0_15px_rgba(168,85,247,0.4)] text-purple-950 dark:text-purple-200 font-extrabold scale-[1.01]"
+                    ? "bg-blue-50/90 dark:bg-slate-800/90 border-blue-500 dark:border-blue-500/70 ring-1 ring-blue-500/30 dark:ring-blue-400/30 text-blue-900 dark:text-blue-200 font-extrabold shadow-xs"
                     : isRegionSelected
-                    ? "bg-purple-50/50 dark:bg-purple-950/30 border-purple-300 dark:border-purple-500/50 ring-1 ring-purple-400/30 dark:ring-purple-400/30 text-purple-900 dark:text-purple-200 font-bold"
-                    : "bg-white dark:bg-[#1A2332] border-slate-100 dark:border-slate-800/80 hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-200"
+                    ? "bg-blue-50/50 dark:bg-slate-800/60 border-blue-300 dark:border-blue-700/60 text-blue-900 dark:text-blue-200 font-bold"
+                    : "bg-white dark:bg-[#151D2A] border-slate-100 dark:border-slate-800/80 hover:border-slate-200 dark:hover:border-slate-700 hover:bg-slate-50/50 dark:hover:bg-slate-800/50 text-slate-700 dark:text-slate-200"
                 }`}
               >
                 <div className="flex items-center space-x-2.5">

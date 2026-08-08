@@ -65,7 +65,7 @@ export const PrefectureDetailPanel: React.FC<PrefectureDetailPanelProps> = ({
   };
 
   return (
-    <div className="bg-white dark:bg-[#0E1628] rounded-2xl border border-purple-200/80 dark:border-purple-500/40 ring-1 ring-purple-500/20 dark:ring-purple-400/30 shadow-sm dark:shadow-[0_0_20px_rgba(168,85,247,0.25)] p-5 flex flex-col space-y-4 transition-all duration-200">
+    <div className="bg-white dark:bg-[#0E1628] rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm p-5 flex flex-col space-y-4 transition-all duration-200">
       {/* Header Info */}
       <div className="flex items-start justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
         <div>
@@ -79,9 +79,9 @@ export const PrefectureDetailPanel: React.FC<PrefectureDetailPanelProps> = ({
         <span
           className={`px-2.5 py-1 rounded-lg text-xs font-bold ${
             currentStatus === "visited"
-              ? "bg-blue-100 dark:bg-cyan-950 text-blue-800 dark:text-cyan-300 border border-blue-200/50 dark:border-cyan-800/50"
+              ? "bg-blue-100 dark:bg-blue-950/80 text-blue-800 dark:text-blue-300 border border-blue-200/50 dark:border-blue-800/50"
               : currentStatus === "transit"
-              ? "bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300 border border-emerald-200/50 dark:border-emerald-800/50"
+              ? "bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-200/50 dark:border-emerald-800/50"
               : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
           }`}
         >
@@ -103,12 +103,12 @@ export const PrefectureDetailPanel: React.FC<PrefectureDetailPanelProps> = ({
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center space-x-1">
                 <span>방문 도시</span>
-                <span className="text-blue-600 dark:text-cyan-400">({cities.length}개)</span>
+                <span className="text-blue-600 dark:text-blue-400">({cities.length}개)</span>
               </span>
               {!showAddForm && !editingCity && (
                 <button
                   onClick={() => setShowAddForm(true)}
-                  className="flex items-center space-x-1 text-xs text-blue-600 dark:text-cyan-400 hover:text-blue-800 dark:hover:text-cyan-300 font-semibold hover:bg-blue-50 dark:hover:bg-cyan-950/50 px-2 py-1 rounded-lg transition-colors"
+                  className="flex items-center space-x-1 text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 font-semibold hover:bg-blue-50 dark:hover:bg-slate-800 px-2 py-1 rounded-lg transition-colors"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>도시 추가</span>
@@ -169,16 +169,16 @@ export const PrefectureDetailPanel: React.FC<PrefectureDetailPanelProps> = ({
 
       {/* Traffic & Airport Access Information Card */}
       {accessInfo && (
-        <div className="p-3 bg-slate-50/80 dark:bg-[#1A2332] rounded-xl border border-slate-100 dark:border-slate-800/80 space-y-2 text-xs transition-colors">
+        <div className="p-3 bg-slate-50/80 dark:bg-[#151D2A] rounded-xl border border-slate-200/60 dark:border-slate-800 space-y-2 text-xs transition-colors">
           <div className="flex items-center justify-between border-b border-slate-200/60 dark:border-slate-800 pb-1.5">
             <span className="font-bold text-slate-800 dark:text-slate-200 flex items-center space-x-1">
-              <Plane className="w-3.5 h-3.5 text-blue-500 dark:text-cyan-400" />
+              <Plane className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
               <span>교통 & 공항 접근 가이드</span>
             </span>
             <span className={`text-[10px] px-1.5 py-0.5 rounded font-extrabold ${
               accessInfo.hasDirectFlight
-                ? "bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300"
-                : "bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300"
+                ? "bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300"
+                : "bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300"
             }`}>
               {accessInfo.hasDirectFlight ? "✈️ 한국 직항 유" : "🚄 신칸센/철도 연계"}
             </span>
@@ -206,7 +206,7 @@ export const PrefectureDetailPanel: React.FC<PrefectureDetailPanelProps> = ({
               <span className="font-semibold text-slate-500 dark:text-slate-400 shrink-0">신칸센: </span>
               <div className="flex flex-wrap gap-1">
                 {accessInfo.shinkansenStations.map((st) => (
-                  <span key={st} className="px-1.5 py-0.2 bg-red-50 dark:bg-red-950/60 border border-red-200/60 dark:border-red-800 text-red-700 dark:text-red-300 rounded text-[10px]">
+                  <span key={st} className="px-1.5 py-0.2 bg-red-50 dark:bg-red-950/60 border border-red-200/60 dark:border-red-800/80 text-red-700 dark:text-red-300 rounded text-[10px]">
                     {st}
                   </span>
                 ))}
@@ -215,7 +215,7 @@ export const PrefectureDetailPanel: React.FC<PrefectureDetailPanelProps> = ({
           )}
 
           {/* Access Description */}
-          <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed bg-white/60 dark:bg-slate-800/60 p-2 rounded-lg border border-slate-100 dark:border-slate-800/60">
+          <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed bg-white/60 dark:bg-slate-800/60 p-2 rounded-lg border border-slate-100 dark:border-slate-800">
             {accessInfo.accessGuide}
           </p>
 
@@ -228,7 +228,7 @@ export const PrefectureDetailPanel: React.FC<PrefectureDetailPanelProps> = ({
               </span>
               <div className="flex flex-wrap gap-1">
                 {accessInfo.representativeCities.map((c) => (
-                  <span key={c} className="px-2 py-0.5 bg-blue-50 dark:bg-cyan-950 text-blue-700 dark:text-cyan-300 rounded-md text-[10px] font-medium border border-blue-100 dark:border-cyan-800/60">
+                  <span key={c} className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-md text-[10px] font-medium border border-slate-200 dark:border-slate-700">
                     {c}
                   </span>
                 ))}
@@ -310,7 +310,7 @@ const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) =>
       <div className="space-y-1">
         <div className="flex items-center justify-between">
           <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200 flex items-center space-x-1">
-            <Plane className="w-3.5 h-3.5 text-blue-600 dark:text-cyan-400" />
+            <Plane className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
             <span>
               {airportConfig.hasDirectFlight ? "직항 공항 선택 & 실시간 운항 정보" : "관문 공항 선택 & 실시간 운항 정보"}
             </span>
@@ -319,7 +319,7 @@ const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) =>
           <div className="flex items-center space-x-1.5">
             <span className={`text-[9px] px-1.5 py-0.5 rounded font-extrabold flex items-center space-x-1 ${
               isLiveApiActive
-                ? "bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800"
+                ? "bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800"
                 : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700"
             }`}>
               <span className={`w-1.5 h-1.5 rounded-full ${isLiveApiActive ? "bg-emerald-500 animate-pulse" : "bg-slate-400"}`} />
@@ -329,7 +329,7 @@ const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) =>
             <button
               onClick={loadFlights}
               disabled={loading}
-              className="flex items-center space-x-1 text-[10px] text-blue-600 dark:text-cyan-400 hover:underline disabled:opacity-50"
+              className="flex items-center space-x-1 text-[10px] text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-50"
               title="실시간 조속 새로고침"
             >
               <RefreshCw className={`w-3 h-3 ${loading ? "animate-spin" : ""}`} />
@@ -348,7 +348,7 @@ const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) =>
 
       {/* 2. Multiple Airports Buttons Toggle */}
       {airportConfig.airports.length > 0 && (
-        <div className="flex flex-wrap gap-1 bg-slate-100/80 dark:bg-slate-800/80 p-1 rounded-xl">
+        <div className="flex flex-wrap gap-1 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl">
           {airportConfig.airports.map((ap) => (
             <button
               key={ap.code}
@@ -356,7 +356,7 @@ const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) =>
               onClick={() => setSelectedAirportCode(ap.code)}
               className={`flex-1 py-1.5 px-2 rounded-lg text-[10px] font-extrabold transition-all flex items-center justify-center space-x-1 ${
                 selectedAirportCode === ap.code
-                  ? "bg-blue-600 dark:bg-cyan-500 text-white dark:text-slate-900 shadow-sm"
+                  ? "bg-blue-600 dark:bg-blue-600 text-white shadow-xs"
                   : "bg-white dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
               }`}
             >
@@ -382,7 +382,7 @@ const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) =>
             onClick={() => setDepFilter(tab.code)}
             className={`flex-1 py-1 rounded transition-all ${
               depFilter === tab.code
-                ? "bg-white dark:bg-slate-700 text-blue-700 dark:text-cyan-300 shadow-xs font-bold"
+                ? "bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 shadow-xs font-bold"
                 : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
             }`}
           >
@@ -394,7 +394,7 @@ const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) =>
       {/* 4. Live Flight Cards List */}
       <div className="space-y-1.5 max-h-[220px] overflow-y-auto pr-1">
         {loading ? (
-          <div className="text-center py-6 text-[10px] text-blue-600 dark:text-cyan-400 flex flex-col items-center justify-center space-y-1.5">
+          <div className="text-center py-6 text-[10px] text-blue-600 dark:text-blue-400 flex flex-col items-center justify-center space-y-1.5">
             <RefreshCw className="w-4 h-4 animate-spin" />
             <span className="font-semibold">{activeAirportObj?.name} 실시간 최신 운항 데이터 가져오는 중...</span>
           </div>
@@ -406,11 +406,11 @@ const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) =>
           schedules.map((flight, idx) => (
             <div
               key={`${flight.flightNo}-${idx}`}
-              className="p-2 bg-white dark:bg-slate-800/80 rounded-lg border border-slate-100 dark:border-slate-700 flex items-center justify-between text-[10px] hover:border-blue-200 dark:hover:border-slate-600 transition-colors"
+              className="p-2 bg-white dark:bg-slate-800/80 rounded-lg border border-slate-100 dark:border-slate-700/80 flex items-center justify-between text-[10px] hover:border-slate-300 dark:hover:border-slate-600 transition-colors"
             >
               <div className="space-y-0.5">
                 <div className="flex items-center space-x-1.5 font-bold text-slate-900 dark:text-slate-100">
-                  <span className="text-blue-600 dark:text-cyan-400">{flight.airline}</span>
+                  <span className="text-blue-600 dark:text-blue-400">{flight.airline}</span>
                   <span className="px-1 py-0.2 bg-slate-100 dark:bg-slate-700 rounded text-slate-600 dark:text-slate-300">{flight.flightNo}</span>
                   {flight.isLive && (
                     <span className="px-1 py-0.2 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 rounded text-[9px]">LIVE</span>
@@ -424,7 +424,7 @@ const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) =>
               </div>
 
               <div className="text-right space-y-0.5">
-                <div className="font-extrabold text-blue-700 dark:text-cyan-300 flex items-center justify-end space-x-1">
+                <div className="font-extrabold text-blue-700 dark:text-blue-300 flex items-center justify-end space-x-1">
                   <Clock className="w-2.5 h-2.5" />
                   <span>{flight.departureTime} ~ {flight.arrivalTime}</span>
                 </div>
