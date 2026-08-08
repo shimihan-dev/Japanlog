@@ -107,6 +107,10 @@ const FLIGHT_DATABASE: FlightSchedule[] = [
   { airline: "아시아나항공", flightNo: "OZ116", depAirport: "인천", depAirportCode: "ICN", arrAirport: "고베 국제전세기", arrAirportCode: "UKB", departureTime: "10:30", arrivalTime: "12:15", days: "화,목,토" },
   { airline: "에어부산", flightNo: "BX128", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "고베 직항 전세기", arrAirportCode: "UKB", departureTime: "11:20", arrivalTime: "12:45", days: "목,일" },
 
+  // Kitakyushu (KKJ)
+  { airline: "진에어", flightNo: "LJ269", depAirport: "인천", depAirportCode: "ICN", arrAirport: "기타큐슈", arrAirportCode: "KKJ", departureTime: "07:05", arrivalTime: "08:30", days: "매일" },
+  { airline: "진에어", flightNo: "LJ271", depAirport: "인천", depAirportCode: "ICN", arrAirport: "기타큐슈", arrAirportCode: "KKJ", departureTime: "17:15", arrivalTime: "18:40", days: "매일" },
+
   // Kansai / Osaka (KIX)
   { airline: "대한항공", flightNo: "KE721", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "07:15", arrivalTime: "09:05", days: "매일" },
   { airline: "대한항공", flightNo: "KE723", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "09:00", arrivalTime: "10:50", days: "매일" },

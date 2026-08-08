@@ -130,22 +130,20 @@ export const TravelTimeline: React.FC<TravelTimelineProps> = ({
               >
                 {/* Timeline Dot */}
                 <div
-                  className={`absolute left-0 top-1 w-3.5 h-3.5 rounded-full border-2 transition-transform ${
-                    isSelected
+                  className={`absolute left-0 top-1 w-3.5 h-3.5 rounded-full border-2 transition-transform ${isSelected
                       ? "bg-blue-600 dark:bg-cyan-400 border-white dark:border-slate-900 scale-125 ring-2 ring-blue-500/30 shadow-sm"
                       : item.status === "visited"
-                      ? "bg-blue-500 dark:bg-cyan-500 border-white dark:border-slate-900 group-hover:scale-110"
-                      : "bg-emerald-500 border-white dark:border-slate-900 group-hover:scale-110"
-                  }`}
+                        ? "bg-blue-500 dark:bg-cyan-500 border-white dark:border-slate-900 group-hover:scale-110"
+                        : "bg-emerald-500 border-white dark:border-slate-900 group-hover:scale-110"
+                    }`}
                 />
 
                 {/* Card Container */}
                 <div
-                  className={`p-2.5 rounded-xl border text-left transition-all ${
-                    isSelected
+                  className={`p-2.5 rounded-xl border text-left transition-all ${isSelected
                       ? "bg-blue-50/80 dark:bg-cyan-950/40 border-blue-300 dark:border-cyan-500/50 ring-1 ring-blue-500/20 shadow-xs"
                       : "bg-slate-50/70 dark:bg-[#1A2332] border-slate-100 dark:border-slate-800 hover:border-slate-200 dark:hover:border-slate-700 hover:bg-white dark:hover:bg-slate-800/80"
-                  }`}
+                    }`}
                 >
                   {/* Header: Date & Status */}
                   <div className="flex items-center justify-between mb-1">
@@ -154,11 +152,10 @@ export const TravelTimeline: React.FC<TravelTimelineProps> = ({
                       <span>{item.displayDate}</span>
                     </span>
                     <span
-                      className={`text-[9px] font-extrabold px-1.5 py-0.2 rounded-md ${
-                        item.status === "visited"
+                      className={`text-[9px] font-extrabold px-1.5 py-0.2 rounded-md ${item.status === "visited"
                           ? "bg-blue-100 dark:bg-cyan-950 text-blue-800 dark:text-cyan-300"
                           : "bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300"
-                      }`}
+                        }`}
                     >
                       {item.status === "visited" ? "방문" : "경유"}
                     </span>
@@ -178,11 +175,10 @@ export const TravelTimeline: React.FC<TravelTimelineProps> = ({
                       </span>
                     </div>
                     <ChevronRight
-                      className={`w-4 h-4 transition-transform ${
-                        isSelected
+                      className={`w-4 h-4 transition-transform ${isSelected
                           ? "text-blue-600 dark:text-cyan-400 translate-x-0.5"
                           : "text-slate-300 dark:text-slate-600 group-hover:text-slate-400"
-                      }`}
+                        }`}
                     />
                   </div>
 
