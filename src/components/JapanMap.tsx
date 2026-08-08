@@ -36,7 +36,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
 
   // Load GeoJSON data for 47 prefectures
   useEffect(() => {
-    fetch("/japan-prefectures.geojson")
+    fetch("/japan.geojson")
       .then((res) => res.json())
       .then((data) => {
         setGeoFeatures(data.features || []);

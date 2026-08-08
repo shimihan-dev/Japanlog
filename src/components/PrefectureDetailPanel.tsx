@@ -5,7 +5,7 @@ import { StatusSelector } from "./StatusSelector";
 import { CityVisitList } from "./CityVisitList";
 import { CityVisitForm } from "./CityVisitForm";
 import { ConfirmModal } from "./ConfirmModal";
-import { MapPin, Plus, Calendar, Hash, FileText } from "lucide-react";
+import { MapPin, Plus } from "lucide-react";
 
 interface PrefectureDetailPanelProps {
   selectedCode: number | null;
@@ -142,72 +142,6 @@ export const PrefectureDetailPanel: React.FC<PrefectureDetailPanelProps> = ({
                 onDelete={(cityId) => onDeleteCity(selectedCode, cityId)}
               />
             )}
-          </div>
-
-          {/* Visit Metadata Section */}
-          <div className="bg-slate-50/80 dark:bg-slate-900/60 p-3 rounded-xl border border-slate-200/60 dark:border-slate-800 space-y-2.5 text-xs">
-            <span className="font-semibold text-slate-700 dark:text-slate-300 block">추가 정보 (선택)</span>
-            
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="text-[10px] text-slate-500 dark:text-slate-400 flex items-center space-x-1 mb-0.5">
-                  <Calendar className="w-3 h-3" />
-                  <span>최초 방문일</span>
-                </label>
-                <input
-                  type="text"
-                  placeholder="예: 2026.08.02"
-                  value={record?.firstVisitedAt || ""}
-                  onChange={(e) => onUpdateDetails(selectedCode, { firstVisitedAt: e.target.value })}
-                  className="w-full text-xs px-2 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-slate-100 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-cyan-500"
-                />
-              </div>
-
-              <div>
-                <label className="text-[10px] text-slate-500 dark:text-slate-400 flex items-center space-x-1 mb-0.5">
-                  <Calendar className="w-3 h-3" />
-                  <span>최근 방문일</span>
-                </label>
-                <input
-                  type="text"
-                  placeholder="예: 2026.08.05"
-                  value={record?.lastVisitedAt || ""}
-                  onChange={(e) => onUpdateDetails(selectedCode, { lastVisitedAt: e.target.value })}
-                  className="w-full text-xs px-2 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-slate-100 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-cyan-500"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="text-[10px] text-slate-500 dark:text-slate-400 flex items-center space-x-1 mb-0.5">
-                  <Hash className="w-3 h-3" />
-                  <span>방문 횟수</span>
-                </label>
-                <input
-                  type="number"
-                  min={1}
-                  placeholder="예: 1"
-                  value={record?.visitCount || ""}
-                  onChange={(e) => onUpdateDetails(selectedCode, { visitCount: Number(e.target.value) || undefined })}
-                  className="w-full text-xs px-2 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-slate-100 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-cyan-500"
-                />
-              </div>
-
-              <div>
-                <label className="text-[10px] text-slate-500 dark:text-slate-400 flex items-center space-x-1 mb-0.5">
-                  <FileText className="w-3 h-3" />
-                  <span>특이사항 / 메모</span>
-                </label>
-                <input
-                  type="text"
-                  placeholder="예: 가족 여행, 식도락"
-                  value={record?.notes || ""}
-                  onChange={(e) => onUpdateDetails(selectedCode, { notes: e.target.value })}
-                  className="w-full text-xs px-2 py-1 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 dark:text-slate-100 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 dark:focus:ring-cyan-500"
-                />
-              </div>
-            </div>
           </div>
         </div>
       )}

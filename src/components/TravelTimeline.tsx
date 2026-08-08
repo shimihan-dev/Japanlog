@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import type { TravelRecordsMap } from "../types/travel";
+import type { TravelRecordsMap, CityVisit } from "../types/travel";
 import { PREFECTURE_MAP_BY_CODE } from "../data/prefectures";
 import { Calendar, MapPin, Clock, ChevronRight, FileText } from "lucide-react";
 
@@ -37,13 +37,16 @@ export const TravelTimeline: React.FC<TravelTimelineProps> = ({
       const pref = PREFECTURE_MAP_BY_CODE.get(rec.prefectureCode);
       if (!pref) return;
 
-      // Determine date string for sorting
-      const dateStr = rec.lastVisitedAt || rec.firstVisitedAt || (rec.cities[0]?.visitedAt) || "최근";
+      // Find the most recent city visitedAt date, or fallback to prefecture-level dates
+      const cityDates = rec.cities
+        .map((c: CityVisit) => c.visitedAt)
+        .filter((d: string | undefined): d is string => Boolean(d && d.trim()));
+
+      const primaryDate = cityDates[cityDates.length - 1] || rec.lastVisitedAt || rec.firstVisitedAt || (rec.cities.length > 0 ? "날짜 미지정" : "날짜 미지정");
       let timeVal = new Date(rec.updatedAt || 0).getTime();
-      
-      // Try parsing date string like 2026.08.02 or 2026.08
-      if (dateStr && dateStr !== "최근") {
-        const parsed = new Date(dateStr.replace(/\./g, "-")).getTime();
+
+      if (primaryDate && primaryDate !== "날짜 미지정") {
+        const parsed = new Date(primaryDate.replace(/\./g, "-")).getTime();
         if (!isNaN(parsed) && parsed > 0) {
           timeVal = parsed;
         }
@@ -55,7 +58,7 @@ export const TravelTimeline: React.FC<TravelTimelineProps> = ({
         nameJa: pref.nameJa,
         region: pref.region,
         status: rec.status,
-        displayDate: dateStr,
+        displayDate: primaryDate,
         timestamp: timeVal,
         cities: rec.cities || [],
         notes: rec.notes,
@@ -167,6 +170,11 @@ export const TravelTimeline: React.FC<TravelTimelineProps> = ({
                         >
                           <MapPin className="w-2.5 h-2.5 text-blue-500 dark:text-cyan-400" />
                           <span>{city.cityNameKo}</span>
+                          {city.visitedAt && (
+                            <span className="text-[9px] text-slate-400 dark:text-slate-500 font-normal">
+                              ({city.visitedAt})
+                            </span>
+                          )}
                         </span>
                       ))}
                     </div>

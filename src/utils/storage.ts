@@ -70,11 +70,7 @@ export function getSampleTravelRecords(): TravelRecordsMap {
       cities: cities.map((cName, idx) => ({
         id: `sample-${pref.code}-${idx}`,
         cityNameKo: cName,
-        visitedAt: "2026.08",
       })),
-      firstVisitedAt: "2026.08.02",
-      lastVisitedAt: "2026.08.03",
-      visitCount: 1,
       notes: `${pref.nameKo} 주요 도시 여행`,
       updatedAt: now,
     };
