@@ -192,17 +192,72 @@ const FLIGHT_DATABASE: FlightSchedule[] = [
   { airline: "아시아나항공", flightNo: "OZ152", depAirport: "인천", depAirportCode: "ICN", arrAirport: "센다이", arrAirportCode: "SDJ", departureTime: "09:35", arrivalTime: "11:50", days: "화,금,일" },
 ];
 
+async function fetchLiveIncheonFlight(targetCodes: string[]): Promise<FlightSchedule[]> {
+  if (!icnApiKey) return [];
+  try {
+    const url = `https://apis.data.go.kr/B551177/StatusOfFlightInfoGG/getFlightsStatusInfo?serviceKey=${icnApiKey}&type=json&searchtype=O`;
+    const res = await fetch(url, { signal: AbortSignal.timeout(3000) });
+    if (!res.ok) return [];
+    const data = await res.json();
+    const items = data?.response?.body?.items || [];
+
+    const results: FlightSchedule[] = [];
+    items.forEach((item: any) => {
+      const arrCode = item.airportCode || item.airport;
+      if (arrCode && targetCodes.includes(arrCode)) {
+        const depTimeRaw = item.scheduleDateTime || item.estimatedDateTime || "";
+        const depTimeFormatted = depTimeRaw.length >= 4 ? `${depTimeRaw.slice(-4, -2)}:${depTimeRaw.slice(-2)}` : "실시간";
+        results.push({
+          airline: item.airline || "대한항공/아시아나",
+          flightNo: item.flightId || item.flightNo || "LIVE",
+          depAirport: "인천",
+          depAirportCode: "ICN",
+          arrAirport: item.airport || arrCode,
+          arrAirportCode: arrCode,
+          departureTime: depTimeFormatted,
+          arrivalTime: "직항",
+          days: "실시간",
+        });
+      }
+    });
+
+    return results;
+  } catch (err) {
+    return [];
+  }
+}
+
 export async function getFlightSchedules(prefCode: number, depFilter: string = "ALL"): Promise<FlightSchedule[]> {
   const iataInfo = PREFECTURE_IATA_MAP[prefCode];
   if (!iataInfo) return [];
 
   const targetCodes = [iataInfo.mainCode, ...(iataInfo.altCodes || [])];
 
-  const matched = FLIGHT_DATABASE.filter((item) => {
+  // Try fetching live API data first
+  let liveFlights: FlightSchedule[] = [];
+  if (icnApiKey) {
+    liveFlights = await fetchLiveIncheonFlight(targetCodes);
+  }
+
+  const matchedDb = FLIGHT_DATABASE.filter((item) => {
     const isAirportMatch = targetCodes.includes(item.arrAirportCode);
     const isDepMatch = depFilter === "ALL" || item.depAirportCode === depFilter;
     return isAirportMatch && isDepMatch;
   });
 
-  return matched;
+  if (liveFlights.length > 0) {
+    const liveFiltered = liveFlights.filter(f => depFilter === "ALL" || f.depAirportCode === depFilter);
+    if (liveFiltered.length > 0) {
+      const merged = [...liveFiltered, ...matchedDb];
+      const seen = new Set<string>();
+      return merged.filter((item) => {
+        const key = `${item.flightNo}-${item.departureTime}`;
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+    }
+  }
+
+  return matchedDb;
 }
