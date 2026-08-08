@@ -261,16 +261,11 @@ export async function fetchLiveAirportFlights(airportCode: string, depFilter: st
   if (liveItems.length > 0) {
     const filteredLive = liveItems.filter((f) => depFilter === "ALL" || f.depAirportCode === depFilter);
     if (filteredLive.length > 0) {
-      const merged = [...filteredLive, ...matchedDb];
-      const seen = new Set<string>();
-      return merged.filter((item) => {
-        const key = `${item.flightNo}-${item.departureTime}`;
-        if (seen.has(key)) return false;
-        seen.add(key);
-        return true;
-      });
+      // Pure Live API Response (Pre-entered hardcoded database is NOT shown when API is live)
+      return filteredLive;
     }
   }
 
+  // Fallback to database only when live API is unavailable or returns 0 items
   return matchedDb;
 }
