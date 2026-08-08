@@ -27,7 +27,7 @@ export const TravelTimeline: React.FC<TravelTimelineProps> = ({
   selectedCode,
   onSelectPrefecture,
 }) => {
-  // Extract visited and transit records into a chronological timeline
+  // Extract visited and transit records into a chronological timeline (grouped by prefecture + visit date)
   const timelineItems = useMemo(() => {
     const list: TimelineItem[] = [];
 
@@ -37,33 +37,59 @@ export const TravelTimeline: React.FC<TravelTimelineProps> = ({
       const pref = PREFECTURE_MAP_BY_CODE.get(rec.prefectureCode);
       if (!pref) return;
 
-      // Find the most recent city visitedAt date, or fallback to prefecture-level dates
-      const cityDates = rec.cities
-        .map((c: CityVisit) => c.visitedAt)
-        .filter((d: string | undefined): d is string => Boolean(d && d.trim()));
-
-      const primaryDate = cityDates[cityDates.length - 1] || rec.lastVisitedAt || rec.firstVisitedAt || (rec.cities.length > 0 ? "날짜 미지정" : "날짜 미지정");
-      let timeVal = new Date(rec.updatedAt || 0).getTime();
-
-      if (primaryDate && primaryDate !== "날짜 미지정") {
-        const parsed = new Date(primaryDate.replace(/\./g, "-")).getTime();
-        if (!isNaN(parsed) && parsed > 0) {
-          timeVal = parsed;
+      if (!rec.cities || rec.cities.length === 0) {
+        // If transit or no cities recorded, create single entry
+        const dateStr = rec.lastVisitedAt || rec.firstVisitedAt || "날짜 미지정";
+        let timeVal = new Date(rec.updatedAt || 0).getTime();
+        if (dateStr !== "날짜 미지정") {
+          const parsed = new Date(dateStr.replace(/\./g, "-")).getTime();
+          if (!isNaN(parsed) && parsed > 0) timeVal = parsed;
         }
-      }
 
-      list.push({
-        code: rec.prefectureCode,
-        nameKo: pref.nameKo,
-        nameJa: pref.nameJa,
-        region: pref.region,
-        status: rec.status,
-        displayDate: primaryDate,
-        timestamp: timeVal,
-        cities: rec.cities || [],
-        notes: rec.notes,
-        visitCount: rec.visitCount,
-      });
+        list.push({
+          code: rec.prefectureCode,
+          nameKo: pref.nameKo,
+          nameJa: pref.nameJa,
+          region: pref.region,
+          status: rec.status,
+          displayDate: dateStr,
+          timestamp: timeVal,
+          cities: [],
+          notes: rec.notes,
+          visitCount: rec.visitCount,
+        });
+      } else {
+        // Group cities by their visitedAt date
+        const dateGroups = new Map<string, CityVisit[]>();
+        rec.cities.forEach((city: CityVisit) => {
+          const d = (city.visitedAt && city.visitedAt.trim()) || "날짜 미지정";
+          if (!dateGroups.has(d)) {
+            dateGroups.set(d, []);
+          }
+          dateGroups.get(d)!.push(city);
+        });
+
+        dateGroups.forEach((groupCities, dateStr) => {
+          let timeVal = new Date(rec.updatedAt || 0).getTime();
+          if (dateStr !== "날짜 미지정") {
+            const parsed = new Date(dateStr.replace(/\./g, "-")).getTime();
+            if (!isNaN(parsed) && parsed > 0) timeVal = parsed;
+          }
+
+          list.push({
+            code: rec.prefectureCode,
+            nameKo: pref.nameKo,
+            nameJa: pref.nameJa,
+            region: pref.region,
+            status: rec.status,
+            displayDate: dateStr,
+            timestamp: timeVal,
+            cities: groupCities,
+            notes: rec.notes,
+            visitCount: rec.visitCount,
+          });
+        });
+      }
     });
 
     // Sort by timestamp descending
