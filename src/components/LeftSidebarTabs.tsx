@@ -30,7 +30,7 @@ export const LeftSidebarTabs: React.FC<LeftSidebarTabsProps> = ({
           onClick={() => setActiveSubTab("list")}
           className={`flex-1 py-2 px-3 rounded-xl transition-all flex items-center justify-center space-x-1.5 ${
             activeSubTab === "list"
-              ? "bg-white dark:bg-[#151D2A] text-slate-900 dark:text-slate-100 shadow-sm"
+              ? "bg-white dark:bg-[#0E1628] text-slate-900 dark:text-slate-100 shadow-sm"
               : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
           }`}
         >
@@ -43,7 +43,7 @@ export const LeftSidebarTabs: React.FC<LeftSidebarTabsProps> = ({
           onClick={() => setActiveSubTab("timeline")}
           className={`flex-1 py-2 px-3 rounded-xl transition-all flex items-center justify-center space-x-1.5 ${
             activeSubTab === "timeline"
-              ? "bg-white dark:bg-[#151D2A] text-slate-900 dark:text-slate-100 shadow-sm"
+              ? "bg-white dark:bg-[#0E1628] text-slate-900 dark:text-slate-100 shadow-sm"
               : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200"
           }`}
         >

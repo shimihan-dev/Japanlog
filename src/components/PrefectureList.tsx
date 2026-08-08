@@ -60,7 +60,7 @@ export const PrefectureList: React.FC<PrefectureListProps> = ({
   }, [records]);
 
   return (
-    <div className="bg-white dark:bg-[#151D2A] rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm p-4 flex flex-col h-full transition-colors duration-200">
+    <div className="bg-white dark:bg-[#0E1628] rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm p-4 flex flex-col h-full transition-colors duration-200">
       {/* Active Region Banner */}
       {selectedRegion && (
         <div className="flex items-center justify-between p-2 bg-blue-50 dark:bg-cyan-950/60 rounded-xl border border-blue-200/80 dark:border-cyan-800/80 text-xs font-semibold text-blue-900 dark:text-cyan-200 mb-2.5">

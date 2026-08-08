@@ -104,7 +104,7 @@ export const SmartQuickAddBar: React.FC<SmartQuickAddBarProps> = ({
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => query.trim().length >= 1 && setIsDropdownOpen(true)}
             placeholder="✨ AI 스마트 도시 등록: 장소나 도시 이름을 입력해보세요 (예: 신주쿠, 유후인, 하카타, 지브리, 도톤보리...)"
-            className="w-full pl-10 pr-24 py-3 bg-white dark:bg-[#151D2A] text-slate-800 dark:text-slate-100 rounded-2xl border border-blue-200 dark:border-slate-800 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-cyan-400 text-xs sm:text-sm placeholder-slate-400 dark:placeholder-slate-500 transition-all"
+            className="w-full pl-10 pr-24 py-3 bg-white dark:bg-[#0E1628] text-slate-800 dark:text-slate-100 rounded-2xl border border-blue-200 dark:border-slate-800/80 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-cyan-400 text-xs sm:text-sm placeholder-slate-400 dark:placeholder-slate-500 transition-all"
           />
         </div>
 
@@ -120,7 +120,7 @@ export const SmartQuickAddBar: React.FC<SmartQuickAddBarProps> = ({
 
       {/* AI Live Suggestions Dropdown */}
       {isDropdownOpen && suggestions.length > 0 && (
-        <div className="absolute left-0 right-0 mt-1.5 bg-white dark:bg-[#151D2A] rounded-2xl border border-slate-200 dark:border-slate-800 shadow-xl overflow-hidden z-30 divide-y divide-slate-100 dark:divide-slate-800/60 animate-in fade-in duration-100">
+        <div className="absolute left-0 right-0 mt-1.5 bg-white dark:bg-[#0E1628] rounded-2xl border border-slate-200 dark:border-slate-800/80 shadow-xl overflow-hidden z-30 divide-y divide-slate-100 dark:divide-slate-800/60 animate-in fade-in duration-100">
           <div className="px-3 py-1.5 bg-slate-50 dark:bg-slate-900/60 text-[11px] font-semibold text-slate-500 dark:text-slate-400 flex items-center space-x-1">
             <Sparkles className="w-3 h-3 text-blue-500 dark:text-cyan-400" />
             <span>AI 자동 인식 매칭 결과</span>

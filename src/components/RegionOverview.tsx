@@ -79,7 +79,7 @@ export const RegionOverview: React.FC<RegionOverviewProps> = ({
   }, [records]);
 
   return (
-    <div className="bg-white dark:bg-[#151D2A] rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm p-4 w-full transition-colors duration-200 mt-4">
+    <div className="bg-white dark:bg-[#0E1628] rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm p-4 w-full transition-colors duration-200 mt-4">
       <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5 mb-3">
         <div className="flex items-center space-x-2">
           <Compass className="w-4 h-4 text-blue-600 dark:text-cyan-400" />

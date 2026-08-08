@@ -10,7 +10,7 @@ export const StatsCards: React.FC<StatsCardsProps> = ({ stats }) => {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 mb-6">
       {/* 1. 방문한 현 */}
-      <div className="bg-white dark:bg-[#151D2A] p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow-md transition-all">
+      <div className="bg-white dark:bg-[#0E1628] p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:shadow-md transition-all">
         <div className="flex items-center space-x-3">
           <div className="p-2.5 rounded-xl bg-blue-50 dark:bg-cyan-950/60 text-blue-600 dark:text-cyan-400">
             <MapPin className="w-5 h-5" />
@@ -30,7 +30,7 @@ export const StatsCards: React.FC<StatsCardsProps> = ({ stats }) => {
       </div>
 
       {/* 2. 경유한 현 */}
-      <div className="bg-white dark:bg-[#151D2A] p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow-md transition-all">
+      <div className="bg-white dark:bg-[#0E1628] p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:shadow-md transition-all">
         <div className="flex items-center space-x-3">
           <div className="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400">
             <Navigation className="w-5 h-5" />
@@ -50,7 +50,7 @@ export const StatsCards: React.FC<StatsCardsProps> = ({ stats }) => {
       </div>
 
       {/* 3. 방문 도시 수 */}
-      <div className="bg-white dark:bg-[#151D2A] p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow-md transition-all">
+      <div className="bg-white dark:bg-[#0E1628] p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:shadow-md transition-all">
         <div className="flex items-center space-x-3">
           <div className="p-2.5 rounded-xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400">
             <Building2 className="w-5 h-5" />
@@ -69,7 +69,7 @@ export const StatsCards: React.FC<StatsCardsProps> = ({ stats }) => {
       </div>
 
       {/* 4. 방문 달성률 */}
-      <div className="bg-white dark:bg-[#151D2A] p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow-md transition-all">
+      <div className="bg-white dark:bg-[#0E1628] p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:shadow-md transition-all">
         <div className="flex items-center space-x-3">
           <div className="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400">
             <Crown className="w-5 h-5" />

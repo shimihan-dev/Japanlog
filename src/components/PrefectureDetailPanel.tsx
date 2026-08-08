@@ -33,7 +33,7 @@ export const PrefectureDetailPanel: React.FC<PrefectureDetailPanelProps> = ({
 
   if (!selectedCode) {
     return (
-      <div className="bg-white dark:bg-[#151D2A] rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm p-6 text-center text-slate-400 dark:text-slate-500 flex flex-col items-center justify-center min-h-[300px] h-full space-y-2 transition-colors duration-200">
+      <div className="bg-white dark:bg-[#0E1628] rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm p-6 text-center text-slate-400 dark:text-slate-500 flex flex-col items-center justify-center min-h-[300px] h-full space-y-2 transition-colors duration-200">
         <MapPin className="w-8 h-8 text-slate-300 dark:text-slate-600" />
         <p className="text-xs font-medium">지도에서 도도부현을 선택하거나 목록에서 클릭해주세요.</p>
       </div>
@@ -65,7 +65,7 @@ export const PrefectureDetailPanel: React.FC<PrefectureDetailPanelProps> = ({
   };
 
   return (
-    <div className="bg-white dark:bg-[#151D2A] rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm p-5 flex flex-col space-y-4 transition-colors duration-200">
+    <div className="bg-white dark:bg-[#0E1628] rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm p-5 flex flex-col space-y-4 transition-colors duration-200">
       {/* Header Info */}
       <div className="flex items-start justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
         <div>
