@@ -147,8 +147,8 @@ export const JapanMap: React.FC<JapanMapProps> = ({
       let centroid = rawCentroid;
       if (rawCentroid && !isNaN(rawCentroid[0]) && !isNaN(rawCentroid[1])) {
         let [cx, cy] = rawCentroid;
-        if (code === 30) cy -= 12; // Wakayama: Shift label up into land center
-        if (code === 46) { cx += 5; cy -= 16; } // Kagoshima: Shift label up into Satsuma peninsula
+        if (code === 30) cy -= 4; // Wakayama: Shift label down slightly
+        if (code === 46) { cx += 5; cy -= 30; } // Kagoshima: Shift label further up into peninsula center
         if (code === 42) { cx += 10; cy -= 5; } // Nagasaki: Adjust for coastal islands
         centroid = [cx, cy];
       }
