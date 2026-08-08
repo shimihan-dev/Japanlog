@@ -10,6 +10,11 @@ export interface FlightSchedule {
   days: string;
 }
 
+const icnApiKey = (import.meta.env.VITE_ICN_AIRPORT_API_KEY || "").trim();
+const korApiKey = (import.meta.env.VITE_KOR_AIRPORT_API_KEY || "").trim();
+
+export const isFlightApiConfigured = Boolean(icnApiKey || korApiKey);
+
 export const PREFECTURE_IATA_MAP: Record<number, { mainCode: string; name: string; altCodes?: string[] }> = {
   1: { mainCode: "CTS", name: "신치토세 (삿포로)" },
   2: { mainCode: "AOJ", name: "아오모리" },
