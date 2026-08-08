@@ -117,8 +117,8 @@ export const JapanMap: React.FC<JapanMapProps> = ({
     const mainlandProjection = d3Geo
       .geoMercator()
       .center([137.2, 36.4])
-      .scale(3100)
-      .translate([width / 2 + 100, height / 2 + 10]);
+      .scale(2950)
+      .translate([width / 2 + 95, height / 2 - 15]);
 
     // 3. Okinawa Inset Projection (Code 47) -> Bottom Right Corner (Enlarged)
     const okinawaProjection = d3Geo
@@ -141,7 +141,18 @@ export const JapanMap: React.FC<JapanMapProps> = ({
       }
 
       const d = pathGenerator(feat as any) || "";
-      const centroid = pathGenerator.centroid(feat as any);
+      const rawCentroid = pathGenerator.centroid(feat as any);
+
+      // Fine-tune label positions for prefectures near map boundaries or complex coastlines
+      let centroid = rawCentroid;
+      if (rawCentroid && !isNaN(rawCentroid[0]) && !isNaN(rawCentroid[1])) {
+        let [cx, cy] = rawCentroid;
+        if (code === 30) cy -= 12; // Wakayama: Shift label up into land center
+        if (code === 46) { cx += 5; cy -= 16; } // Kagoshima: Shift label up into Satsuma peninsula
+        if (code === 42) { cx += 10; cy -= 5; } // Nagasaki: Adjust for coastal islands
+        centroid = [cx, cy];
+      }
+
       return { code, feature: feat, d, centroid };
     });
 
