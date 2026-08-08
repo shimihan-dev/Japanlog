@@ -235,6 +235,9 @@ export const PrefectureDetailPanel: React.FC<PrefectureDetailPanelProps> = ({
               </div>
             </div>
           )}
+
+          {/* Direct Flight Schedules List Component */}
+          <FlightSchedulesSection prefCode={selectedCode} />
         </div>
       )}
 
@@ -248,6 +251,97 @@ export const PrefectureDetailPanel: React.FC<PrefectureDetailPanelProps> = ({
         onConfirm={handleConfirmUnvisited}
         onCancel={() => setConfirmStatusModal(null)}
       />
+    </div>
+  );
+};
+
+// Sub-component for Direct Flight Schedules
+import { getFlightSchedules } from "../services/flightService";
+import type { FlightSchedule } from "../services/flightService";
+import { Clock, Calendar } from "lucide-react";
+
+const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) => {
+  const [depFilter, setDepFilter] = useState<string>("ALL");
+  const [schedules, setSchedules] = useState<FlightSchedule[]>([]);
+
+  React.useEffect(() => {
+    getFlightSchedules(prefCode, depFilter).then(setSchedules);
+  }, [prefCode, depFilter]);
+
+  if (schedules.length === 0 && depFilter === "ALL") return null;
+
+  return (
+    <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800 space-y-2">
+      <div className="flex items-center justify-between">
+        <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200 flex items-center space-x-1">
+          <Plane className="w-3 h-3 text-blue-600 dark:text-cyan-400" />
+          <span>한국 출발 직항 운항 스케줄</span>
+          <span className="text-[10px] text-blue-600 dark:text-cyan-400 font-extrabold">({schedules.length}개)</span>
+        </span>
+      </div>
+
+      {/* Departure Airport Filter Tabs */}
+      <div className="flex bg-slate-200/60 dark:bg-slate-800 p-0.5 rounded-lg text-[10px] font-semibold">
+        {[
+          { code: "ALL", label: "전체" },
+          { code: "ICN", label: "인천" },
+          { code: "PUS", label: "부산" },
+          { code: "GMP", label: "김포" },
+          { code: "CJJ", label: "청주/기타" },
+        ].map((tab) => (
+          <button
+            key={tab.code}
+            type="button"
+            onClick={() => setDepFilter(tab.code)}
+            className={`flex-1 py-1 rounded transition-all ${
+              depFilter === tab.code
+                ? "bg-white dark:bg-slate-700 text-blue-700 dark:text-cyan-300 shadow-xs font-bold"
+                : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Flight Cards List */}
+      <div className="space-y-1.5 max-h-[160px] overflow-y-auto pr-1">
+        {schedules.length === 0 ? (
+          <div className="text-center py-3 text-[10px] text-slate-400">
+            선택한 출발 공항에서 직항 노선 정보가 없습니다.
+          </div>
+        ) : (
+          schedules.map((flight, idx) => (
+            <div
+              key={`${flight.flightNo}-${idx}`}
+              className="p-2 bg-white dark:bg-slate-800/80 rounded-lg border border-slate-100 dark:border-slate-700 flex items-center justify-between text-[10px]"
+            >
+              <div className="space-y-0.5">
+                <div className="flex items-center space-x-1.5 font-bold text-slate-900 dark:text-slate-100">
+                  <span className="text-blue-600 dark:text-cyan-400">{flight.airline}</span>
+                  <span className="px-1 py-0.2 bg-slate-100 dark:bg-slate-700 rounded text-slate-600 dark:text-slate-300">{flight.flightNo}</span>
+                </div>
+                <div className="text-slate-500 dark:text-slate-400 flex items-center space-x-1">
+                  <span>{flight.depAirport} ({flight.depAirportCode})</span>
+                  <span>➔</span>
+                  <span className="font-semibold text-slate-700 dark:text-slate-300">{flight.arrAirport} ({flight.arrAirportCode})</span>
+                </div>
+              </div>
+
+              <div className="text-right space-y-0.5">
+                <div className="font-extrabold text-blue-700 dark:text-cyan-300 flex items-center justify-end space-x-1">
+                  <Clock className="w-2.5 h-2.5" />
+                  <span>{flight.departureTime} ~ {flight.arrivalTime}</span>
+                </div>
+                <div className="text-[9px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center justify-end space-x-0.5">
+                  <Calendar className="w-2.5 h-2.5" />
+                  <span>{flight.days}</span>
+                </div>
+              </div>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 };
