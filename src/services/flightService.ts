@@ -8,6 +8,18 @@ export interface FlightSchedule {
   departureTime: string;
   arrivalTime: string;
   days: string;
+  isLive?: boolean;
+}
+
+export interface PrefectureAirportOption {
+  code: string;
+  name: string;
+  isGateway?: boolean;
+}
+
+export interface PrefectureAirportConfig {
+  hasDirectFlight: boolean;
+  airports: PrefectureAirportOption[];
 }
 
 const icnApiKey = (import.meta.env.VITE_ICN_AIRPORT_API_KEY || "").trim();
@@ -15,59 +27,59 @@ const korApiKey = (import.meta.env.VITE_KOR_AIRPORT_API_KEY || "").trim();
 
 export const isFlightApiConfigured = Boolean(icnApiKey || korApiKey);
 
-export const PREFECTURE_IATA_MAP: Record<number, { mainCode: string; name: string; altCodes?: string[] }> = {
-  1: { mainCode: "CTS", name: "신치토세 (삿포로)" },
-  2: { mainCode: "AOJ", name: "아오모리" },
-  3: { mainCode: "SDJ", name: "센다이 (인근)" },
-  4: { mainCode: "SDJ", name: "센다이" },
-  5: { mainCode: "AXT", name: "아키타" },
-  6: { mainCode: "SDJ", name: "센다이 (인근)" },
-  7: { mainCode: "SDJ", name: "센다이 (인근)" },
-  8: { mainCode: "IBR", name: "이바라키" },
-  9: { mainCode: "NRT", name: "나리타 (인근)" },
-  10: { mainCode: "HND", name: "하네다 (인근)" },
-  11: { mainCode: "HND", name: "하네다 (인근)" },
-  12: { mainCode: "NRT", name: "나리타" },
-  13: { mainCode: "HND", name: "하네다", altCodes: ["NRT"] },
-  14: { mainCode: "HND", name: "하네다 (인근)", altCodes: ["NRT"] },
-  15: { mainCode: "KIJ", name: "니가타" },
-  16: { mainCode: "TOY", name: "도야마" },
-  17: { mainCode: "KMQ", name: "고마쓰" },
-  18: { mainCode: "KMQ", name: "고마쓰 (인근)" },
-  19: { mainCode: "HND", name: "하네다 (인근)" },
-  20: { mainCode: "HND", name: "하네다 (인근)" },
-  21: { mainCode: "NGO", name: "나고야 중부 (인근)" },
-  22: { mainCode: "FSZ", name: "시즈오카" },
-  23: { mainCode: "NGO", name: "나고야 중부" },
-  24: { mainCode: "NGO", name: "나고야 중부 (인근)" },
-  25: { mainCode: "KIX", name: "간사이 (인근)" },
-  26: { mainCode: "KIX", name: "간사이 (인근)" },
-  27: { mainCode: "KIX", name: "간사이 (오사카)" },
-  28: { mainCode: "KIX", name: "간사이 (인근)" },
-  29: { mainCode: "KIX", name: "간사이 (인근)" },
-  30: { mainCode: "KIX", name: "간사이 (인근)" },
-  31: { mainCode: "YGJ", name: "요나고" },
-  32: { mainCode: "YGJ", name: "요나고 (인근)" },
-  33: { mainCode: "OKJ", name: "오카야마" },
-  34: { mainCode: "HIJ", name: "히로시마" },
-  35: { mainCode: "UBJ", name: "야마구치 우베" },
-  36: { mainCode: "TAK", name: "다카마쓰 (인근)" },
-  37: { mainCode: "TAK", name: "다카마쓰" },
-  38: { mainCode: "MYJ", name: "마츠야마" },
-  39: { mainCode: "TAK", name: "다카마쓰 (인근)" },
-  40: { mainCode: "FUK", name: "후쿠오카", altCodes: ["KKJ"] },
-  41: { mainCode: "HSG", name: "사가", altCodes: ["FUK"] },
-  42: { mainCode: "NGS", name: "나가사키" },
-  43: { mainCode: "KMJ", name: "구마모토" },
-  44: { mainCode: "OIT", name: "오이타" },
-  45: { mainCode: "KMI", name: "미야자키" },
-  46: { mainCode: "KOJ", name: "가고시마" },
-  47: { mainCode: "OKA", name: "오키나와 나하" },
+export const PREFECTURE_AIRPORTS_MAP: Record<number, PrefectureAirportConfig> = {
+  1: { hasDirectFlight: true, airports: [{ code: "CTS", name: "삿포로 신치토세" }] },
+  2: { hasDirectFlight: true, airports: [{ code: "AOJ", name: "아오모리 공항" }] },
+  3: { hasDirectFlight: false, airports: [{ code: "SDJ", name: "센다이 공항 (관문)", isGateway: true }, { code: "AOJ", name: "아오모리 공항 (관문)", isGateway: true }] },
+  4: { hasDirectFlight: true, airports: [{ code: "SDJ", name: "센다이 공항" }] },
+  5: { hasDirectFlight: false, airports: [{ code: "AOJ", name: "아오모리 공항 (관문)", isGateway: true }, { code: "SDJ", name: "센다이 공항 (관문)", isGateway: true }] },
+  6: { hasDirectFlight: false, airports: [{ code: "SDJ", name: "센다이 공항 (관문)", isGateway: true }] },
+  7: { hasDirectFlight: false, airports: [{ code: "SDJ", name: "센다이 공항 (관문)", isGateway: true }, { code: "NRT", name: "도쿄 나리타 (관문)", isGateway: true }] },
+  8: { hasDirectFlight: true, airports: [{ code: "IBR", name: "이바라키 공항" }, { code: "NRT", name: "도쿄 나리타" }] },
+  9: { hasDirectFlight: false, airports: [{ code: "HND", name: "도쿄 하네다 (관문)", isGateway: true }, { code: "NRT", name: "도쿄 나리타 (관문)", isGateway: true }] },
+  10: { hasDirectFlight: false, airports: [{ code: "HND", name: "도쿄 하네다 (관문)", isGateway: true }, { code: "NRT", name: "도쿄 나리타 (관문)", isGateway: true }] },
+  11: { hasDirectFlight: false, airports: [{ code: "HND", name: "도쿄 하네다 (관문)", isGateway: true }, { code: "NRT", name: "도쿄 나리타 (관문)", isGateway: true }] },
+  12: { hasDirectFlight: true, airports: [{ code: "NRT", name: "도쿄 나리타" }, { code: "HND", name: "도쿄 하네다" }] },
+  13: { hasDirectFlight: true, airports: [{ code: "HND", name: "도쿄 하네다" }, { code: "NRT", name: "도쿄 나리타" }] },
+  14: { hasDirectFlight: false, airports: [{ code: "HND", name: "도쿄 하네다 (관문)", isGateway: true }, { code: "NRT", name: "도쿄 나리타 (관문)", isGateway: true }] },
+  15: { hasDirectFlight: false, airports: [{ code: "KMQ", name: "고마쓰 공항 (관문)", isGateway: true }, { code: "HND", name: "도쿄 하네다 (관문)", isGateway: true }] },
+  16: { hasDirectFlight: false, airports: [{ code: "KMQ", name: "고마쓰 공항 (관문)", isGateway: true }] },
+  17: { hasDirectFlight: true, airports: [{ code: "KMQ", name: "고마쓰 공항" }] },
+  18: { hasDirectFlight: false, airports: [{ code: "KMQ", name: "고마쓰 공항 (관문)", isGateway: true }, { code: "KIX", name: "오사카 간사이 (관문)", isGateway: true }] },
+  19: { hasDirectFlight: false, airports: [{ code: "HND", name: "도쿄 하네다 (관문)", isGateway: true }, { code: "NRT", name: "도쿄 나리타 (관문)", isGateway: true }] },
+  20: { hasDirectFlight: false, airports: [{ code: "HND", name: "도쿄 하네다 (관문)", isGateway: true }, { code: "NGO", name: "나고야 중부 (관문)", isGateway: true }] },
+  21: { hasDirectFlight: false, airports: [{ code: "NGO", name: "나고야 중부 (관문)", isGateway: true }] },
+  22: { hasDirectFlight: true, airports: [{ code: "FSZ", name: "시즈오카 공항" }, { code: "HND", name: "도쿄 하네다" }] },
+  23: { hasDirectFlight: true, airports: [{ code: "NGO", name: "나고야 중부" }, { code: "FSZ", name: "시즈오카" }] },
+  24: { hasDirectFlight: false, airports: [{ code: "NGO", name: "나고야 중부 (관문)", isGateway: true }, { code: "KIX", name: "오사카 간사이 (관문)", isGateway: true }] },
+  25: { hasDirectFlight: false, airports: [{ code: "KIX", name: "오사카 간사이 (관문)", isGateway: true }] },
+  26: { hasDirectFlight: false, airports: [{ code: "KIX", name: "오사카 간사이 (관문)", isGateway: true }, { code: "HND", name: "도쿄 하네다 (관문)", isGateway: true }] },
+  27: { hasDirectFlight: true, airports: [{ code: "KIX", name: "오사카 간사이" }] },
+  28: { hasDirectFlight: false, airports: [{ code: "KIX", name: "오사카 간사이 (관문)", isGateway: true }] },
+  29: { hasDirectFlight: false, airports: [{ code: "KIX", name: "오사카 간사이 (관문)", isGateway: true }] },
+  30: { hasDirectFlight: false, airports: [{ code: "KIX", name: "오사카 간사이 (관문)", isGateway: true }] },
+  31: { hasDirectFlight: true, airports: [{ code: "YGJ", name: "요나고 공항" }] },
+  32: { hasDirectFlight: false, airports: [{ code: "YGJ", name: "요나고 공항 (관문)", isGateway: true }, { code: "HIJ", name: "히로시마 공항 (관문)", isGateway: true }] },
+  33: { hasDirectFlight: true, airports: [{ code: "OKJ", name: "오카야마 공항" }] },
+  34: { hasDirectFlight: true, airports: [{ code: "HIJ", name: "히로시마 공항" }] },
+  35: { hasDirectFlight: false, airports: [{ code: "FUK", name: "후쿠오카 공항 (관문)", isGateway: true }, { code: "HIJ", name: "히로시마 공항 (관문)", isGateway: true }] },
+  36: { hasDirectFlight: false, airports: [{ code: "TAK", name: "다카마쓰 공항 (관문)", isGateway: true }, { code: "KIX", name: "오사카 간사이 (관문)", isGateway: true }] },
+  37: { hasDirectFlight: true, airports: [{ code: "TAK", name: "다카마쓰 공항" }, { code: "MYJ", name: "마츠야마 공항" }] },
+  38: { hasDirectFlight: true, airports: [{ code: "MYJ", name: "마츠야마 공항" }, { code: "TAK", name: "다카마쓰 공항" }] },
+  39: { hasDirectFlight: false, airports: [{ code: "TAK", name: "다카마쓰 공항 (관문)", isGateway: true }, { code: "MYJ", name: "마츠야마 공항 (관문)", isGateway: true }] },
+  40: { hasDirectFlight: true, airports: [{ code: "FUK", name: "후쿠오카 공항" }, { code: "KKJ", name: "기타큐슈 공항" }] },
+  41: { hasDirectFlight: true, airports: [{ code: "HSG", name: "사가 공항" }, { code: "FUK", name: "후쿠오카 공항" }] },
+  42: { hasDirectFlight: true, airports: [{ code: "NGS", name: "나가사키 공항" }, { code: "FUK", name: "후쿠오카 공항" }] },
+  43: { hasDirectFlight: true, airports: [{ code: "KMJ", name: "구마모토 공항" }, { code: "FUK", name: "후쿠오카 공항" }] },
+  44: { hasDirectFlight: true, airports: [{ code: "OIT", name: "오이타 공항" }, { code: "FUK", name: "후쿠오카 공항" }] },
+  45: { hasDirectFlight: true, airports: [{ code: "KMI", name: "미야자키 공항" }] },
+  46: { hasDirectFlight: true, airports: [{ code: "KOJ", name: "가고시마 공항" }] },
+  47: { hasDirectFlight: true, airports: [{ code: "OKA", name: "오키나와 나하" }] },
 };
 
 // Comprehensive Direct Flight Schedules Database (Korea ↔ Japan)
 const FLIGHT_DATABASE: FlightSchedule[] = [
-  // Fukuoka (FUK) - Comprehensive Timetable
+  // Fukuoka (FUK)
   { airline: "대한항공", flightNo: "KE787", depAirport: "인천", depAirportCode: "ICN", arrAirport: "후쿠오카", arrAirportCode: "FUK", departureTime: "07:55", arrivalTime: "09:20", days: "매일" },
   { airline: "대한항공", flightNo: "KE789", depAirport: "인천", depAirportCode: "ICN", arrAirport: "후쿠오카", arrAirportCode: "FUK", departureTime: "13:05", arrivalTime: "14:30", days: "매일" },
   { airline: "대한항공", flightNo: "KE781", depAirport: "인천", depAirportCode: "ICN", arrAirport: "후쿠오카", arrAirportCode: "FUK", departureTime: "16:40", arrivalTime: "18:05", days: "매일" },
@@ -90,7 +102,11 @@ const FLIGHT_DATABASE: FlightSchedule[] = [
   { airline: "이스타항공", flightNo: "ZE607", depAirport: "인천", depAirportCode: "ICN", arrAirport: "후쿠오카", arrAirportCode: "FUK", departureTime: "14:50", arrivalTime: "16:15", days: "매일" },
   { airline: "에어서울", flightNo: "RS731", depAirport: "인천", depAirportCode: "ICN", arrAirport: "후쿠오카", arrAirportCode: "FUK", departureTime: "09:10", arrivalTime: "10:35", days: "매일" },
 
-  // Kansai / Osaka (KIX) - Expanded
+  // Kitakyushu (KKJ)
+  { airline: "진에어", flightNo: "LJ269", depAirport: "인천", depAirportCode: "ICN", arrAirport: "기타큐슈", arrAirportCode: "KKJ", departureTime: "07:05", arrivalTime: "08:30", days: "매일" },
+  { airline: "진에어", flightNo: "LJ271", depAirport: "인천", depAirportCode: "ICN", arrAirport: "기타큐슈", arrAirportCode: "KKJ", departureTime: "17:15", arrivalTime: "18:40", days: "매일" },
+
+  // Kansai / Osaka (KIX)
   { airline: "대한항공", flightNo: "KE721", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "07:15", arrivalTime: "09:05", days: "매일" },
   { airline: "대한항공", flightNo: "KE723", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "09:00", arrivalTime: "10:50", days: "매일" },
   { airline: "대한항공", flightNo: "KE725", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "15:20", arrivalTime: "17:10", days: "매일" },
@@ -105,7 +121,7 @@ const FLIGHT_DATABASE: FlightSchedule[] = [
   { airline: "티웨이항공", flightNo: "TW523", depAirport: "청주", depAirportCode: "CJJ", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "10:00", arrivalTime: "11:30", days: "매일" },
   { airline: "피치항공", flightNo: "MM708", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "22:40", arrivalTime: "00:25", days: "매일" },
 
-  // Tokyo Haneda / Narita (HND/NRT) - Expanded
+  // Tokyo Haneda / Narita (HND/NRT)
   { airline: "대한항공", flightNo: "KE2101", depAirport: "김포", depAirportCode: "GMP", arrAirport: "도쿄 하네다", arrAirportCode: "HND", departureTime: "09:00", arrivalTime: "11:05", days: "매일" },
   { airline: "대한항공", flightNo: "KE2103", depAirport: "김포", depAirportCode: "GMP", arrAirport: "도쿄 하네다", arrAirportCode: "HND", departureTime: "16:20", arrivalTime: "18:35", days: "매일" },
   { airline: "아시아나항공", flightNo: "OZ1015", depAirport: "김포", depAirportCode: "GMP", arrAirport: "도쿄 하네다", arrAirportCode: "HND", departureTime: "08:40", arrivalTime: "10:45", days: "매일" },
@@ -119,7 +135,7 @@ const FLIGHT_DATABASE: FlightSchedule[] = [
   { airline: "에어부산", flightNo: "BX111", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "도쿄 나리타", arrAirportCode: "NRT", departureTime: "08:05", arrivalTime: "10:10", days: "매일" },
   { airline: "티웨이항공", flightNo: "TW527", depAirport: "청주", depAirportCode: "CJJ", arrAirport: "도쿄 나리타", arrAirportCode: "NRT", departureTime: "09:30", arrivalTime: "11:40", days: "매일" },
 
-  // Sapporo Chitose (CTS) - Expanded
+  // Sapporo Chitose (CTS)
   { airline: "대한항공", flightNo: "KE765", depAirport: "인천", depAirportCode: "ICN", arrAirport: "삿포로", arrAirportCode: "CTS", departureTime: "10:05", arrivalTime: "12:50", days: "매일" },
   { airline: "아시아나항공", flightNo: "OZ174", depAirport: "인천", depAirportCode: "ICN", arrAirport: "삿포로", arrAirportCode: "CTS", departureTime: "14:20", arrivalTime: "17:05", days: "매일" },
   { airline: "진에어", flightNo: "LJ231", depAirport: "인천", depAirportCode: "ICN", arrAirport: "삿포로", arrAirportCode: "CTS", departureTime: "08:20", arrivalTime: "11:05", days: "매일" },
@@ -127,13 +143,13 @@ const FLIGHT_DATABASE: FlightSchedule[] = [
   { airline: "티웨이항공", flightNo: "TW171", depAirport: "인천", depAirportCode: "ICN", arrAirport: "삿포로", arrAirportCode: "CTS", departureTime: "11:35", arrivalTime: "14:25", days: "매일" },
   { airline: "에어부산", flightNo: "BX182", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "삿포로", arrAirportCode: "CTS", departureTime: "09:05", arrivalTime: "11:30", days: "월,목,금,일" },
 
-  // Okinawa Naha (OKA) - Expanded
+  // Okinawa Naha (OKA)
   { airline: "대한항공", flightNo: "KE755", depAirport: "인천", depAirportCode: "ICN", arrAirport: "오키나와", arrAirportCode: "OKA", departureTime: "08:05", arrivalTime: "10:25", days: "매일" },
   { airline: "아시아나항공", flightNo: "OZ172", depAirport: "인천", depAirportCode: "ICN", arrAirport: "오키나와", arrAirportCode: "OKA", departureTime: "09:40", arrivalTime: "12:05", days: "매일" },
   { airline: "진에어", flightNo: "LJ241", depAirport: "인천", depAirportCode: "ICN", arrAirport: "오키나와", arrAirportCode: "OKA", departureTime: "10:10", arrivalTime: "12:35", days: "매일" },
   { airline: "제주항공", flightNo: "7C1802", depAirport: "인천", depAirportCode: "ICN", arrAirport: "오키나와", arrAirportCode: "OKA", departureTime: "12:40", arrivalTime: "15:05", days: "매일" },
 
-  // Nagoya Chubu (NGO) - Expanded
+  // Nagoya Chubu (NGO)
   { airline: "대한항공", flightNo: "KE753", depAirport: "인천", depAirportCode: "ICN", arrAirport: "나고야 중부", arrAirportCode: "NGO", departureTime: "10:35", arrivalTime: "12:35", days: "매일" },
   { airline: "아시아나항공", flightNo: "OZ122", depAirport: "인천", depAirportCode: "ICN", arrAirport: "나고야 중부", arrAirportCode: "NGO", departureTime: "08:20", arrivalTime: "10:10", days: "매일" },
   { airline: "진에어", flightNo: "LJ263", depAirport: "인천", depAirportCode: "ICN", arrAirport: "나고야 중부", arrAirportCode: "NGO", departureTime: "07:35", arrivalTime: "09:25", days: "매일" },
@@ -192,63 +208,53 @@ const FLIGHT_DATABASE: FlightSchedule[] = [
   { airline: "아시아나항공", flightNo: "OZ152", depAirport: "인천", depAirportCode: "ICN", arrAirport: "센다이", arrAirportCode: "SDJ", departureTime: "09:35", arrivalTime: "11:50", days: "화,금,일" },
 ];
 
-async function fetchLiveIncheonFlight(targetCodes: string[]): Promise<FlightSchedule[]> {
-  if (!icnApiKey) return [];
-  try {
-    const url = `https://apis.data.go.kr/B551177/StatusOfFlightInfoGG/getFlightsStatusInfo?serviceKey=${icnApiKey}&type=json&searchtype=O`;
-    const res = await fetch(url, { signal: AbortSignal.timeout(3000) });
-    if (!res.ok) return [];
-    const data = await res.json();
-    const items = data?.response?.body?.items || [];
+export async function fetchLiveAirportFlights(airportCode: string, depFilter: string = "ALL"): Promise<FlightSchedule[]> {
+  let liveItems: FlightSchedule[] = [];
 
-    const results: FlightSchedule[] = [];
-    items.forEach((item: any) => {
-      const arrCode = item.airportCode || item.airport;
-      if (arrCode && targetCodes.includes(arrCode)) {
-        const depTimeRaw = item.scheduleDateTime || item.estimatedDateTime || "";
-        const depTimeFormatted = depTimeRaw.length >= 4 ? `${depTimeRaw.slice(-4, -2)}:${depTimeRaw.slice(-2)}` : "실시간";
-        results.push({
-          airline: item.airline || "대한항공/아시아나",
-          flightNo: item.flightId || item.flightNo || "LIVE",
-          depAirport: "인천",
-          depAirportCode: "ICN",
-          arrAirport: item.airport || arrCode,
-          arrAirportCode: arrCode,
-          departureTime: depTimeFormatted,
-          arrivalTime: "직항",
-          days: "실시간",
+  // Try Open API fetch if API key present
+  if (icnApiKey) {
+    try {
+      const url = `https://apis.data.go.kr/B551177/StatusOfFlightInfoGG/getFlightsStatusInfo?serviceKey=${icnApiKey}&type=json&searchtype=O`;
+      const res = await fetch(url, { signal: AbortSignal.timeout(3000) });
+      if (res.ok) {
+        const data = await res.json();
+        const items = data?.response?.body?.items || [];
+        items.forEach((item: any) => {
+          const arrCode = item.airportCode || item.airport;
+          if (arrCode === airportCode) {
+            const depTimeRaw = item.scheduleDateTime || item.estimatedDateTime || "";
+            const depTimeFormatted = depTimeRaw.length >= 4 ? `${depTimeRaw.slice(-4, -2)}:${depTimeRaw.slice(-2)}` : "실시간";
+            liveItems.push({
+              airline: item.airline || "대한항공/아시아나",
+              flightNo: item.flightId || item.flightNo || "LIVE",
+              depAirport: "인천",
+              depAirportCode: "ICN",
+              arrAirport: item.airport || arrCode,
+              arrAirportCode: arrCode,
+              departureTime: depTimeFormatted,
+              arrivalTime: "직항",
+              days: "실시간",
+              isLive: true,
+            });
+          }
         });
       }
-    });
-
-    return results;
-  } catch (err) {
-    return [];
-  }
-}
-
-export async function getFlightSchedules(prefCode: number, depFilter: string = "ALL"): Promise<FlightSchedule[]> {
-  const iataInfo = PREFECTURE_IATA_MAP[prefCode];
-  if (!iataInfo) return [];
-
-  const targetCodes = [iataInfo.mainCode, ...(iataInfo.altCodes || [])];
-
-  // Try fetching live API data first
-  let liveFlights: FlightSchedule[] = [];
-  if (icnApiKey) {
-    liveFlights = await fetchLiveIncheonFlight(targetCodes);
+    } catch (err) {
+      // Ignore CORS/Network error and fallback
+    }
   }
 
+  // Filter matching entries from Database
   const matchedDb = FLIGHT_DATABASE.filter((item) => {
-    const isAirportMatch = targetCodes.includes(item.arrAirportCode);
+    const isAirportMatch = item.arrAirportCode === airportCode;
     const isDepMatch = depFilter === "ALL" || item.depAirportCode === depFilter;
     return isAirportMatch && isDepMatch;
   });
 
-  if (liveFlights.length > 0) {
-    const liveFiltered = liveFlights.filter(f => depFilter === "ALL" || f.depAirportCode === depFilter);
-    if (liveFiltered.length > 0) {
-      const merged = [...liveFiltered, ...matchedDb];
+  if (liveItems.length > 0) {
+    const filteredLive = liveItems.filter((f) => depFilter === "ALL" || f.depAirportCode === depFilter);
+    if (filteredLive.length > 0) {
+      const merged = [...filteredLive, ...matchedDb];
       const seen = new Set<string>();
       return merged.filter((item) => {
         const key = `${item.flightNo}-${item.departureTime}`;

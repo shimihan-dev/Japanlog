@@ -255,32 +255,106 @@ export const PrefectureDetailPanel: React.FC<PrefectureDetailPanelProps> = ({
   );
 };
 
-// Sub-component for Direct Flight Schedules
-import { getFlightSchedules } from "../services/flightService";
+// Sub-component for Direct Flight Schedules & Gateway Airport Real-time Fetcher
+import { fetchLiveAirportFlights, PREFECTURE_AIRPORTS_MAP } from "../services/flightService";
 import type { FlightSchedule } from "../services/flightService";
-import { Clock, Calendar } from "lucide-react";
+import { Clock, Calendar, RefreshCw, AlertCircle } from "lucide-react";
 
 const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) => {
+  const airportConfig = PREFECTURE_AIRPORTS_MAP[prefCode] || {
+    hasDirectFlight: false,
+    airports: [{ code: "KIX", name: "오사카 간사이 (관문)", isGateway: true }],
+  };
+
+  const [selectedAirportCode, setSelectedAirportCode] = useState<string>(
+    airportConfig.airports[0]?.code || "KIX"
+  );
   const [depFilter, setDepFilter] = useState<string>("ALL");
   const [schedules, setSchedules] = useState<FlightSchedule[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [lastFetchedTime, setLastFetchedTime] = useState<string>("");
+
+  // Reset selected airport when prefecture changes
+  React.useEffect(() => {
+    if (airportConfig.airports.length > 0) {
+      setSelectedAirportCode(airportConfig.airports[0].code);
+    }
+  }, [prefCode]);
+
+  // Fetch live flight data whenever selected airport or departure airport filter changes
+  const loadFlights = React.useCallback(() => {
+    setLoading(true);
+    fetchLiveAirportFlights(selectedAirportCode, depFilter)
+      .then((data) => {
+        setSchedules(data);
+        const now = new Date();
+        const timeStr = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}:${now.getSeconds().toString().padStart(2, "0")}`;
+        setLastFetchedTime(timeStr);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [selectedAirportCode, depFilter]);
 
   React.useEffect(() => {
-    getFlightSchedules(prefCode, depFilter).then(setSchedules);
-  }, [prefCode, depFilter]);
+    loadFlights();
+  }, [loadFlights]);
 
-  if (schedules.length === 0 && depFilter === "ALL") return null;
+  const activeAirportObj = airportConfig.airports.find((a) => a.code === selectedAirportCode) || airportConfig.airports[0];
 
   return (
-    <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800 space-y-2">
-      <div className="flex items-center justify-between">
-        <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200 flex items-center space-x-1">
-          <Plane className="w-3 h-3 text-blue-600 dark:text-cyan-400" />
-          <span>한국 출발 직항 운항 스케줄</span>
-          <span className="text-[10px] text-blue-600 dark:text-cyan-400 font-extrabold">({schedules.length}개)</span>
-        </span>
+    <div className="pt-2.5 border-t border-slate-200/60 dark:border-slate-800 space-y-2.5">
+      {/* 1. Direct vs Gateway Airport Selection Header */}
+      <div className="space-y-1">
+        <div className="flex items-center justify-between">
+          <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200 flex items-center space-x-1">
+            <Plane className="w-3.5 h-3.5 text-blue-600 dark:text-cyan-400" />
+            <span>
+              {airportConfig.hasDirectFlight ? "직항 공항 선택 & 실시간 운항 정보" : "관문 공항 선택 & 실시간 운항 정보"}
+            </span>
+          </span>
+
+          <button
+            onClick={loadFlights}
+            disabled={loading}
+            className="flex items-center space-x-1 text-[10px] text-blue-600 dark:text-cyan-400 hover:underline disabled:opacity-50"
+            title="실시간 조속 새로고침"
+          >
+            <RefreshCw className={`w-3 h-3 ${loading ? "animate-spin" : ""}`} />
+            <span>{lastFetchedTime ? `${lastFetchedTime} 기준` : "실시간 조회"}</span>
+          </button>
+        </div>
+
+        {!airportConfig.hasDirectFlight && (
+          <p className="text-[10px] text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 p-1.5 rounded-lg border border-amber-200/60 dark:border-amber-800/60 flex items-start space-x-1">
+            <AlertCircle className="w-3 h-3 shrink-0 mt-0.5" />
+            <span>직항 미보유 지역입니다. 아래 **가장 가까운 관문 공항**을 클릭하여 실시간 항공편을 조회해보세요.</span>
+          </p>
+        )}
       </div>
 
-      {/* Departure Airport Filter Tabs */}
+      {/* 2. Multiple Airports Buttons Toggle */}
+      {airportConfig.airports.length > 0 && (
+        <div className="flex flex-wrap gap-1 bg-slate-100/80 dark:bg-slate-800/80 p-1 rounded-xl">
+          {airportConfig.airports.map((ap) => (
+            <button
+              key={ap.code}
+              type="button"
+              onClick={() => setSelectedAirportCode(ap.code)}
+              className={`flex-1 py-1.5 px-2 rounded-lg text-[10px] font-extrabold transition-all flex items-center justify-center space-x-1 ${
+                selectedAirportCode === ap.code
+                  ? "bg-blue-600 dark:bg-cyan-500 text-white dark:text-slate-900 shadow-sm"
+                  : "bg-white dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
+              }`}
+            >
+              <span>{ap.name}</span>
+              <span className="opacity-75">({ap.code})</span>
+            </button>
+          ))}
+        </div>
+      )}
+
+      {/* 3. Departure Airport Filter Tabs */}
       <div className="flex bg-slate-200/60 dark:bg-slate-800 p-0.5 rounded-lg text-[10px] font-semibold">
         {[
           { code: "ALL", label: "전체" },
@@ -304,22 +378,30 @@ const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) =>
         ))}
       </div>
 
-      {/* Flight Cards List */}
+      {/* 4. Live Flight Cards List */}
       <div className="space-y-1.5 max-h-[220px] overflow-y-auto pr-1">
-        {schedules.length === 0 ? (
-          <div className="text-center py-3 text-[10px] text-slate-400">
-            선택한 출발 공항에서 직항 노선 정보가 없습니다.
+        {loading ? (
+          <div className="text-center py-6 text-[10px] text-blue-600 dark:text-cyan-400 flex flex-col items-center justify-center space-y-1.5">
+            <RefreshCw className="w-4 h-4 animate-spin" />
+            <span className="font-semibold">{activeAirportObj?.name} 실시간 최신 운항 데이터 가져오는 중...</span>
+          </div>
+        ) : schedules.length === 0 ? (
+          <div className="text-center py-4 text-[10px] text-slate-400">
+            선택한 {activeAirportObj?.name} 공항에 대한 직항 노선 스케줄이 없습니다.
           </div>
         ) : (
           schedules.map((flight, idx) => (
             <div
               key={`${flight.flightNo}-${idx}`}
-              className="p-2 bg-white dark:bg-slate-800/80 rounded-lg border border-slate-100 dark:border-slate-700 flex items-center justify-between text-[10px]"
+              className="p-2 bg-white dark:bg-slate-800/80 rounded-lg border border-slate-100 dark:border-slate-700 flex items-center justify-between text-[10px] hover:border-blue-200 dark:hover:border-slate-600 transition-colors"
             >
               <div className="space-y-0.5">
                 <div className="flex items-center space-x-1.5 font-bold text-slate-900 dark:text-slate-100">
                   <span className="text-blue-600 dark:text-cyan-400">{flight.airline}</span>
                   <span className="px-1 py-0.2 bg-slate-100 dark:bg-slate-700 rounded text-slate-600 dark:text-slate-300">{flight.flightNo}</span>
+                  {flight.isLive && (
+                    <span className="px-1 py-0.2 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 rounded text-[9px]">LIVE</span>
+                  )}
                 </div>
                 <div className="text-slate-500 dark:text-slate-400 flex items-center space-x-1">
                   <span>{flight.depAirport} ({flight.depAirportCode})</span>
