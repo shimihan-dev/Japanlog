@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useAuth } from "./hooks/useAuth";
 import { useTravelRecords } from "./hooks/useTravelRecords";
 import { calculateTravelStats } from "./utils/statistics";
 import { Header } from "./components/Header";
@@ -9,8 +10,18 @@ import { PrefectureList } from "./components/PrefectureList";
 import { TravelTimeline } from "./components/TravelTimeline";
 import { PrefectureDetailPanel } from "./components/PrefectureDetailPanel";
 import { ConfirmModal } from "./components/ConfirmModal";
+import { AuthModal } from "./components/AuthModal";
 
 export const App: React.FC = () => {
+  const {
+    user,
+    isConfigured,
+    signInWithEmail,
+    signUpWithEmail,
+    sendMagicLink,
+    signOut,
+  } = useAuth();
+
   const {
     records,
     selectedCode,
@@ -22,9 +33,10 @@ export const App: React.FC = () => {
     updatePrefectureDetails,
     loadSample,
     resetAll,
-  } = useTravelRecords();
+  } = useTravelRecords(user);
 
   const [showResetModal, setShowResetModal] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
     const saved = localStorage.getItem("japan-travel-map-theme");
     if (saved) return saved === "dark";
@@ -52,9 +64,12 @@ export const App: React.FC = () => {
       {/* App Header */}
       <Header
         isDarkMode={isDarkMode}
+        user={user}
         onToggleDarkMode={() => setIsDarkMode((prev) => !prev)}
         onLoadSample={loadSample}
         onReset={() => setShowResetModal(true)}
+        onOpenAuthModal={() => setShowAuthModal(true)}
+        onSignOut={signOut}
       />
 
       {/* Main Container */}
@@ -115,6 +130,16 @@ export const App: React.FC = () => {
           <p>© 2026 Japanlog — 일본 47개 도도부현 여행 방문 및 경유 시각화 웹앱</p>
         </div>
       </footer>
+
+      {/* Auth Modal */}
+      <AuthModal
+        isOpen={showAuthModal}
+        isConfigured={isConfigured}
+        onClose={() => setShowAuthModal(false)}
+        onSignIn={signInWithEmail}
+        onSignUp={signUpWithEmail}
+        onMagicLink={sendMagicLink}
+      />
 
       {/* Reset Confirmation Modal */}
       <ConfirmModal

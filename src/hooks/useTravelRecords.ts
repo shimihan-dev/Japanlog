@@ -2,10 +2,57 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import type { TravelRecordsMap, VisitStatus, CityVisit, PrefectureRecord } from "../types/travel";
 import { loadTravelRecords, saveTravelRecords, getSampleTravelRecords, clearTravelRecords } from "../utils/storage";
 import { PREFECTURES } from "../data/prefectures";
+import { supabase, isSupabaseConfigured } from "../lib/supabase";
+import type { User } from "@supabase/supabase-js";
 
-export function useTravelRecords() {
+export function useTravelRecords(user: User | null = null) {
   const [records, setRecords] = useState<TravelRecordsMap>(() => loadTravelRecords());
   const [selectedCode, setSelectedCode] = useState<number | null>(40); // default selection: Fukuoka (40)
+
+  // Sync with Supabase Cloud on User Login / Session Change
+  useEffect(() => {
+    if (!isSupabaseConfigured || !user) return;
+
+    let isMounted = true;
+
+    async function fetchCloudRecords() {
+      try {
+        const { data, error } = await supabase
+          .from("user_travel_records")
+          .select("records")
+          .eq("user_id", user!.id)
+          .single();
+
+        if (error && error.code !== "PGRST116") {
+          console.error("Failed to fetch cloud records:", error);
+        }
+
+        if (data && data.records && Object.keys(data.records).length > 0) {
+          if (isMounted) {
+            setRecords(data.records as TravelRecordsMap);
+          }
+        } else {
+          // First time cloud sync for this user: Upload current local records
+          const localData = loadTravelRecords();
+          if (Object.keys(localData).length > 0) {
+            await supabase.from("user_travel_records").upsert({
+              user_id: user!.id,
+              records: localData,
+              updated_at: new Date().toISOString(),
+            });
+          }
+        }
+      } catch (err) {
+        console.error("Cloud sync error:", err);
+      }
+    }
+
+    fetchCloudRecords();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [user]);
 
   // Ensure all 47 prefectures exist in the record map with default unvisited status if not set
   const completeRecords = useMemo(() => {
@@ -25,10 +72,26 @@ export function useTravelRecords() {
     return map;
   }, [records]);
 
-  // Persist to localStorage
+  // Persist to localStorage & Supabase Cloud
   useEffect(() => {
     saveTravelRecords(records);
-  }, [records]);
+
+    if (isSupabaseConfigured && user) {
+      const timer = setTimeout(async () => {
+        try {
+          await supabase.from("user_travel_records").upsert({
+            user_id: user.id,
+            records,
+            updated_at: new Date().toISOString(),
+          });
+        } catch (err) {
+          console.error("Failed to save to Supabase cloud:", err);
+        }
+      }, 500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [records, user]);
 
   const updateStatus = useCallback((code: number, status: VisitStatus) => {
     setRecords((prev) => {
