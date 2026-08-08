@@ -47,9 +47,11 @@ export const App: React.FC = () => {
   useEffect(() => {
     if (isDarkMode) {
       document.documentElement.classList.add("dark");
+      document.body.classList.add("dark");
       localStorage.setItem("japan-travel-map-theme", "dark");
     } else {
       document.documentElement.classList.remove("dark");
+      document.body.classList.remove("dark");
       localStorage.setItem("japan-travel-map-theme", "light");
     }
   }, [isDarkMode]);
