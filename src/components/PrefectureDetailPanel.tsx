@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import type { PrefectureRecord, VisitStatus, CityVisit } from "../types/travel";
 import { PREFECTURE_MAP_BY_CODE } from "../data/prefectures";
+import { PREFECTURE_ACCESS_INFO } from "../data/transitRoutes";
 import { StatusSelector } from "./StatusSelector";
 import { CityVisitList } from "./CityVisitList";
 import { CityVisitForm } from "./CityVisitForm";
 import { ConfirmModal } from "./ConfirmModal";
-import { MapPin, Plus } from "lucide-react";
+import { MapPin, Plus, Plane, Train, Building2 } from "lucide-react";
 
 interface PrefectureDetailPanelProps {
   selectedCode: number | null;
@@ -42,6 +43,7 @@ export const PrefectureDetailPanel: React.FC<PrefectureDetailPanelProps> = ({
   const prefMeta = PREFECTURE_MAP_BY_CODE.get(selectedCode);
   if (!prefMeta) return null;
 
+  const accessInfo = PREFECTURE_ACCESS_INFO[selectedCode];
   const currentStatus = record?.status || "unvisited";
   const cities = record?.cities || [];
 
@@ -165,10 +167,74 @@ export const PrefectureDetailPanel: React.FC<PrefectureDetailPanelProps> = ({
         </div>
       )}
 
-      {/* Unvisited UI */}
-      {currentStatus === "unvisited" && (
-        <div className="text-center py-6 text-slate-400 dark:text-slate-500 text-xs">
-          아직 방문한 적 없는 지역입니다. 방문 또는 경유로 상태를 변경해보세요!
+      {/* Traffic & Airport Access Information Card */}
+      {accessInfo && (
+        <div className="p-3 bg-slate-50/80 dark:bg-[#1A2332] rounded-xl border border-slate-100 dark:border-slate-800/80 space-y-2 text-xs transition-colors">
+          <div className="flex items-center justify-between border-b border-slate-200/60 dark:border-slate-800 pb-1.5">
+            <span className="font-bold text-slate-800 dark:text-slate-200 flex items-center space-x-1">
+              <Plane className="w-3.5 h-3.5 text-blue-500 dark:text-cyan-400" />
+              <span>교통 & 공항 접근 가이드</span>
+            </span>
+            <span className={`text-[10px] px-1.5 py-0.5 rounded font-extrabold ${
+              accessInfo.hasDirectFlight
+                ? "bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-300"
+                : "bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-300"
+            }`}>
+              {accessInfo.hasDirectFlight ? "✈️ 한국 직항 유" : "🚄 신칸센/철도 연계"}
+            </span>
+          </div>
+
+          {/* Airport Details */}
+          {accessInfo.airportName && (
+            <div className="text-[11px] text-slate-700 dark:text-slate-300">
+              <span className="font-semibold text-slate-500 dark:text-slate-400">주요 공항: </span>
+              <span>{accessInfo.airportName}</span>
+            </div>
+          )}
+
+          {accessInfo.nearestAirport && (
+            <div className="text-[11px] text-slate-700 dark:text-slate-300">
+              <span className="font-semibold text-slate-500 dark:text-slate-400">가까운 공항: </span>
+              <span>{accessInfo.nearestAirport}</span>
+            </div>
+          )}
+
+          {/* Shinkansen Stations */}
+          {accessInfo.shinkansenStations && accessInfo.shinkansenStations.length > 0 && (
+            <div className="flex items-center space-x-1 text-[11px]">
+              <Train className="w-3 h-3 text-red-500 shrink-0" />
+              <span className="font-semibold text-slate-500 dark:text-slate-400 shrink-0">신칸센: </span>
+              <div className="flex flex-wrap gap-1">
+                {accessInfo.shinkansenStations.map((st) => (
+                  <span key={st} className="px-1.5 py-0.2 bg-red-50 dark:bg-red-950/60 border border-red-200/60 dark:border-red-800 text-red-700 dark:text-red-300 rounded text-[10px]">
+                    {st}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Access Description */}
+          <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed bg-white/60 dark:bg-slate-800/60 p-2 rounded-lg border border-slate-100 dark:border-slate-800/60">
+            {accessInfo.accessGuide}
+          </p>
+
+          {/* Major Representative Cities */}
+          {accessInfo.representativeCities.length > 0 && (
+            <div className="pt-0.5">
+              <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 flex items-center space-x-1 mb-1">
+                <Building2 className="w-3 h-3 text-slate-400" />
+                <span>권역 대표 주요 도시:</span>
+              </span>
+              <div className="flex flex-wrap gap-1">
+                {accessInfo.representativeCities.map((c) => (
+                  <span key={c} className="px-2 py-0.5 bg-blue-50 dark:bg-cyan-950 text-blue-700 dark:text-cyan-300 rounded-md text-[10px] font-medium border border-blue-100 dark:border-cyan-800/60">
+                    {c}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
