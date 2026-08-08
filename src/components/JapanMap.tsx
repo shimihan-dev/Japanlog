@@ -3,8 +3,6 @@ import * as d3Geo from "d3-geo";
 import type { TravelRecordsMap, VisitStatus } from "../types/travel";
 import { PREFECTURE_MAP_BY_CODE } from "../data/prefectures";
 import { MapLegend } from "./MapLegend";
-import { SHINKANSEN_ROUTES } from "../data/transitRoutes";
-import { Train } from "lucide-react";
 
 interface JapanMapProps {
   records: TravelRecordsMap;
@@ -32,7 +30,6 @@ export const JapanMap: React.FC<JapanMapProps> = ({
   const [geoFeatures, setGeoFeatures] = useState<GeoFeature[]>([]);
   const [hoveredCode, setHoveredCode] = useState<number | null>(null);
   const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(null);
-  const [showShinkansen, setShowShinkansen] = useState<boolean>(false);
   const mapContainerRef = useRef<HTMLDivElement>(null);
 
   // Load GeoJSON data for 47 prefectures
@@ -89,7 +86,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
   }, [geoFeatures]);
 
   // Configure Mercator projections for Hokkaido inset, Mainland, and Okinawa inset
-  const { featurePaths, shinkansenPathData } = useMemo(() => {
+  const { featurePaths } = useMemo(() => {
     const width = 800;
     const height = 700;
 
@@ -130,30 +127,16 @@ export const JapanMap: React.FC<JapanMapProps> = ({
       let centroid = rawCentroid;
       if (rawCentroid && !isNaN(rawCentroid[0]) && !isNaN(rawCentroid[1])) {
         let [cx, cy] = rawCentroid;
-        if (code === 30) cy -= 4;
-        if (code === 46) { cx += 5; cy -= 30; }
-        if (code === 42) { cx += 10; cy -= 5; }
+        if (code === 30) cy -= 4; // Wakayama label Y shift
+        if (code === 46) { cx += 5; cy -= 30; } // Kagoshima label Y shift
+        if (code === 42) { cx += 10; cy -= 5; } // Nagasaki label shift
         centroid = [cx, cy];
       }
 
       return { code, feature: feat, d, centroid };
     });
 
-    const projectedShinkansen = SHINKANSEN_ROUTES.map((route) => {
-      const projectedPoints = route.stations.map((st) => {
-        const proj = st.prefCode === 1 ? hokkaidoProjection : mainlandProjection;
-        const [x, y] = proj([st.lng, st.lat]) || [0, 0];
-        return { ...st, x, y };
-      });
-
-      const pathD = projectedPoints
-        .map((pt, idx) => `${idx === 0 ? "M" : "L"} ${pt.x} ${pt.y}`)
-        .join(" ");
-
-      return { ...route, points: projectedPoints, pathD };
-    });
-
-    return { featurePaths: paths, shinkansenPathData: projectedShinkansen };
+    return { featurePaths: paths };
   }, [processedGeoFeatures]);
 
   const handleMouseMove = (e: React.MouseEvent, code: number) => {
@@ -194,24 +177,9 @@ export const JapanMap: React.FC<JapanMapProps> = ({
       ref={mapContainerRef}
       className="relative w-full bg-white dark:bg-[#151D2A] rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm p-4 transition-colors duration-200"
     >
-      {/* Map Controls */}
-      <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10 pointer-events-none">
-        <div className="pointer-events-auto">
-          <MapLegend />
-        </div>
-
-        <button
-          type="button"
-          onClick={() => setShowShinkansen((prev) => !prev)}
-          className={`pointer-events-auto flex items-center space-x-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-sm border ${
-            showShinkansen
-              ? "bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-cyan-500 dark:to-blue-600 text-white border-transparent shadow-blue-500/20"
-              : "bg-white/90 dark:bg-slate-800/90 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700"
-          }`}
-        >
-          <Train className={`w-3.5 h-3.5 ${showShinkansen ? "animate-pulse" : ""}`} />
-          <span>신칸센 노선 레이어</span>
-        </button>
+      {/* Map Legend Overlay */}
+      <div className="absolute top-4 left-4 z-10 pointer-events-auto">
+        <MapLegend />
       </div>
 
       {/* SVG Container */}
@@ -236,13 +204,9 @@ export const JapanMap: React.FC<JapanMapProps> = ({
               floodColor={isDarkMode ? "#00F0FF" : "#0F172A"}
             />
           </filter>
-
-          <filter id="shinkansen-glow" x="-20%" y="-20%" width="140%" height="140%">
-            <feGaussianBlur stdDeviation="2" result="blur" />
-            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-          </filter>
         </defs>
 
+        {/* 1. Hokkaido Top-Left Corner Inset Box Line */}
         <path
           d="M 30 330 L 340 330 L 340 40"
           fill="none"
@@ -251,6 +215,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
           strokeWidth="1.2"
         />
 
+        {/* 2. Okinawa Bottom-Right Corner Inset Line */}
         <path
           d="M 500 670 L 500 520 L 780 520"
           fill="none"
@@ -259,6 +224,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
           strokeWidth="1.2"
         />
 
+        {/* Prefectures Path Layers */}
         <g filter="url(#map-drop-shadow)">
           {featurePaths.map(({ code, d, centroid }) => {
             const pref = PREFECTURE_MAP_BY_CODE.get(code);
@@ -292,6 +258,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
                   }
                 />
 
+                {/* Prefecture Label */}
                 {pref && centroid && !isNaN(centroid[0]) && !isNaN(centroid[1]) && (
                   <text
                     x={centroid[0]}
@@ -321,39 +288,10 @@ export const JapanMap: React.FC<JapanMapProps> = ({
               </g>
             );
           })}
-
-          {showShinkansen && (
-            <g pointerEvents="none" filter="url(#shinkansen-glow)">
-              {shinkansenPathData.map((route) => (
-                <g key={route.id}>
-                  <path
-                    d={route.pathD}
-                    fill="none"
-                    stroke={route.color}
-                    strokeWidth="3.5"
-                    strokeDasharray="6 3"
-                    strokeLinecap="round"
-                    className="animate-pulse opacity-90"
-                  />
-                  {route.points.map((st, i) => (
-                    <g key={`${route.id}-st-${i}`}>
-                      <circle
-                        cx={st.x}
-                        cy={st.y}
-                        r="3.5"
-                        fill="#FFFFFF"
-                        stroke={route.color}
-                        strokeWidth="2"
-                      />
-                    </g>
-                  ))}
-                </g>
-              ))}
-            </g>
-          )}
         </g>
       </svg>
 
+      {/* Tooltip */}
       {tooltipPos && hoveredPref && (
         <div
           style={{
