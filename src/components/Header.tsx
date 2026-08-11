@@ -25,30 +25,30 @@ export const Header: React.FC<HeaderProps> = ({
 }) => {
   return (
     <header className="bg-white dark:bg-[#0E1628]/95 border-b border-slate-200 dark:border-slate-800/80 sticky top-0 z-20 shadow-sm backdrop-blur-md transition-colors duration-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 flex flex-wrap items-center justify-between gap-4">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-3">
         {/* Title Section */}
-        <div className="flex items-center space-x-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 dark:from-cyan-500 dark:to-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20 dark:shadow-cyan-500/20">
+        <div className="flex items-center space-x-2.5">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 dark:from-cyan-500 dark:to-blue-600 flex items-center justify-center text-white shadow-md shadow-blue-500/20 dark:shadow-cyan-500/20 shrink-0">
             <Map className="w-5 h-5" />
           </div>
           <div>
             <div className="flex items-center space-x-2">
-              <span className="inline-block w-4 h-3 bg-red-500 rounded-sm shadow-sm relative overflow-hidden border border-slate-200 dark:border-slate-700" title="Japan Flag">
+              <span className="inline-block w-4 h-3 bg-red-500 rounded-sm shadow-xs relative overflow-hidden border border-slate-200 dark:border-slate-700" title="Japan Flag">
                 <span className="absolute inset-0 m-auto w-1.5 h-1.5 bg-red-600 rounded-full" />
               </span>
-              <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">일본 여행 지도</h1>
+              <h1 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">일본 여행 지도</h1>
             </div>
-            <p className="text-xs text-slate-500 dark:text-slate-400">내가 방문하고 경유한 일본 47개 도도부현 기록</p>
+            <p className="text-[11px] sm:text-xs text-slate-500 dark:text-slate-400">내가 방문하고 경유한 일본 47개 도도부현 기록</p>
           </div>
         </div>
 
         {/* Quick Actions & Auth & Theme Toggle */}
-        <div className="flex items-center space-x-2">
+        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
           {/* Share Achievement Card Button */}
           {onOpenShareModal && (
             <button
               onClick={onOpenShareModal}
-              className="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-cyan-500 dark:to-blue-600 hover:from-blue-700 hover:to-indigo-700 dark:hover:from-cyan-600 dark:hover:to-blue-700 rounded-lg transition-all shadow-sm"
+              className="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-cyan-500 dark:to-blue-600 hover:from-blue-700 hover:to-indigo-700 dark:hover:from-cyan-600 dark:hover:to-blue-700 rounded-lg transition-all shadow-xs"
               title="여행 성취 인포그래픽 카드 생성 & PNG 저장"
             >
               <Share2 className="w-3.5 h-3.5" />
@@ -60,7 +60,7 @@ export const Header: React.FC<HeaderProps> = ({
           {user ? (
             <div className="flex items-center space-x-1.5 bg-blue-50/80 dark:bg-cyan-950/50 p-1 pl-2.5 rounded-lg border border-blue-200/70 dark:border-cyan-800/70">
               <Cloud className="w-3.5 h-3.5 text-blue-600 dark:text-cyan-400 shrink-0" />
-              <span className="text-xs font-semibold text-blue-900 dark:text-cyan-200 max-w-[130px] truncate" title={user.email}>
+              <span className="text-xs font-semibold text-blue-900 dark:text-cyan-200 max-w-[100px] sm:max-w-[140px] truncate" title={user.email}>
                 {user.email}
               </span>
               <button

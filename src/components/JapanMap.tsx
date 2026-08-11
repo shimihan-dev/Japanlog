@@ -94,21 +94,21 @@ export const JapanMap: React.FC<JapanMapProps> = ({
 
   // Unified Mercator Projection for natural contiguous Japan (Hokkaido sitting naturally above Aomori)
   const { featurePaths, projectedShinkansenLines } = useMemo(() => {
-    const width = 800;
-    const height = 750;
+    const width = 850;
+    const height = 800;
 
     // Single unified projection mapping Hokkaido naturally above Aomori over Tsugaru Strait
     const mainProjection = d3Geo
       .geoMercator()
       .center([137.5, 37.8])
-      .scale(2650)
-      .translate([width / 2 + 10, height / 2 + 10]);
+      .scale(2850)
+      .translate([width / 2 + 10, height / 2 + 35]);
 
     const okinawaProjection = d3Geo
       .geoMercator()
       .center([127.98, 26.47])
-      .scale(6200)
-      .translate([640, 630]);
+      .scale(6400)
+      .translate([670, 670]);
 
     const mainPath = d3Geo.geoPath().projection(mainProjection);
     const okinawaPath = d3Geo.geoPath().projection(okinawaProjection);
@@ -158,7 +158,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
       };
     });
 
-    return { featurePaths: paths, mainProjection, projectedShinkansenLines };
+    return { featurePaths: paths, projectedShinkansenLines };
   }, [processedGeoFeatures]);
 
   const handleMouseMove = (e: React.MouseEvent, code: number) => {
@@ -200,17 +200,17 @@ export const JapanMap: React.FC<JapanMapProps> = ({
   return (
     <div
       ref={mapContainerRef}
-      className="relative w-full bg-white dark:bg-[#151D2A] rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm p-4 transition-colors duration-200"
+      className="relative w-full bg-white dark:bg-[#151D2A] rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm p-3 sm:p-4 transition-colors duration-200"
     >
-      {/* Map Legend, Active Region Indicator & Shinkansen Toggle */}
-      <div className="absolute top-4 left-4 right-4 flex flex-wrap items-center justify-between gap-2 z-10 pointer-events-none">
-        <div className="pointer-events-auto flex items-center space-x-2">
+      {/* Map Control Bar (Above SVG Map - Dedicated Header Bar to Never Overlap Hokkaido) */}
+      <div className="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-slate-100 dark:border-slate-800/80">
+        <div className="flex flex-wrap items-center gap-2">
           <MapLegend />
 
           {/* Shinkansen Layer Toggle */}
           <button
             onClick={() => setShowShinkansen(!showShinkansen)}
-            className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-xl text-xs font-bold transition-all border shadow-sm ${
+            className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-xl text-xs font-bold transition-all border shadow-2xs ${
               showShinkansen
                 ? "bg-emerald-600 dark:bg-emerald-500 text-white border-emerald-500 shadow-emerald-500/20"
                 : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700"
@@ -223,7 +223,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
         </div>
 
         {selectedRegion && (
-          <div className="pointer-events-auto flex items-center space-x-2 px-3 py-1.5 bg-blue-600 dark:bg-cyan-500 text-white dark:text-slate-900 rounded-xl text-xs font-bold shadow-md animate-in fade-in duration-150">
+          <div className="flex items-center space-x-2 px-3 py-1 bg-blue-600 dark:bg-cyan-500 text-white dark:text-slate-900 rounded-xl text-xs font-bold shadow-2xs animate-in fade-in duration-150">
             <span>단일 권역 강조: {selectedRegion}</span>
             {onClearRegion && (
               <button
@@ -239,7 +239,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
       </div>
 
       {/* SVG Container */}
-      <svg viewBox="0 0 800 750" className="w-full h-auto max-h-[700px] drop-shadow-sm select-none">
+      <svg viewBox="0 0 850 800" className="w-full h-auto max-h-[760px] drop-shadow-sm select-none">
         <defs>
           <linearGradient id="light-visited-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#3B82F6" />
