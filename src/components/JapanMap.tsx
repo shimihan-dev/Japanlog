@@ -135,7 +135,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
       return { code, feature: feat, d, centroid };
     });
 
-    // Project Shinkansen stations onto screen coordinates using mainProjection
+    // Project Shinkansen stations and detailed waypoints onto screen coordinates
     const projectedShinkansenLines = SHINKANSEN_LINES.map((line) => {
       const projectedStations = line.stations.map((st) => {
         const pt = mainProjection(st.coords);
@@ -146,8 +146,21 @@ export const JapanMap: React.FC<JapanMapProps> = ({
         };
       });
 
-      // SVG path string connecting stations
-      const pathD = projectedStations.reduce((acc, curr, idx) => {
+      // Project waypoints for smooth, accurate track curvature
+      const waypoints = line.pathWaypoints && line.pathWaypoints.length > 0
+        ? line.pathWaypoints
+        : line.stations.map((st) => st.coords);
+
+      const projectedWaypoints = waypoints.map((coords) => {
+        const pt = mainProjection(coords);
+        return {
+          px: pt ? pt[0] : 0,
+          py: pt ? pt[1] : 0,
+        };
+      });
+
+      // SVG path string connecting waypoints
+      const pathD = projectedWaypoints.reduce((acc, curr, idx) => {
         return idx === 0 ? `M ${curr.px} ${curr.py}` : `${acc} L ${curr.px} ${curr.py}`;
       }, "");
 
