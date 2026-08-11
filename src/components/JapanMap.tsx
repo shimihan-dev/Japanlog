@@ -2,8 +2,9 @@ import React, { useEffect, useState, useMemo, useRef } from "react";
 import * as d3Geo from "d3-geo";
 import type { TravelRecordsMap, VisitStatus } from "../types/travel";
 import { PREFECTURE_MAP_BY_CODE } from "../data/prefectures";
+import { SHINKANSEN_LINES } from "../data/shinkansenRoutes";
 import { MapLegend } from "./MapLegend";
-import { X } from "lucide-react";
+import { X, Train } from "lucide-react";
 
 interface JapanMapProps {
   records: TravelRecordsMap;
@@ -35,6 +36,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
   const [geoFeatures, setGeoFeatures] = useState<GeoFeature[]>([]);
   const [hoveredCode, setHoveredCode] = useState<number | null>(null);
   const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(null);
+  const [showShinkansen, setShowShinkansen] = useState<boolean>(true);
   const mapContainerRef = useRef<HTMLDivElement>(null);
 
   // Load GeoJSON data for 47 prefectures
@@ -90,39 +92,31 @@ export const JapanMap: React.FC<JapanMapProps> = ({
     });
   }, [geoFeatures]);
 
-  // Configure Mercator projections for Hokkaido inset, Mainland, and Okinawa inset
-  const { featurePaths } = useMemo(() => {
+  // Unified Mercator Projection for natural contiguous Japan (Hokkaido sitting naturally above Aomori)
+  const { featurePaths, projectedShinkansenLines } = useMemo(() => {
     const width = 800;
-    const height = 700;
+    const height = 750;
 
-    const hokkaidoProjection = d3Geo
+    // Single unified projection mapping Hokkaido naturally above Aomori over Tsugaru Strait
+    const mainProjection = d3Geo
       .geoMercator()
-      .center([142.6, 43.4])
-      .scale(2300)
-      .translate([195, 190]);
-
-    const mainlandProjection = d3Geo
-      .geoMercator()
-      .center([137.2, 36.4])
-      .scale(2950)
-      .translate([width / 2 + 95, height / 2 - 15]);
+      .center([137.5, 37.8])
+      .scale(2650)
+      .translate([width / 2 + 10, height / 2 + 10]);
 
     const okinawaProjection = d3Geo
       .geoMercator()
       .center([127.98, 26.47])
       .scale(6200)
-      .translate([635, 595]);
+      .translate([640, 630]);
 
-    const hokkaidoPath = d3Geo.geoPath().projection(hokkaidoProjection);
-    const mainlandPath = d3Geo.geoPath().projection(mainlandProjection);
+    const mainPath = d3Geo.geoPath().projection(mainProjection);
     const okinawaPath = d3Geo.geoPath().projection(okinawaProjection);
 
     const paths = processedGeoFeatures.map((feat: any) => {
       const code = feat.properties.id;
-      let pathGenerator = mainlandPath;
-      if (code === 1) {
-        pathGenerator = hokkaidoPath;
-      } else if (code === 47) {
+      let pathGenerator = mainPath;
+      if (code === 47) {
         pathGenerator = okinawaPath;
       }
 
@@ -141,7 +135,30 @@ export const JapanMap: React.FC<JapanMapProps> = ({
       return { code, feature: feat, d, centroid };
     });
 
-    return { featurePaths: paths };
+    // Project Shinkansen stations onto screen coordinates using mainProjection
+    const projectedShinkansenLines = SHINKANSEN_LINES.map((line) => {
+      const projectedStations = line.stations.map((st) => {
+        const pt = mainProjection(st.coords);
+        return {
+          ...st,
+          px: pt ? pt[0] : 0,
+          py: pt ? pt[1] : 0,
+        };
+      });
+
+      // SVG path string connecting stations
+      const pathD = projectedStations.reduce((acc, curr, idx) => {
+        return idx === 0 ? `M ${curr.px} ${curr.py}` : `${acc} L ${curr.px} ${curr.py}`;
+      }, "");
+
+      return {
+        ...line,
+        projectedStations,
+        pathD,
+      };
+    });
+
+    return { featurePaths: paths, mainProjection, projectedShinkansenLines };
   }, [processedGeoFeatures]);
 
   const handleMouseMove = (e: React.MouseEvent, code: number) => {
@@ -185,10 +202,24 @@ export const JapanMap: React.FC<JapanMapProps> = ({
       ref={mapContainerRef}
       className="relative w-full bg-white dark:bg-[#151D2A] rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm p-4 transition-colors duration-200"
     >
-      {/* Map Legend & Active Region Indicator */}
-      <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10 pointer-events-none">
-        <div className="pointer-events-auto">
+      {/* Map Legend, Active Region Indicator & Shinkansen Toggle */}
+      <div className="absolute top-4 left-4 right-4 flex flex-wrap items-center justify-between gap-2 z-10 pointer-events-none">
+        <div className="pointer-events-auto flex items-center space-x-2">
           <MapLegend />
+
+          {/* Shinkansen Layer Toggle */}
+          <button
+            onClick={() => setShowShinkansen(!showShinkansen)}
+            className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-xl text-xs font-bold transition-all border shadow-sm ${
+              showShinkansen
+                ? "bg-emerald-600 dark:bg-emerald-500 text-white border-emerald-500 shadow-emerald-500/20"
+                : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700"
+            }`}
+            title="신칸센 철도 노선 오버레이 표시/숨김"
+          >
+            <Train className="w-3.5 h-3.5" />
+            <span>신칸센 노선도</span>
+          </button>
         </div>
 
         {selectedRegion && (
@@ -208,7 +239,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
       </div>
 
       {/* SVG Container */}
-      <svg viewBox="0 0 800 700" className="w-full h-auto max-h-[640px] drop-shadow-sm select-none">
+      <svg viewBox="0 0 800 750" className="w-full h-auto max-h-[700px] drop-shadow-sm select-none">
         <defs>
           <linearGradient id="light-visited-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#3B82F6" />
@@ -231,18 +262,9 @@ export const JapanMap: React.FC<JapanMapProps> = ({
           </filter>
         </defs>
 
-        {/* 1. Hokkaido Top-Left Corner Inset Box Line */}
+        {/* Okinawa Bottom-Right Corner Inset Line */}
         <path
-          d="M 30 330 L 340 330 L 340 40"
-          fill="none"
-          stroke={isDarkMode ? "#38BDF8" : "#94A3B8"}
-          strokeOpacity={isDarkMode ? "0.4" : "1"}
-          strokeWidth="1.2"
-        />
-
-        {/* 2. Okinawa Bottom-Right Corner Inset Line */}
-        <path
-          d="M 500 670 L 500 520 L 780 520"
+          d="M 500 720 L 500 580 L 780 580"
           fill="none"
           stroke={isDarkMode ? "#38BDF8" : "#94A3B8"}
           strokeOpacity={isDarkMode ? "0.4" : "1"}
@@ -317,6 +339,63 @@ export const JapanMap: React.FC<JapanMapProps> = ({
             );
           })}
         </g>
+
+        {/* 🚄 Shinkansen Railway Overlay Layer */}
+        {showShinkansen && (
+          <g className="pointer-events-none transition-all duration-300">
+            {projectedShinkansenLines.map((line) => (
+              <g key={line.id}>
+                {/* Underglow for Railway Line */}
+                <path
+                  d={line.pathD}
+                  fill="none"
+                  stroke={isDarkMode ? line.darkColor : line.color}
+                  strokeWidth="5.5"
+                  strokeOpacity="0.4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                {/* Main Railway Line (Dashed Style) */}
+                <path
+                  d={line.pathD}
+                  fill="none"
+                  stroke={isDarkMode ? line.darkColor : line.color}
+                  strokeWidth="2.8"
+                  strokeDasharray="6 4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+
+                {/* Station Dots & Name Labels */}
+                {line.projectedStations.map((st, idx) => (
+                  <g key={`${line.id}-${st.nameKo}-${idx}`}>
+                    <circle
+                      cx={st.px}
+                      cy={st.py}
+                      r="3.5"
+                      fill="#FFFFFF"
+                      stroke={isDarkMode ? line.darkColor : line.color}
+                      strokeWidth="2"
+                      className="shadow-sm"
+                    />
+                    <text
+                      x={st.px + 5}
+                      y={st.py - 5}
+                      className="text-[8px] font-extrabold fill-slate-800 dark:fill-white"
+                      style={{
+                        paintOrder: "stroke fill",
+                        stroke: isDarkMode ? "#0F172A" : "#FFFFFF",
+                        strokeWidth: "2px",
+                      }}
+                    >
+                      {st.nameKo}
+                    </text>
+                  </g>
+                ))}
+              </g>
+            ))}
+          </g>
+        )}
       </svg>
 
       {/* Tooltip */}

@@ -77,6 +77,8 @@ export const App: React.FC = () => {
     }
   };
 
+  const [mobileTab, setMobileTab] = useState<"map" | "list">("map");
+
   return (
     <div className="min-h-screen flex flex-col bg-[#F6F8FA] dark:bg-[#0B0F17] text-slate-800 dark:text-slate-100 font-sans transition-colors duration-200">
       {/* App Header */}
@@ -92,7 +94,7 @@ export const App: React.FC = () => {
       />
 
       {/* Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6">
         {/* AI Smart Quick City Add Bar */}
         <SmartQuickAddBar
           onAddCity={addCity}
@@ -102,10 +104,36 @@ export const App: React.FC = () => {
         {/* Top Statistics Cards */}
         <StatsCards stats={stats} />
 
+        {/* Mobile View Switcher Tabs (< lg screens) */}
+        <div className="lg:hidden flex bg-slate-200/80 dark:bg-slate-800/80 p-1 rounded-2xl text-xs font-bold shadow-xs mb-2">
+          <button
+            type="button"
+            onClick={() => setMobileTab("map")}
+            className={`flex-1 py-2.5 rounded-xl transition-all flex items-center justify-center space-x-2 ${
+              mobileTab === "map"
+                ? "bg-blue-600 dark:bg-cyan-500 text-white dark:text-slate-900 shadow-sm font-extrabold"
+                : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
+            }`}
+          >
+            <span>🗾 일본 지도 & 상세</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setMobileTab("list")}
+            className={`flex-1 py-2.5 rounded-xl transition-all flex items-center justify-center space-x-2 ${
+              mobileTab === "list"
+                ? "bg-blue-600 dark:bg-cyan-500 text-white dark:text-slate-900 shadow-sm font-extrabold"
+                : "text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100"
+            }`}
+          >
+            <span>📋 도도부현 리스트 & 타임라인</span>
+          </button>
+        </div>
+
         {/* Responsive Dashboard Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* Left Column: Integrated Sidebar Sub-tabs (3 cols) */}
-          <div className="lg:col-span-3 order-2 lg:order-1 flex flex-col">
+          {/* Left Column: Integrated Sidebar Sub-tabs (3 cols on desktop, visible on mobile when mobileTab === 'list') */}
+          <div className={`lg:col-span-3 order-2 lg:order-1 flex-col ${mobileTab === "list" ? "flex" : "hidden lg:flex"}`}>
             <LeftSidebarTabs
               records={records}
               selectedCode={selectedCode}
@@ -115,8 +143,8 @@ export const App: React.FC = () => {
             />
           </div>
 
-          {/* Center Column: Japan Map & Region Overview (6 cols) */}
-          <div className="lg:col-span-6 order-1 lg:order-2 flex flex-col items-center">
+          {/* Center Column: Japan Map & Region Overview (6 cols on desktop, visible on mobile when mobileTab === 'map') */}
+          <div className={`lg:col-span-6 order-1 lg:order-2 flex-col items-center ${mobileTab === "map" ? "flex" : "hidden lg:flex"}`}>
             <JapanMap
               records={records}
               selectedCode={selectedCode}
@@ -133,7 +161,7 @@ export const App: React.FC = () => {
           </div>
 
           {/* Right Column: Prefecture Detail Panel & Travel Insights (3 cols) */}
-          <div className="lg:col-span-3 order-3 lg:order-3 flex flex-col">
+          <div className={`lg:col-span-3 order-3 lg:order-3 flex-col ${mobileTab === "map" ? "flex" : "hidden lg:flex"}`}>
             <PrefectureDetailPanel
               selectedCode={selectedCode}
               record={selectedCode ? records[selectedCode] : undefined}
