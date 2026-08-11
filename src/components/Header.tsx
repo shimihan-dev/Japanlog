@@ -1,5 +1,5 @@
 import React from "react";
-import { Map, RotateCcw, Sparkles, Sun, Moon, User as UserIcon, LogOut, Cloud } from "lucide-react";
+import { Map, RotateCcw, Sparkles, Sun, Moon, User as UserIcon, LogOut, Cloud, Share2 } from "lucide-react";
 import type { User } from "@supabase/supabase-js";
 
 interface HeaderProps {
@@ -10,6 +10,7 @@ interface HeaderProps {
   onReset: () => void;
   onOpenAuthModal: () => void;
   onSignOut: () => void;
+  onOpenShareModal?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -20,6 +21,7 @@ export const Header: React.FC<HeaderProps> = ({
   onReset,
   onOpenAuthModal,
   onSignOut,
+  onOpenShareModal,
 }) => {
   return (
     <header className="bg-white dark:bg-[#0E1628]/95 border-b border-slate-200 dark:border-slate-800/80 sticky top-0 z-20 shadow-sm backdrop-blur-md transition-colors duration-200">
@@ -42,6 +44,18 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Quick Actions & Auth & Theme Toggle */}
         <div className="flex items-center space-x-2">
+          {/* Share Achievement Card Button */}
+          {onOpenShareModal && (
+            <button
+              onClick={onOpenShareModal}
+              className="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-bold text-white bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-cyan-500 dark:to-blue-600 hover:from-blue-700 hover:to-indigo-700 dark:hover:from-cyan-600 dark:hover:to-blue-700 rounded-lg transition-all shadow-sm"
+              title="여행 성취 인포그래픽 카드 생성 & PNG 저장"
+            >
+              <Share2 className="w-3.5 h-3.5" />
+              <span>성취 카드 공유</span>
+            </button>
+          )}
+
           {/* User Auth Section */}
           {user ? (
             <div className="flex items-center space-x-1.5 bg-blue-50/80 dark:bg-cyan-950/50 p-1 pl-2.5 rounded-lg border border-blue-200/70 dark:border-cyan-800/70">
@@ -60,7 +74,7 @@ export const Header: React.FC<HeaderProps> = ({
           ) : (
             <button
               onClick={onOpenAuthModal}
-              className="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-cyan-500 dark:to-blue-600 hover:from-blue-700 hover:to-indigo-700 dark:hover:from-cyan-600 dark:hover:to-blue-700 rounded-lg transition-all shadow-xs"
+              className="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg transition-all border border-slate-200 dark:border-slate-700"
             >
               <UserIcon className="w-3.5 h-3.5" />
               <span>로그인 / 동기화</span>

@@ -12,6 +12,7 @@ import { TravelInsights } from "./components/TravelInsights";
 import { PrefectureDetailPanel } from "./components/PrefectureDetailPanel";
 import { ConfirmModal } from "./components/ConfirmModal";
 import { AuthModal } from "./components/AuthModal";
+import { ShareCardModal } from "./components/ShareCardModal";
 
 import { PREFECTURES } from "./data/prefectures";
 
@@ -40,6 +41,7 @@ export const App: React.FC = () => {
 
   const [showResetModal, setShowResetModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showShareModal, setShowShareModal] = useState(false);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
     const saved = localStorage.getItem("japan-travel-map-theme");
@@ -86,6 +88,7 @@ export const App: React.FC = () => {
         onReset={() => setShowResetModal(true)}
         onOpenAuthModal={() => setShowAuthModal(true)}
         onSignOut={signOut}
+        onOpenShareModal={() => setShowShareModal(true)}
       />
 
       {/* Main Container */}
@@ -163,6 +166,15 @@ export const App: React.FC = () => {
         onSignIn={signInWithEmail}
         onSignUp={signUpWithEmail}
         onMagicLink={sendMagicLink}
+      />
+
+      {/* Share Infographic Card Modal */}
+      <ShareCardModal
+        isOpen={showShareModal}
+        onClose={() => setShowShareModal(false)}
+        stats={stats}
+        records={records}
+        userName={user?.email ? user.email.split("@")[0] : "여행가"}
       />
 
       {/* Reset Confirmation Modal */}
