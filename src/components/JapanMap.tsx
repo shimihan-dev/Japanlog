@@ -95,20 +95,20 @@ export const JapanMap: React.FC<JapanMapProps> = ({
   // Unified Mercator Projection for natural contiguous Japan (Hokkaido sitting naturally above Aomori)
   const { featurePaths, projectedShinkansenLines } = useMemo(() => {
     const width = 850;
-    const height = 800;
+    const height = 920;
 
-    // Single unified projection mapping Hokkaido naturally above Aomori over Tsugaru Strait
+    // Single unified projection mapping Hokkaido naturally above Aomori over Tsugaru Strait with complete unclipped coverage
     const mainProjection = d3Geo
       .geoMercator()
-      .center([137.5, 37.8])
-      .scale(2850)
-      .translate([width / 2 + 10, height / 2 + 35]);
+      .center([137.5, 38.0])
+      .scale(2500)
+      .translate([width / 2 + 10, height / 2 - 10]);
 
     const okinawaProjection = d3Geo
       .geoMercator()
       .center([127.98, 26.47])
-      .scale(6400)
-      .translate([670, 670]);
+      .scale(5400)
+      .translate([690, 780]);
 
     const mainPath = d3Geo.geoPath().projection(mainProjection);
     const okinawaPath = d3Geo.geoPath().projection(okinawaProjection);
@@ -239,7 +239,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
       </div>
 
       {/* SVG Container */}
-      <svg viewBox="0 0 850 800" className="w-full h-auto max-h-[760px] drop-shadow-sm select-none">
+      <svg viewBox="0 0 850 920" className="w-full h-auto max-h-[850px] drop-shadow-sm select-none">
         <defs>
           <linearGradient id="light-visited-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#3B82F6" />
@@ -264,7 +264,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
 
         {/* Okinawa Bottom-Right Corner Inset Line */}
         <path
-          d="M 500 720 L 500 580 L 780 580"
+          d="M 520 900 L 520 720 L 830 720"
           fill="none"
           stroke={isDarkMode ? "#38BDF8" : "#94A3B8"}
           strokeOpacity={isDarkMode ? "0.4" : "1"}
