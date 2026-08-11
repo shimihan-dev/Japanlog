@@ -302,8 +302,6 @@ const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) =>
 
   const activeAirportObj = airportConfig.airports.find((a) => a.code === selectedAirportCode) || airportConfig.airports[0];
 
-  const isLiveApiActive = schedules.some((s) => s.isLive);
-
   return (
     <div className="pt-2.5 border-t border-slate-200/60 dark:border-slate-800 space-y-2.5">
       {/* 1. Direct vs Gateway Airport Selection Header */}
@@ -316,26 +314,15 @@ const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) =>
             </span>
           </span>
 
-          <div className="flex items-center space-x-1.5">
-            <span className={`text-[9px] px-1.5 py-0.5 rounded font-extrabold flex items-center space-x-1 ${
-              isLiveApiActive
-                ? "bg-emerald-100 dark:bg-emerald-950/80 text-emerald-700 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800"
-                : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700"
-            }`}>
-              <span className={`w-1.5 h-1.5 rounded-full ${isLiveApiActive ? "bg-emerald-500 animate-pulse" : "bg-slate-400"}`} />
-              <span>{isLiveApiActive ? "공공데이터 API 실시간 성공" : "정기 타임테이블"}</span>
-            </span>
-
-            <button
-              onClick={loadFlights}
-              disabled={loading}
-              className="flex items-center space-x-1 text-[10px] text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-50"
-              title="실시간 조속 새로고침"
-            >
-              <RefreshCw className={`w-3 h-3 ${loading ? "animate-spin" : ""}`} />
-              <span>{lastFetchedTime ? `${lastFetchedTime} 기준` : "실시간 조회"}</span>
-            </button>
-          </div>
+          <button
+            onClick={loadFlights}
+            disabled={loading}
+            className="flex items-center space-x-1 text-[10px] text-blue-600 dark:text-blue-400 hover:underline disabled:opacity-50"
+            title="실시간 새로고침"
+          >
+            <RefreshCw className={`w-3 h-3 ${loading ? "animate-spin" : ""}`} />
+            <span>{lastFetchedTime ? `${lastFetchedTime} 기준` : "실시간 조회"}</span>
+          </button>
         </div>
 
         {!airportConfig.hasDirectFlight && (
