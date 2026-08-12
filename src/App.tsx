@@ -13,6 +13,7 @@ import { PrefectureDetailPanel } from "./components/PrefectureDetailPanel";
 import { ConfirmModal } from "./components/ConfirmModal";
 import { AuthModal } from "./components/AuthModal";
 import { ShareCardModal } from "./components/ShareCardModal";
+import { TravelUtilityWidget } from "./components/TravelUtilityWidget";
 
 import { PREFECTURES } from "./data/prefectures";
 
@@ -132,8 +133,9 @@ export const App: React.FC = () => {
 
         {/* Responsive Dashboard Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* Left Column: Integrated Sidebar Sub-tabs (3 cols on desktop, visible on mobile when mobileTab === 'list') */}
-          <div className={`lg:col-span-3 order-2 lg:order-1 flex-col ${mobileTab === "list" ? "flex" : "hidden lg:flex"}`}>
+          {/* Left Column: Integrated Sidebar Sub-tabs & Travel Utility Toolkit (3 cols on desktop) */}
+          <div className={`lg:col-span-3 order-2 lg:order-1 flex-col space-y-4 ${mobileTab === "list" ? "flex" : "hidden lg:flex"}`}>
+            <TravelUtilityWidget selectedCode={selectedCode} />
             <LeftSidebarTabs
               records={records}
               selectedCode={selectedCode}
