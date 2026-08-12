@@ -11,6 +11,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/data-go/, ''),
       },
+      '/api/hanabank': {
+        target: 'https://quotation-api-cdn.dunamu.com/v1/forex/recent',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/hanabank/, ''),
+      },
     },
   },
 })
