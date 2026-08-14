@@ -150,7 +150,6 @@ const FLIGHT_DATABASE: FlightSchedule[] = [
   { airline: "이스타항공", flightNo: "ZE944", depAirport: "후쿠오카", depAirportCode: "FUK", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "18:05", arrivalTime: "19:00", days: "매일", direction: "INBOUND" },
   { airline: "티웨이항공", flightNo: "TW232", depAirport: "후쿠오카", depAirportCode: "FUK", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "11:00", arrivalTime: "11:55", days: "매일", direction: "INBOUND" },
   { airline: "티웨이항공", flightNo: "TW236", depAirport: "후쿠오카", depAirportCode: "FUK", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "20:00", arrivalTime: "21:00", days: "매일", direction: "INBOUND" },
-  { airline: "티웨이항공", flightNo: "TW272", depAirport: "후쿠오카", depAirportCode: "FUK", arrAirport: "대구", arrAirportCode: "TAE", departureTime: "10:05", arrivalTime: "11:10", days: "매일", direction: "INBOUND" },
   { airline: "이스타항공", flightNo: "ZE606", depAirport: "후쿠오카", depAirportCode: "FUK", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "11:00", arrivalTime: "12:25", days: "매일", direction: "INBOUND" },
   { airline: "이스타항공", flightNo: "ZE608", depAirport: "후쿠오카", depAirportCode: "FUK", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "17:15", arrivalTime: "18:40", days: "매일", direction: "INBOUND" },
   { airline: "에어서울", flightNo: "RS732", depAirport: "후쿠오카", depAirportCode: "FUK", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "11:35", arrivalTime: "13:00", days: "매일", direction: "INBOUND" },
