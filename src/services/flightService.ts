@@ -98,13 +98,28 @@ const FLIGHT_DATABASE: FlightSchedule[] = [
   { airline: "진에어", flightNo: "LJ267", depAirport: "인천", depAirportCode: "ICN", arrAirport: "후쿠오카", arrAirportCode: "FUK", departureTime: "15:10", arrivalTime: "16:30", days: "매일", direction: "OUTBOUND" },
   { airline: "티웨이항공", flightNo: "TW293", depAirport: "인천", depAirportCode: "ICN", arrAirport: "후쿠오카", arrAirportCode: "FUK", departureTime: "10:05", arrivalTime: "11:30", days: "매일", direction: "OUTBOUND" },
   { airline: "티웨이항공", flightNo: "TW295", depAirport: "인천", depAirportCode: "ICN", arrAirport: "후쿠오카", arrAirportCode: "FUK", departureTime: "15:05", arrivalTime: "16:30", days: "매일", direction: "OUTBOUND" },
-  { airline: "에어부산", flightNo: "BX112", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "후쿠오카", arrAirportCode: "FUK", departureTime: "07:30", arrivalTime: "08:25", days: "매일", direction: "OUTBOUND" },
-  { airline: "에어부산", flightNo: "BX114", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "후쿠오카", arrAirportCode: "FUK", departureTime: "14:00", arrivalTime: "14:55", days: "매일", direction: "OUTBOUND" },
-  { airline: "에어부산", flightNo: "BX116", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "후쿠오카", arrAirportCode: "FUK", departureTime: "18:00", arrivalTime: "18:55", days: "매일", direction: "OUTBOUND" },
+  // -- Busan (PUS) -> Fukuoka (FUK) Official Timetable --
+  { airline: "에어부산", flightNo: "BX148", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "후쿠오카", arrAirportCode: "FUK", departureTime: "07:30", arrivalTime: "08:30", days: "매일", direction: "OUTBOUND" },
+  { airline: "에어부산", flightNo: "BX142", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "후쿠오카", arrAirportCode: "FUK", departureTime: "10:00", arrivalTime: "10:55", days: "매일", direction: "OUTBOUND" },
+  { airline: "에어부산", flightNo: "BX146", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "후쿠오카", arrAirportCode: "FUK", departureTime: "14:00", arrivalTime: "15:00", days: "매일", direction: "OUTBOUND" },
+  { airline: "에어부산", flightNo: "BX144", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "후쿠오카", arrAirportCode: "FUK", departureTime: "17:55", arrivalTime: "18:55", days: "매일", direction: "OUTBOUND" },
+  { airline: "진에어", flightNo: "LJ291", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "후쿠오카", arrAirportCode: "FUK", departureTime: "15:55", arrivalTime: "16:55", days: "매일", direction: "OUTBOUND" },
+  { airline: "제주항공", flightNo: "7C1451", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "후쿠오카", arrAirportCode: "FUK", departureTime: "07:00", arrivalTime: "07:55", days: "매일", direction: "OUTBOUND" },
+  { airline: "제주항공", flightNo: "7C1453", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "후쿠오카", arrAirportCode: "FUK", departureTime: "13:20", arrivalTime: "14:20", days: "매일", direction: "OUTBOUND" },
+  { airline: "제주항공", flightNo: "7C1455", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "후쿠오카", arrAirportCode: "FUK", departureTime: "14:55", arrivalTime: "15:55", days: "매일", direction: "OUTBOUND" },
+  { airline: "제주항공", flightNo: "7C1457", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "후쿠오카", arrAirportCode: "FUK", departureTime: "18:15", arrivalTime: "19:15", days: "매일", direction: "OUTBOUND" },
+  { airline: "이스타항공", flightNo: "ZE941", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "후쿠오카", arrAirportCode: "FUK", departureTime: "09:40", arrivalTime: "10:55", days: "매일", direction: "OUTBOUND" },
+  { airline: "이스타항공", flightNo: "ZE943", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "후쿠오카", arrAirportCode: "FUK", departureTime: "16:00", arrivalTime: "17:05", days: "매일", direction: "OUTBOUND" },
+  { airline: "티웨이항공", flightNo: "TW231", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "후쿠오카", arrAirportCode: "FUK", departureTime: "09:00", arrivalTime: "10:00", days: "매일", direction: "OUTBOUND" },
+  { airline: "티웨이항공", flightNo: "TW235", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "후쿠오카", arrAirportCode: "FUK", departureTime: "18:00", arrivalTime: "19:00", days: "매일", direction: "OUTBOUND" },
+
   { airline: "티웨이항공", flightNo: "TW271", depAirport: "대구", depAirportCode: "TAE", arrAirport: "후쿠오카", arrAirportCode: "FUK", departureTime: "08:00", arrivalTime: "09:05", days: "매일", direction: "OUTBOUND" },
   { airline: "이스타항공", flightNo: "ZE605", depAirport: "인천", depAirportCode: "ICN", arrAirport: "후쿠오카", arrAirportCode: "FUK", departureTime: "08:35", arrivalTime: "10:00", days: "매일", direction: "OUTBOUND" },
   { airline: "이스타항공", flightNo: "ZE607", depAirport: "인천", depAirportCode: "ICN", arrAirport: "후쿠오카", arrAirportCode: "FUK", departureTime: "14:50", arrivalTime: "16:15", days: "매일", direction: "OUTBOUND" },
   { airline: "에어서울", flightNo: "RS731", depAirport: "인천", depAirportCode: "ICN", arrAirport: "후쿠오카", arrAirportCode: "FUK", departureTime: "09:10", arrivalTime: "10:35", days: "매일", direction: "OUTBOUND" },
+  // -- Cheongju (CJJ) -> Fukuoka (FUK) --
+  { airline: "에어로케이", flightNo: "RF332", depAirport: "청주", depAirportCode: "CJJ", arrAirport: "후쿠오카", arrAirportCode: "FUK", departureTime: "06:35", arrivalTime: "07:45", days: "매일", direction: "OUTBOUND" },
+  { airline: "티웨이항공", flightNo: "TW225", depAirport: "청주", depAirportCode: "CJJ", arrAirport: "후쿠오카", arrAirportCode: "FUK", departureTime: "17:05", arrivalTime: "18:20", days: "주 5회", direction: "OUTBOUND" },
 
   // Inbound (Fukuoka -> Korea Return)
   { airline: "대한항공", flightNo: "KE788", depAirport: "후쿠오카", depAirportCode: "FUK", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "10:30", arrivalTime: "11:55", days: "매일", direction: "INBOUND" },
@@ -121,66 +136,171 @@ const FLIGHT_DATABASE: FlightSchedule[] = [
   { airline: "진에어", flightNo: "LJ268", depAirport: "후쿠오카", depAirportCode: "FUK", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "17:30", arrivalTime: "19:00", days: "매일", direction: "INBOUND" },
   { airline: "티웨이항공", flightNo: "TW294", depAirport: "후쿠오카", depAirportCode: "FUK", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "12:30", arrivalTime: "13:55", days: "매일", direction: "INBOUND" },
   { airline: "티웨이항공", flightNo: "TW296", depAirport: "후쿠오카", depAirportCode: "FUK", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "17:30", arrivalTime: "18:55", days: "매일", direction: "INBOUND" },
-  { airline: "에어부산", flightNo: "BX111", depAirport: "후쿠오카", depAirportCode: "FUK", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "09:20", arrivalTime: "10:15", days: "매일", direction: "INBOUND" },
-  { airline: "에어부산", flightNo: "BX113", depAirport: "후쿠오카", depAirportCode: "FUK", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "15:50", arrivalTime: "16:45", days: "매일", direction: "INBOUND" },
-  { airline: "에어부산", flightNo: "BX115", depAirport: "후쿠오카", depAirportCode: "FUK", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "19:50", arrivalTime: "20:45", days: "매일", direction: "INBOUND" },
+
+  // -- Fukuoka (FUK) -> Busan (PUS) Official Timetable --
+  { airline: "에어부산", flightNo: "BX147", depAirport: "후쿠오카", depAirportCode: "FUK", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "09:25", arrivalTime: "10:25", days: "매일", direction: "INBOUND" },
+  { airline: "에어부산", flightNo: "BX141", depAirport: "후쿠오카", depAirportCode: "FUK", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "11:55", arrivalTime: "13:00", days: "매일", direction: "INBOUND" },
+  { airline: "에어부산", flightNo: "BX145", depAirport: "후쿠오카", depAirportCode: "FUK", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "16:00", arrivalTime: "17:05", days: "매일", direction: "INBOUND" },
+  { airline: "에어부산", flightNo: "BX143", depAirport: "후쿠오카", depAirportCode: "FUK", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "19:55", arrivalTime: "21:00", days: "매일", direction: "INBOUND" },
+  { airline: "진에어", flightNo: "LJ292", depAirport: "후쿠오카", depAirportCode: "FUK", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "19:05", arrivalTime: "20:05", days: "매일", direction: "INBOUND" },
+  { airline: "제주항공", flightNo: "7C1452", depAirport: "후쿠오카", depAirportCode: "FUK", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "08:55", arrivalTime: "10:00", days: "매일", direction: "INBOUND" },
+  { airline: "제주항공", flightNo: "7C1454", depAirport: "후쿠오카", depAirportCode: "FUK", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "15:10", arrivalTime: "16:00", days: "매일", direction: "INBOUND" },
+  { airline: "제주항공", flightNo: "7C1456", depAirport: "후쿠오카", depAirportCode: "FUK", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "17:00", arrivalTime: "18:05", days: "매일", direction: "INBOUND" },
+  { airline: "제주항공", flightNo: "7C1458", depAirport: "후쿠오카", depAirportCode: "FUK", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "20:15", arrivalTime: "21:15", days: "매일", direction: "INBOUND" },
+  { airline: "이스타항공", flightNo: "ZE942", depAirport: "후쿠오카", depAirportCode: "FUK", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "12:00", arrivalTime: "13:10", days: "매일", direction: "INBOUND" },
+  { airline: "이스타항공", flightNo: "ZE944", depAirport: "후쿠오카", depAirportCode: "FUK", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "18:05", arrivalTime: "19:00", days: "매일", direction: "INBOUND" },
+  { airline: "티웨이항공", flightNo: "TW232", depAirport: "후쿠오카", depAirportCode: "FUK", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "11:00", arrivalTime: "11:55", days: "매일", direction: "INBOUND" },
+  { airline: "티웨이항공", flightNo: "TW236", depAirport: "후쿠오카", depAirportCode: "FUK", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "20:00", arrivalTime: "21:00", days: "매일", direction: "INBOUND" },
   { airline: "티웨이항공", flightNo: "TW272", depAirport: "후쿠오카", depAirportCode: "FUK", arrAirport: "대구", arrAirportCode: "TAE", departureTime: "10:05", arrivalTime: "11:10", days: "매일", direction: "INBOUND" },
   { airline: "이스타항공", flightNo: "ZE606", depAirport: "후쿠오카", depAirportCode: "FUK", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "11:00", arrivalTime: "12:25", days: "매일", direction: "INBOUND" },
   { airline: "이스타항공", flightNo: "ZE608", depAirport: "후쿠오카", depAirportCode: "FUK", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "17:15", arrivalTime: "18:40", days: "매일", direction: "INBOUND" },
   { airline: "에어서울", flightNo: "RS732", depAirport: "후쿠오카", depAirportCode: "FUK", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "11:35", arrivalTime: "13:00", days: "매일", direction: "INBOUND" },
+  // -- Fukuoka (FUK) -> Cheongju (CJJ) --
+  { airline: "에어로케이", flightNo: "RF331", depAirport: "후쿠오카", depAirportCode: "FUK", arrAirport: "청주", arrAirportCode: "CJJ", departureTime: "08:30", arrivalTime: "10:00", days: "매일", direction: "INBOUND" },
+  { airline: "티웨이항공", flightNo: "TW226", depAirport: "후쿠오카", depAirportCode: "FUK", arrAirport: "청주", arrAirportCode: "CJJ", departureTime: "19:20", arrivalTime: "20:40", days: "주 6회", direction: "INBOUND" },
 
   // ----------------------------------------------------
   // 2. Kobe / Hyogo (UKB) - 고베
   // ----------------------------------------------------
-  { airline: "대한항공", flightNo: "KE727", depAirport: "인천", depAirportCode: "ICN", arrAirport: "고베 전세기", arrAirportCode: "UKB", departureTime: "08:15", arrivalTime: "10:00", days: "월,수,금,일", direction: "OUTBOUND" },
-  { airline: "아시아나항공", flightNo: "OZ116", depAirport: "인천", depAirportCode: "ICN", arrAirport: "고베 전세기", arrAirportCode: "UKB", departureTime: "10:30", arrivalTime: "12:15", days: "화,목,토", direction: "OUTBOUND" },
-  { airline: "에어부산", flightNo: "BX128", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "고베 전세기", arrAirportCode: "UKB", departureTime: "11:20", arrivalTime: "12:45", days: "목,일", direction: "OUTBOUND" },
-  // Return
-  { airline: "대한항공", flightNo: "KE728", depAirport: "고베 전세기", depAirportCode: "UKB", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "11:10", arrivalTime: "13:00", days: "월,수,금,일", direction: "INBOUND" },
-  { airline: "아시아나항공", flightNo: "OZ115", depAirport: "고베 전세기", depAirportCode: "UKB", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "13:20", arrivalTime: "15:05", days: "화,목,토", direction: "INBOUND" },
-  { airline: "에어부산", flightNo: "BX127", depAirport: "고베 전세기", depAirportCode: "UKB", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "13:45", arrivalTime: "15:10", days: "목,일", direction: "INBOUND" },
+  // Outbound (Korea -> Kobe)
+  { airline: "대한항공", flightNo: "KE2171", depAirport: "인천", depAirportCode: "ICN", arrAirport: "고베", arrAirportCode: "UKB", departureTime: "09:05", arrivalTime: "10:55", days: "매일", direction: "OUTBOUND" },
+  { airline: "대한항공", flightNo: "KE2173", depAirport: "인천", depAirportCode: "ICN", arrAirport: "고베", arrAirportCode: "UKB", departureTime: "15:50", arrivalTime: "17:45", days: "매일", direction: "OUTBOUND" },
+  { airline: "진에어", flightNo: "LJ381", depAirport: "인천", depAirportCode: "ICN", arrAirport: "고베", arrAirportCode: "UKB", departureTime: "13:35", arrivalTime: "15:30", days: "매일", direction: "OUTBOUND" },
+  { airline: "제주항공", flightNo: "7C1621", depAirport: "인천", depAirportCode: "ICN", arrAirport: "고베", arrAirportCode: "UKB", departureTime: "13:35", arrivalTime: "15:15", days: "매일", direction: "OUTBOUND" },
+  { airline: "에어부산", flightNo: "BX128", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "고베", arrAirportCode: "UKB", departureTime: "11:20", arrivalTime: "12:45", days: "목,일", direction: "OUTBOUND" },
+
+  // Inbound (Kobe -> Korea Return)
+  { airline: "대한항공", flightNo: "KE2172", depAirport: "고베", depAirportCode: "UKB", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "11:55", arrivalTime: "13:45", days: "매일", direction: "INBOUND" },
+  { airline: "대한항공", flightNo: "KE2174", depAirport: "고베", depAirportCode: "UKB", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "18:55", arrivalTime: "20:50", days: "매일", direction: "INBOUND" },
+  { airline: "진에어", flightNo: "LJ382", depAirport: "고베", depAirportCode: "UKB", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "16:30", arrivalTime: "18:30", days: "매일", direction: "INBOUND" },
+  { airline: "제주항공", flightNo: "7C1622", depAirport: "고베", depAirportCode: "UKB", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "16:25", arrivalTime: "18:15", days: "매일", direction: "INBOUND" },
+  { airline: "에어부산", flightNo: "BX127", depAirport: "고베", depAirportCode: "UKB", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "13:45", arrivalTime: "15:10", days: "목,일", direction: "INBOUND" },
 
   // ----------------------------------------------------
   // 3. Kitakyushu (KKJ) - 기타큐슈
   // ----------------------------------------------------
   { airline: "진에어", flightNo: "LJ269", depAirport: "인천", depAirportCode: "ICN", arrAirport: "기타큐슈", arrAirportCode: "KKJ", departureTime: "07:05", arrivalTime: "08:30", days: "매일", direction: "OUTBOUND" },
   { airline: "진에어", flightNo: "LJ271", depAirport: "인천", depAirportCode: "ICN", arrAirport: "기타큐슈", arrAirportCode: "KKJ", departureTime: "17:15", arrivalTime: "18:40", days: "매일", direction: "OUTBOUND" },
+  { airline: "에어로케이", flightNo: "RF372", depAirport: "청주", depAirportCode: "CJJ", arrAirport: "기타큐슈", arrAirportCode: "KKJ", departureTime: "13:20", arrivalTime: "14:30", days: "화,목,토", direction: "OUTBOUND" },
   // Return
   { airline: "진에어", flightNo: "LJ270", depAirport: "기타큐슈", depAirportCode: "KKJ", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "09:30", arrivalTime: "11:00", days: "매일", direction: "INBOUND" },
   { airline: "진에어", flightNo: "LJ272", depAirport: "기타큐슈", depAirportCode: "KKJ", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "19:40", arrivalTime: "21:10", days: "매일", direction: "INBOUND" },
+  { airline: "에어로케이", flightNo: "RF371", depAirport: "기타큐슈", depAirportCode: "KKJ", arrAirport: "청주", arrAirportCode: "CJJ", departureTime: "15:30", arrivalTime: "16:45", days: "화,목,토", direction: "INBOUND" },
 
   // ----------------------------------------------------
   // 4. Kansai / Osaka (KIX) - 오사카 간사이
   // ----------------------------------------------------
-  // Outbound
-  { airline: "대한항공", flightNo: "KE721", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "07:15", arrivalTime: "09:05", days: "매일", direction: "OUTBOUND" },
-  { airline: "대한항공", flightNo: "KE723", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "09:00", arrivalTime: "10:50", days: "매일", direction: "OUTBOUND" },
+  // Outbound (Korea -> Kansai/Osaka)
+  // -- Gimpo (GMP) -> Kansai/Osaka (KIX) Official Timetable --
+  { airline: "대한항공", flightNo: "KE2117", depAirport: "김포", depAirportCode: "GMP", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "09:00", arrivalTime: "10:45", days: "매일", direction: "OUTBOUND" },
+  { airline: "대한항공", flightNo: "KE2119", depAirport: "김포", depAirportCode: "GMP", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "16:30", arrivalTime: "18:25", days: "매일", direction: "OUTBOUND" },
+  { airline: "아시아나항공", flightNo: "OZ1145", depAirport: "김포", depAirportCode: "GMP", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "08:10", arrivalTime: "09:50", days: "매일", direction: "OUTBOUND" },
+  { airline: "아시아나항공", flightNo: "OZ1165", depAirport: "김포", depAirportCode: "GMP", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "17:40", arrivalTime: "19:20", days: "매일", direction: "OUTBOUND" },
+  { airline: "제주항공", flightNo: "7C1325", depAirport: "김포", depAirportCode: "GMP", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "08:20", arrivalTime: "10:00", days: "매일", direction: "OUTBOUND" },
+  { airline: "제주항공", flightNo: "7C1327", depAirport: "김포", depAirportCode: "GMP", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "14:00", arrivalTime: "15:40", days: "매일", direction: "OUTBOUND" },
+  { airline: "피치항공", flightNo: "MM736", depAirport: "김포", depAirportCode: "GMP", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "11:25", arrivalTime: "13:05", days: "매일", direction: "OUTBOUND" },
+  { airline: "피치항공", flightNo: "MM732", depAirport: "김포", depAirportCode: "GMP", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "13:05", arrivalTime: "14:50", days: "매일", direction: "OUTBOUND" },
+  { airline: "피치항공", flightNo: "MM740", depAirport: "김포", depAirportCode: "GMP", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "17:00", arrivalTime: "18:40", days: "매일", direction: "OUTBOUND" },
+  { airline: "피치항공", flightNo: "MM734", depAirport: "김포", depAirportCode: "GMP", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "18:45", arrivalTime: "20:30", days: "매일", direction: "OUTBOUND" },
+
+  // -- Incheon (ICN) -> Kansai/Osaka (KIX) Official Timetable --
+  { airline: "대한항공", flightNo: "KE723", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "08:50", arrivalTime: "10:35", days: "매일", direction: "OUTBOUND" },
+  { airline: "대한항공", flightNo: "KE727", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "11:05", arrivalTime: "12:50", days: "매일", direction: "OUTBOUND" },
   { airline: "대한항공", flightNo: "KE725", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "15:20", arrivalTime: "17:10", days: "매일", direction: "OUTBOUND" },
-  { airline: "아시아나항공", flightNo: "OZ112", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "08:00", arrivalTime: "09:40", days: "매일", direction: "OUTBOUND" },
+  { airline: "대한항공", flightNo: "KE721", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "19:00", arrivalTime: "21:00", days: "매일", direction: "OUTBOUND" },
+  { airline: "대한항공", flightNo: "KE737", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "20:50", arrivalTime: "22:40", days: "매일", direction: "OUTBOUND" },
+  { airline: "아시아나항공", flightNo: "OZ112", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "08:05", arrivalTime: "09:40", days: "매일", direction: "OUTBOUND" },
   { airline: "아시아나항공", flightNo: "OZ114", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "14:10", arrivalTime: "15:50", days: "매일", direction: "OUTBOUND" },
-  { airline: "진에어", flightNo: "LJ211", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "07:50", arrivalTime: "09:35", days: "매일", direction: "OUTBOUND" },
-  { airline: "진에어", flightNo: "LJ213", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "13:30", arrivalTime: "15:15", days: "매일", direction: "OUTBOUND" },
-  { airline: "제주항공", flightNo: "7C1302", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "07:00", arrivalTime: "08:55", days: "매일", direction: "OUTBOUND" },
-  { airline: "티웨이항공", flightNo: "TW281", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "07:45", arrivalTime: "09:30", days: "매일", direction: "OUTBOUND" },
+  { airline: "아시아나항공", flightNo: "OZ118", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "16:00", arrivalTime: "17:45", days: "매일", direction: "OUTBOUND" },
+  { airline: "아시아나항공", flightNo: "OZ116", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "19:10", arrivalTime: "20:55", days: "매일", direction: "OUTBOUND" },
+  { airline: "제주항공", flightNo: "7C1301", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "07:00", arrivalTime: "09:00", days: "매일", direction: "OUTBOUND" },
+  { airline: "제주항공", flightNo: "7C1391", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "08:05", arrivalTime: "09:40", days: "매일", direction: "OUTBOUND" },
+  { airline: "제주항공", flightNo: "7C1303", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "09:10", arrivalTime: "11:00", days: "매일", direction: "OUTBOUND" },
+  { airline: "제주항공", flightNo: "7C1315", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "10:15", arrivalTime: "12:05", days: "매일", direction: "OUTBOUND" },
+  { airline: "제주항공", flightNo: "7C1393", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "14:10", arrivalTime: "15:50", days: "매일", direction: "OUTBOUND" },
+  { airline: "제주항공", flightNo: "7C1305", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "16:55", arrivalTime: "18:40", days: "매일", direction: "OUTBOUND" },
+  { airline: "제주항공", flightNo: "7C1395", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "19:10", arrivalTime: "20:55", days: "매일", direction: "OUTBOUND" },
+  { airline: "티웨이항공", flightNo: "TW301", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "07:55", arrivalTime: "09:55", days: "매일", direction: "OUTBOUND" },
+  { airline: "티웨이항공", flightNo: "TW303", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "12:10", arrivalTime: "14:00", days: "매일", direction: "OUTBOUND" },
+  { airline: "티웨이항공", flightNo: "TW305", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "15:55", arrivalTime: "17:55", days: "매일", direction: "OUTBOUND" },
+  { airline: "진에어", flightNo: "LJ231", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "08:00", arrivalTime: "09:45", days: "매일", direction: "OUTBOUND" },
+  { airline: "진에어", flightNo: "LJ233", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "08:55", arrivalTime: "10:50", days: "매일", direction: "OUTBOUND" },
+  { airline: "진에어", flightNo: "LJ961", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "09:35", arrivalTime: "11:10", days: "매일", direction: "OUTBOUND" },
+  { airline: "진에어", flightNo: "LJ237", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "14:10", arrivalTime: "15:55", days: "매일", direction: "OUTBOUND" },
+  { airline: "진에어", flightNo: "LJ235", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "15:00", arrivalTime: "16:40", days: "매일", direction: "OUTBOUND" },
+  { airline: "에어서울", flightNo: "RS711", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "07:15", arrivalTime: "09:05", days: "매일", direction: "OUTBOUND" },
+  { airline: "에어서울", flightNo: "RS713", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "13:10", arrivalTime: "15:00", days: "매일", direction: "OUTBOUND" },
+  { airline: "에어서울", flightNo: "RS715", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "15:20", arrivalTime: "17:00", days: "매일", direction: "OUTBOUND" },
+  { airline: "에어부산", flightNo: "BX174", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "12:40", arrivalTime: "14:40", days: "매일", direction: "OUTBOUND" },
+  { airline: "이스타항공", flightNo: "ZE611", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "09:05", arrivalTime: "10:55", days: "매일", direction: "OUTBOUND" },
+  { airline: "이스타항공", flightNo: "ZE615", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "09:55", arrivalTime: "11:55", days: "매일", direction: "OUTBOUND" },
+  { airline: "이스타항공", flightNo: "ZE613", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "15:05", arrivalTime: "17:00", days: "매일", direction: "OUTBOUND" },
+  { airline: "파라타항공", flightNo: "WE511", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "11:10", arrivalTime: "13:00", days: "매일", direction: "OUTBOUND" },
+  { airline: "피치항공", flightNo: "MM712", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "07:30", arrivalTime: "09:15", days: "매일", direction: "OUTBOUND" },
+  { airline: "피치항공", flightNo: "MM702", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "10:35", arrivalTime: "12:20", days: "매일", direction: "OUTBOUND" },
+  { airline: "피치항공", flightNo: "MM706", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "15:20", arrivalTime: "17:05", days: "매일", direction: "OUTBOUND" },
+  { airline: "피치항공", flightNo: "MM710", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "21:00", arrivalTime: "22:45", days: "매일", direction: "OUTBOUND" },
+
+  // -- Busan (PUS) / Cheongju (CJJ) -> Kansai/Osaka (KIX) --
   { airline: "에어부산", flightNo: "BX122", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "08:35", arrivalTime: "10:00", days: "매일", direction: "OUTBOUND" },
   { airline: "에어부산", flightNo: "BX124", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "16:30", arrivalTime: "18:00", days: "매일", direction: "OUTBOUND" },
   { airline: "티웨이항공", flightNo: "TW523", depAirport: "청주", depAirportCode: "CJJ", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "10:00", arrivalTime: "11:30", days: "매일", direction: "OUTBOUND" },
-  { airline: "피치항공", flightNo: "MM708", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "22:40", arrivalTime: "00:25", days: "매일", direction: "OUTBOUND" },
 
-  // Return
-  { airline: "대한항공", flightNo: "KE722", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "10:20", arrivalTime: "12:15", days: "매일", direction: "INBOUND" },
-  { airline: "대한항공", flightNo: "KE724", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "12:00", arrivalTime: "13:55", days: "매일", direction: "INBOUND" },
-  { airline: "대한항공", flightNo: "KE726", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "18:25", arrivalTime: "20:20", days: "매일", direction: "INBOUND" },
-  { airline: "아시아나항공", flightNo: "OZ111", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "10:50", arrivalTime: "12:40", days: "매일", direction: "INBOUND" },
-  { airline: "아시아나항공", flightNo: "OZ113", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "17:00", arrivalTime: "18:50", days: "매일", direction: "INBOUND" },
-  { airline: "진에어", flightNo: "LJ212", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "10:45", arrivalTime: "12:35", days: "매일", direction: "INBOUND" },
-  { airline: "진에어", flightNo: "LJ214", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "16:25", arrivalTime: "18:15", days: "매일", direction: "INBOUND" },
-  { airline: "제주항공", flightNo: "7C1301", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "09:55", arrivalTime: "11:55", days: "매일", direction: "INBOUND" },
-  { airline: "티웨이항공", flightNo: "TW282", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "10:30", arrivalTime: "12:20", days: "매일", direction: "INBOUND" },
+  // Inbound (Kansai/Osaka -> Korea)
+  // -- Kansai/Osaka (KIX) -> Gimpo (GMP) Official Timetable --
+  { airline: "대한항공", flightNo: "KE2118", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "11:55", arrivalTime: "13:55", days: "매일", direction: "INBOUND" },
+  { airline: "대한항공", flightNo: "KE2120", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "19:35", arrivalTime: "21:35", days: "매일", direction: "INBOUND" },
+  { airline: "아시아나항공", flightNo: "OZ1135", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "11:10", arrivalTime: "13:10", days: "매일", direction: "INBOUND" },
+  { airline: "아시아나항공", flightNo: "OZ1155", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "20:40", arrivalTime: "22:25", days: "매일", direction: "INBOUND" },
+  { airline: "제주항공", flightNo: "7C1326", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "11:00", arrivalTime: "13:00", days: "매일", direction: "INBOUND" },
+  { airline: "제주항공", flightNo: "7C1328", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "16:30", arrivalTime: "18:30", days: "매일", direction: "INBOUND" },
+  { airline: "피치항공", flightNo: "MM733", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "08:30", arrivalTime: "10:30", days: "매일", direction: "INBOUND" },
+  { airline: "피치항공", flightNo: "MM731", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "10:25", arrivalTime: "12:20", days: "매일", direction: "INBOUND" },
+  { airline: "피치항공", flightNo: "MM739", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "14:10", arrivalTime: "16:10", days: "매일", direction: "INBOUND" },
+  { airline: "피치항공", flightNo: "MM733", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "16:00", arrivalTime: "17:55", days: "매일", direction: "INBOUND" },
+
+  // -- Kansai/Osaka (KIX) -> Incheon (ICN) Official Timetable --
+  { airline: "대한항공", flightNo: "KE738", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "02:15", arrivalTime: "04:05", days: "매일", direction: "INBOUND" },
+  { airline: "대한항공", flightNo: "KE722", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "09:15", arrivalTime: "11:10", days: "매일", direction: "INBOUND" },
+  { airline: "대한항공", flightNo: "KE724", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "11:55", arrivalTime: "14:00", days: "매일", direction: "INBOUND" },
+  { airline: "대한항공", flightNo: "KE728", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "14:00", arrivalTime: "15:55", days: "매일", direction: "INBOUND" },
+  { airline: "대한항공", flightNo: "KE726", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "18:25", arrivalTime: "20:30", days: "매일", direction: "INBOUND" },
+  { airline: "아시아나항공", flightNo: "OZ111", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "10:50", arrivalTime: "12:50", days: "매일", direction: "INBOUND" },
+  { airline: "아시아나항공", flightNo: "OZ113", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "17:00", arrivalTime: "19:05", days: "매일", direction: "INBOUND" },
+  { airline: "아시아나항공", flightNo: "OZ117", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "19:05", arrivalTime: "21:10", days: "매일", direction: "INBOUND" },
+  { airline: "아시아나항공", flightNo: "OZ115", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "09:00", arrivalTime: "11:00", days: "매일", direction: "INBOUND" },
+  { airline: "제주항공", flightNo: "7C1396", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "09:00", arrivalTime: "11:00", days: "매일", direction: "INBOUND" },
+  { airline: "제주항공", flightNo: "7C1302", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "09:50", arrivalTime: "11:50", days: "매일", direction: "INBOUND" },
+  { airline: "제주항공", flightNo: "7C1392", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "10:50", arrivalTime: "12:50", days: "매일", direction: "INBOUND" },
+  { airline: "제주항공", flightNo: "7C1304", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "11:50", arrivalTime: "13:50", days: "매일", direction: "INBOUND" },
+  { airline: "제주항공", flightNo: "7C1316", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "13:05", arrivalTime: "15:15", days: "매일", direction: "INBOUND" },
+  { airline: "제주항공", flightNo: "7C1394", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "17:00", arrivalTime: "19:05", days: "매일", direction: "INBOUND" },
+  { airline: "제주항공", flightNo: "7C1306", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "19:40", arrivalTime: "21:40", days: "매일", direction: "INBOUND" },
+  { airline: "티웨이항공", flightNo: "TW302", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "11:55", arrivalTime: "13:15", days: "매일", direction: "INBOUND" },
+  { airline: "티웨이항공", flightNo: "TW304", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "15:30", arrivalTime: "17:35", days: "매일", direction: "INBOUND" },
+  { airline: "티웨이항공", flightNo: "TW306", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "19:15", arrivalTime: "21:10", days: "매일", direction: "INBOUND" },
+  { airline: "진에어", flightNo: "LJ232", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "11:05", arrivalTime: "13:10", days: "매일", direction: "INBOUND" },
+  { airline: "진에어", flightNo: "LJ234", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "12:00", arrivalTime: "14:00", days: "매일", direction: "INBOUND" },
+  { airline: "진에어", flightNo: "LJ962", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "12:10", arrivalTime: "14:15", days: "매일", direction: "INBOUND" },
+  { airline: "진에어", flightNo: "LJ238", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "16:55", arrivalTime: "19:10", days: "매일", direction: "INBOUND" },
+  { airline: "진에어", flightNo: "LJ236", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "18:00", arrivalTime: "19:55", days: "매일", direction: "INBOUND" },
+  { airline: "에어서울", flightNo: "RS712", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "10:00", arrivalTime: "11:55", days: "매일", direction: "INBOUND" },
+  { airline: "에어서울", flightNo: "RS714", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "16:00", arrivalTime: "17:55", days: "매일", direction: "INBOUND" },
+  { airline: "에어서울", flightNo: "RS716", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "18:00", arrivalTime: "20:05", days: "매일", direction: "INBOUND" },
+  { airline: "에어부산", flightNo: "BX173", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "15:40", arrivalTime: "18:10", days: "매일", direction: "INBOUND" },
+  { airline: "이스타항공", flightNo: "ZE612", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "11:50", arrivalTime: "13:50", days: "매일", direction: "INBOUND" },
+  { airline: "이스타항공", flightNo: "ZE616", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "12:55", arrivalTime: "15:05", days: "매일", direction: "INBOUND" },
+  { airline: "이스타항공", flightNo: "ZE614", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "18:00", arrivalTime: "19:50", days: "매일", direction: "INBOUND" },
+  { airline: "파라타항공", flightNo: "WE512", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "14:30", arrivalTime: "16:40", days: "매일", direction: "INBOUND" },
+  { airline: "피치항공", flightNo: "MM701", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "07:40", arrivalTime: "09:45", days: "매일", direction: "INBOUND" },
+  { airline: "피치항공", flightNo: "MM705", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "12:30", arrivalTime: "14:35", days: "매일", direction: "INBOUND" },
+  { airline: "피치항공", flightNo: "MM709", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "18:10", arrivalTime: "20:15", days: "매일", direction: "INBOUND" },
+  { airline: "피치항공", flightNo: "MM711", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "19:55", arrivalTime: "21:55", days: "매일", direction: "INBOUND" },
+
+  // -- Kansai/Osaka (KIX) -> Busan (PUS) / Cheongju (CJJ) --
   { airline: "에어부산", flightNo: "BX121", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "11:00", arrivalTime: "12:30", days: "매일", direction: "INBOUND" },
   { airline: "에어부산", flightNo: "BX123", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "19:00", arrivalTime: "20:30", days: "매일", direction: "INBOUND" },
   { airline: "티웨이항공", flightNo: "TW524", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "청주", arrAirportCode: "CJJ", departureTime: "12:30", arrivalTime: "14:00", days: "매일", direction: "INBOUND" },
-  { airline: "피치항공", flightNo: "MM707", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "19:50", arrivalTime: "21:55", days: "매일", direction: "INBOUND" },
 
   // ----------------------------------------------------
   // 5. Tokyo Haneda / Narita (HND / NRT) - 도쿄
@@ -314,15 +434,21 @@ const FLIGHT_DATABASE: FlightSchedule[] = [
   // ----------------------------------------------------
   // 7. Okinawa Naha (OKA) - 오키나와
   // ----------------------------------------------------
-  { airline: "대한항공", flightNo: "KE755", depAirport: "인천", depAirportCode: "ICN", arrAirport: "오키나와", arrAirportCode: "OKA", departureTime: "08:05", arrivalTime: "10:25", days: "매일", direction: "OUTBOUND" },
-  { airline: "아시아나항공", flightNo: "OZ172", depAirport: "인천", depAirportCode: "ICN", arrAirport: "오키나와", arrAirportCode: "OKA", departureTime: "09:40", arrivalTime: "12:05", days: "매일", direction: "OUTBOUND" },
-  { airline: "진에어", flightNo: "LJ241", depAirport: "인천", depAirportCode: "ICN", arrAirport: "오키나와", arrAirportCode: "OKA", departureTime: "10:10", arrivalTime: "12:35", days: "매일", direction: "OUTBOUND" },
-  { airline: "제주항공", flightNo: "7C1802", depAirport: "인천", depAirportCode: "ICN", arrAirport: "오키나와", arrAirportCode: "OKA", departureTime: "12:40", arrivalTime: "15:05", days: "매일", direction: "OUTBOUND" },
-  // Return
-  { airline: "대한항공", flightNo: "KE756", depAirport: "오키나와", depAirportCode: "OKA", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "11:35", arrivalTime: "14:05", days: "매일", direction: "INBOUND" },
-  { airline: "아시아나항공", flightNo: "OZ171", depAirport: "오키나와", depAirportCode: "OKA", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "13:20", arrivalTime: "15:45", days: "매일", direction: "INBOUND" },
-  { airline: "진에어", flightNo: "LJ242", depAirport: "오키나와", depAirportCode: "OKA", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "13:45", arrivalTime: "16:15", days: "매일", direction: "INBOUND" },
-  { airline: "제주항공", flightNo: "7C1801", depAirport: "오키나와", depAirportCode: "OKA", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "16:05", arrivalTime: "18:35", days: "매일", direction: "INBOUND" },
+  // Outbound (Incheon -> Okinawa)
+  { airline: "대한항공", flightNo: "KE755", depAirport: "인천", depAirportCode: "ICN", arrAirport: "오키나와", arrAirportCode: "OKA", departureTime: "08:05", arrivalTime: "10:35", days: "매일", direction: "OUTBOUND" },
+  { airline: "아시아나항공", flightNo: "OZ172", depAirport: "인천", depAirportCode: "ICN", arrAirport: "오키나와", arrAirportCode: "OKA", departureTime: "08:50", arrivalTime: "11:15", days: "매일", direction: "OUTBOUND" },
+  { airline: "제주항공", flightNo: "7C1801", depAirport: "인천", depAirportCode: "ICN", arrAirport: "오키나와", arrAirportCode: "OKA", departureTime: "13:20", arrivalTime: "15:50", days: "매일", direction: "OUTBOUND" },
+  { airline: "티웨이항공", flightNo: "TW281", depAirport: "인천", depAirportCode: "ICN", arrAirport: "오키나와", arrAirportCode: "OKA", departureTime: "11:00", arrivalTime: "13:35", days: "매일", direction: "OUTBOUND" },
+  { airline: "진에어", flightNo: "LJ341", depAirport: "인천", depAirportCode: "ICN", arrAirport: "오키나와", arrAirportCode: "OKA", departureTime: "09:55", arrivalTime: "12:20", days: "매일", direction: "OUTBOUND" },
+  { airline: "이스타항공", flightNo: "ZE631", depAirport: "인천", depAirportCode: "ICN", arrAirport: "오키나와", arrAirportCode: "OKA", departureTime: "11:30", arrivalTime: "14:00", days: "매일", direction: "OUTBOUND" },
+
+  // Inbound (Okinawa -> Incheon Return)
+  { airline: "대한항공", flightNo: "KE756", depAirport: "오키나와", depAirportCode: "OKA", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "11:45", arrivalTime: "13:55", days: "매일", direction: "INBOUND" },
+  { airline: "아시아나항공", flightNo: "OZ171", depAirport: "오키나와", depAirportCode: "OKA", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "12:15", arrivalTime: "14:35", days: "매일", direction: "INBOUND" },
+  { airline: "제주항공", flightNo: "7C1802", depAirport: "오키나와", depAirportCode: "OKA", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "16:45", arrivalTime: "18:55", days: "매일", direction: "INBOUND" },
+  { airline: "티웨이항공", flightNo: "TW282", depAirport: "오키나와", depAirportCode: "OKA", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "14:35", arrivalTime: "16:55", days: "매일", direction: "INBOUND" },
+  { airline: "진에어", flightNo: "LJ342", depAirport: "오키나와", depAirportCode: "OKA", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "13:30", arrivalTime: "15:45", days: "매일", direction: "INBOUND" },
+  { airline: "이스타항공", flightNo: "ZE632", depAirport: "오키나와", depAirportCode: "OKA", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "15:00", arrivalTime: "17:35", days: "매일", direction: "INBOUND" },
 
   // ----------------------------------------------------
   // 8. Nagoya Chubu (NGO) - 나고야
