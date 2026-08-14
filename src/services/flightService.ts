@@ -267,10 +267,24 @@ const FLIGHT_DATABASE: FlightSchedule[] = [
   { airline: "피치항공", flightNo: "MM706", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "15:20", arrivalTime: "17:05", days: "매일", aircraft: "A320-200", direction: "OUTBOUND" },
   { airline: "피치항공", flightNo: "MM710", depAirport: "인천", depAirportCode: "ICN", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "21:00", arrivalTime: "22:45", days: "매일", aircraft: "A320-200", direction: "OUTBOUND" },
 
-  // -- Busan (PUS) / Cheongju (CJJ) -> Kansai/Osaka (KIX) --
-  { airline: "에어부산", flightNo: "BX122", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "08:35", arrivalTime: "10:00", days: "매일", direction: "OUTBOUND" },
-  { airline: "에어부산", flightNo: "BX124", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "16:30", arrivalTime: "18:00", days: "매일", direction: "OUTBOUND" },
-  { airline: "티웨이항공", flightNo: "TW523", depAirport: "청주", depAirportCode: "CJJ", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "10:00", arrivalTime: "11:30", days: "매일", direction: "OUTBOUND" },
+  // -- Busan (PUS) -> Kansai/Osaka (KIX) Official Timetable --
+  { airline: "에어부산", flightNo: "BX124", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "08:30", arrivalTime: "10:05", days: "매일", aircraft: "A321neo / A321-200 / A321LR", direction: "OUTBOUND" },
+  { airline: "에어부산", flightNo: "BX126", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "11:25", arrivalTime: "12:55", days: "매일", aircraft: "A321neo / A321-200 / A321LR", direction: "OUTBOUND" },
+  { airline: "에어부산", flightNo: "BX122", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "16:30", arrivalTime: "17:55", days: "매일", aircraft: "A321neo / A321-200 / A321LR", direction: "OUTBOUND" },
+  { airline: "진에어", flightNo: "LJ255", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "08:45", arrivalTime: "09:55", days: "매일", aircraft: "B737-800", direction: "OUTBOUND" },
+  { airline: "진에어", flightNo: "LJ251", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "13:35", arrivalTime: "15:05", days: "매일", aircraft: "B737-800", direction: "OUTBOUND" },
+  { airline: "진에어", flightNo: "LJ253", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "15:05", arrivalTime: "16:35", days: "매일", aircraft: "B737-800", direction: "OUTBOUND" },
+  { airline: "진에어", flightNo: "LJ257", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "15:50", arrivalTime: "17:20", days: "매일", aircraft: "B737-800", direction: "OUTBOUND" },
+  { airline: "제주항공", flightNo: "7C1351", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "08:30", arrivalTime: "09:50", days: "매일", aircraft: "B737-800", direction: "OUTBOUND" },
+  { airline: "제주항공", flightNo: "7C1371", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "17:30", arrivalTime: "19:00", days: "주 3회", aircraft: "B737-800", direction: "OUTBOUND" },
+  { airline: "제주항공", flightNo: "7C1353", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "17:00", arrivalTime: "18:10", days: "매일", aircraft: "B737-800", direction: "OUTBOUND" },
+  { airline: "티웨이항공", flightNo: "TW319", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "09:25", arrivalTime: "10:55", days: "매일", aircraft: "B737-800", direction: "OUTBOUND" },
+  { airline: "티웨이항공", flightNo: "TW321", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "14:05", arrivalTime: "15:35", days: "매일", aircraft: "B737-800", direction: "OUTBOUND" },
+  { airline: "이스타항공", flightNo: "ZE913", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "07:55", arrivalTime: "09:40", days: "매일", aircraft: "B737-800 / B737-8", direction: "OUTBOUND" },
+  { airline: "이스타항공", flightNo: "ZE915", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "14:20", arrivalTime: "15:50", days: "매일", aircraft: "B737-800 / B737-8", direction: "OUTBOUND" },
+
+  // -- Cheongju (CJJ) -> Kansai/Osaka (KIX) --
+  { airline: "티웨이항공", flightNo: "TW523", depAirport: "청주", depAirportCode: "CJJ", arrAirport: "간사이(오사카)", arrAirportCode: "KIX", departureTime: "10:00", arrivalTime: "11:30", days: "매일", aircraft: "B737-800", direction: "OUTBOUND" },
 
   // Inbound (Kansai/Osaka -> Korea)
   // -- Kansai/Osaka (KIX) -> Gimpo (GMP) Official Timetable --
@@ -323,10 +337,24 @@ const FLIGHT_DATABASE: FlightSchedule[] = [
   { airline: "피치항공", flightNo: "MM709", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "18:10", arrivalTime: "20:15", days: "매일", aircraft: "A320-200", direction: "INBOUND" },
   { airline: "피치항공", flightNo: "MM711", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "19:55", arrivalTime: "21:55", days: "매일", aircraft: "A320-200", direction: "INBOUND" },
 
-  // -- Kansai/Osaka (KIX) -> Busan (PUS) / Cheongju (CJJ) --
-  { airline: "에어부산", flightNo: "BX121", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "11:00", arrivalTime: "12:30", days: "매일", direction: "INBOUND" },
-  { airline: "에어부산", flightNo: "BX123", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "19:00", arrivalTime: "20:30", days: "매일", direction: "INBOUND" },
-  { airline: "티웨이항공", flightNo: "TW524", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "청주", arrAirportCode: "CJJ", departureTime: "12:30", arrivalTime: "14:00", days: "매일", direction: "INBOUND" },
+  // -- Kansai/Osaka (KIX) -> Busan (PUS) Official Timetable --
+  { airline: "에어부산", flightNo: "BX123", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "11:00", arrivalTime: "13:00", days: "매일", aircraft: "A321neo / A321-200 / A321LR", direction: "INBOUND" },
+  { airline: "에어부산", flightNo: "BX125", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "14:00", arrivalTime: "15:40", days: "매일", aircraft: "A321neo / A321-200 / A321LR", direction: "INBOUND" },
+  { airline: "에어부산", flightNo: "BX121", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "18:50", arrivalTime: "20:30", days: "매일", aircraft: "A321neo / A321-200 / A321LR", direction: "INBOUND" },
+  { airline: "진에어", flightNo: "LJ252", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "10:35", arrivalTime: "12:05", days: "매일", aircraft: "B737-800", direction: "INBOUND" },
+  { airline: "진에어", flightNo: "LJ256", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "10:55", arrivalTime: "12:25", days: "매일", aircraft: "B737-800", direction: "INBOUND" },
+  { airline: "진에어", flightNo: "LJ254", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "17:35", arrivalTime: "18:55", days: "매일", aircraft: "B737-800", direction: "INBOUND" },
+  { airline: "진에어", flightNo: "LJ258", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "18:20", arrivalTime: "19:50", days: "매일", aircraft: "B737-800", direction: "INBOUND" },
+  { airline: "제주항공", flightNo: "7C1352", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "10:40", arrivalTime: "12:10", days: "매일", aircraft: "B737-800", direction: "INBOUND" },
+  { airline: "제주항공", flightNo: "7C1372", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "20:00", arrivalTime: "21:35", days: "주 3회", aircraft: "B737-800", direction: "INBOUND" },
+  { airline: "제주항공", flightNo: "7C1354", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "19:00", arrivalTime: "20:30", days: "매일", aircraft: "B737-800", direction: "INBOUND" },
+  { airline: "티웨이항공", flightNo: "TW322", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "16:35", arrivalTime: "18:10", days: "매일", aircraft: "B737-800", direction: "INBOUND" },
+  { airline: "티웨이항공", flightNo: "TW320", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "18:40", arrivalTime: "20:15", days: "매일", aircraft: "B737-800", direction: "INBOUND" },
+  { airline: "이스타항공", flightNo: "ZE914", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "10:50", arrivalTime: "12:20", days: "매일", aircraft: "B737-800 / B737-8", direction: "INBOUND" },
+  { airline: "이스타항공", flightNo: "ZE916", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "17:00", arrivalTime: "18:30", days: "매일", aircraft: "B737-800 / B737-8", direction: "INBOUND" },
+
+  // -- Kansai/Osaka (KIX) -> Cheongju (CJJ) --
+  { airline: "티웨이항공", flightNo: "TW524", depAirport: "간사이(오사카)", depAirportCode: "KIX", arrAirport: "청주", arrAirportCode: "CJJ", departureTime: "12:30", arrivalTime: "14:00", days: "매일", aircraft: "B737-800", direction: "INBOUND" },
 
   // ----------------------------------------------------
   // 5. Tokyo Haneda / Narita (HND / NRT) - 도쿄
