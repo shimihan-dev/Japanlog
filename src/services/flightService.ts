@@ -31,9 +31,26 @@ export const isFlightApiConfigured = Boolean(icnApiKey || korApiKey);
 
 export const AEROTYPE_BASE_URL = "https://aerotype-iota.vercel.app/";
 
+const AEROTYPE_MODEL_ALIAS_MAP: Record<string, string> = {
+  // Boeing 737 MAX Series
+  "B737-8": "B737-MAX8",
+  "737-8": "B737-MAX8",
+  "B737-9": "B737-MAX9",
+  "737-9": "B737-MAX9",
+  "B737-7": "B737-MAX7",
+  "737-7": "B737-MAX7",
+  "B737-10": "B737-MAX10",
+  "737-10": "B737-MAX10",
+
+  // Airbus Series
+  "A321-200": "A321",
+  "A320-200": "A320",
+};
+
 export function getAerotypeUrl(aircraftModel: string): string {
   const cleaned = aircraftModel.trim();
-  return `${AEROTYPE_BASE_URL}?id=${encodeURIComponent(cleaned)}`;
+  const targetId = AEROTYPE_MODEL_ALIAS_MAP[cleaned] || cleaned;
+  return `${AEROTYPE_BASE_URL}?id=${encodeURIComponent(targetId)}`;
 }
 
 export const PREFECTURE_AIRPORTS_MAP: Record<number, PrefectureAirportConfig> = {
