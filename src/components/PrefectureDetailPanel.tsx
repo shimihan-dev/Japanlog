@@ -258,7 +258,7 @@ export const PrefectureDetailPanel: React.FC<PrefectureDetailPanelProps> = ({
 // Sub-component for Direct Flight Schedules & Gateway Airport Real-time Fetcher
 import { fetchLiveAirportFlights, PREFECTURE_AIRPORTS_MAP } from "../services/flightService";
 import type { FlightSchedule } from "../services/flightService";
-import { Clock, Calendar, RefreshCw, AlertCircle } from "lucide-react";
+import { Clock, Calendar, RefreshCw, AlertCircle, ArrowLeftRight, PlaneTakeoff, PlaneLanding } from "lucide-react";
 
 const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) => {
   const airportConfig = PREFECTURE_AIRPORTS_MAP[prefCode] || {
@@ -269,6 +269,7 @@ const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) =>
   const [selectedAirportCode, setSelectedAirportCode] = useState<string>(
     airportConfig.airports[0]?.code || "KIX"
   );
+  const [directionFilter, setDirectionFilter] = useState<"ALL" | "OUTBOUND" | "INBOUND">("ALL");
   const [depFilter, setDepFilter] = useState<string>("ALL");
   const [schedules, setSchedules] = useState<FlightSchedule[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
@@ -281,10 +282,10 @@ const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) =>
     }
   }, [prefCode]);
 
-  // Fetch live flight data whenever selected airport or departure airport filter changes
+  // Fetch live flight data whenever selected airport, direction filter, or Korean airport filter changes
   const loadFlights = React.useCallback(() => {
     setLoading(true);
-    fetchLiveAirportFlights(selectedAirportCode, depFilter)
+    fetchLiveAirportFlights(selectedAirportCode, depFilter, directionFilter)
       .then((data) => {
         setSchedules(data);
         const now = new Date();
@@ -294,7 +295,7 @@ const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) =>
       .finally(() => {
         setLoading(false);
       });
-  }, [selectedAirportCode, depFilter]);
+  }, [selectedAirportCode, depFilter, directionFilter]);
 
   React.useEffect(() => {
     loadFlights();
@@ -310,7 +311,7 @@ const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) =>
           <span className="text-[11px] font-bold text-slate-800 dark:text-slate-200 flex items-center space-x-1">
             <Plane className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
             <span>
-              {airportConfig.hasDirectFlight ? "직항 공항 선택 & 실시간 운항 정보" : "관문 공항 선택 & 실시간 운항 정보"}
+              {airportConfig.hasDirectFlight ? "직항 공항 선택 & 실시간 왕복 운항 정보" : "관문 공항 선택 & 실시간 왕복 운항 정보"}
             </span>
           </span>
 
@@ -328,7 +329,7 @@ const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) =>
         {!airportConfig.hasDirectFlight && (
           <p className="text-[10px] text-amber-700 dark:text-amber-300 bg-amber-50 dark:bg-amber-950/60 p-1.5 rounded-lg border border-amber-200/60 dark:border-amber-800/60 flex items-start space-x-1">
             <AlertCircle className="w-3 h-3 shrink-0 mt-0.5" />
-            <span>직항 미보유 지역입니다. 아래 **가장 가까운 관문 공항**을 클릭하여 실시간 항공편을 조회해보세요.</span>
+            <span>직항 미보유 지역입니다. 아래 **가장 가까운 관문 공항**을 클릭하여 실시간 왕복 항공편을 조회해보세요.</span>
           </p>
         )}
       </div>
@@ -354,76 +355,136 @@ const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) =>
         </div>
       )}
 
-      {/* 3. Departure Airport Filter Tabs */}
-      <div className="flex bg-slate-200/60 dark:bg-slate-800 p-0.5 rounded-lg text-[10px] font-semibold">
-        {[
-          { code: "ALL", label: "전체" },
-          { code: "ICN", label: "인천" },
-          { code: "PUS", label: "부산" },
-          { code: "GMP", label: "김포" },
-          { code: "CJJ", label: "청주/기타" },
-        ].map((tab) => (
+      {/* 3. Direction Filter Tabs (Round-Trip vs Outbound vs Inbound) */}
+      <div className="space-y-1">
+        <div className="flex bg-slate-100 dark:bg-slate-800/90 p-0.5 rounded-lg text-[10px] font-bold border border-slate-200/50 dark:border-slate-700/50">
           <button
-            key={tab.code}
             type="button"
-            onClick={() => setDepFilter(tab.code)}
-            className={`flex-1 py-1 rounded transition-all ${
-              depFilter === tab.code
-                ? "bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 shadow-xs font-bold"
-                : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
+            onClick={() => setDirectionFilter("ALL")}
+            className={`flex-1 py-1 px-1.5 rounded transition-all flex items-center justify-center space-x-1 ${
+              directionFilter === "ALL"
+                ? "bg-blue-600 text-white shadow-xs font-extrabold"
+                : "text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-700"
             }`}
           >
-            {tab.label}
+            <ArrowLeftRight className="w-3 h-3" />
+            <span>왕복 전체</span>
           </button>
-        ))}
+          <button
+            type="button"
+            onClick={() => setDirectionFilter("OUTBOUND")}
+            className={`flex-1 py-1 px-1.5 rounded transition-all flex items-center justify-center space-x-1 ${
+              directionFilter === "OUTBOUND"
+                ? "bg-blue-600 text-white shadow-xs font-extrabold"
+                : "text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-700"
+            }`}
+          >
+            <PlaneTakeoff className="w-3 h-3" />
+            <span>한국 ➔ 일본</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => setDirectionFilter("INBOUND")}
+            className={`flex-1 py-1 px-1.5 rounded transition-all flex items-center justify-center space-x-1 ${
+              directionFilter === "INBOUND"
+                ? "bg-emerald-600 text-white shadow-xs font-extrabold"
+                : "text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-700"
+            }`}
+          >
+            <PlaneLanding className="w-3 h-3" />
+            <span>일본 ➔ 한국</span>
+          </button>
+        </div>
+
+        {/* 4. Korean Airport Filter Tabs */}
+        <div className="flex bg-slate-200/60 dark:bg-slate-800 p-0.5 rounded-lg text-[10px] font-semibold">
+          {[
+            { code: "ALL", label: "전체 공항" },
+            { code: "ICN", label: "인천" },
+            { code: "PUS", label: "부산" },
+            { code: "GMP", label: "김포" },
+            { code: "CJJ", label: "청주/대구/기타" },
+          ].map((tab) => (
+            <button
+              key={tab.code}
+              type="button"
+              onClick={() => setDepFilter(tab.code)}
+              className={`flex-1 py-1 rounded transition-all ${
+                depFilter === tab.code
+                  ? "bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 shadow-xs font-bold"
+                  : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* 4. Live Flight Cards List */}
-      <div className="space-y-1.5 max-h-[220px] overflow-y-auto pr-1">
+      {/* 5. Live Flight Cards List */}
+      <div className="space-y-1.5 max-h-[240px] overflow-y-auto pr-1">
         {loading ? (
           <div className="text-center py-6 text-[10px] text-blue-600 dark:text-blue-400 flex flex-col items-center justify-center space-y-1.5">
             <RefreshCw className="w-4 h-4 animate-spin" />
-            <span className="font-semibold">{activeAirportObj?.name} 실시간 최신 운항 데이터 가져오는 중...</span>
+            <span className="font-semibold">{activeAirportObj?.name} 실시간 왕복 운항 데이터 가져오는 중...</span>
           </div>
         ) : schedules.length === 0 ? (
           <div className="text-center py-4 text-[10px] text-slate-400">
-            선택한 {activeAirportObj?.name} 공항에 대한 직항 노선 스케줄이 없습니다.
+            선택한 조건의 직항/왕복 노선 스케줄이 없습니다.
           </div>
         ) : (
-          schedules.map((flight, idx) => (
-            <div
-              key={`${flight.flightNo}-${idx}`}
-              className="p-2 bg-white dark:bg-slate-800/80 rounded-lg border border-slate-100 dark:border-slate-700/80 flex items-center justify-between text-[10px] hover:border-slate-300 dark:hover:border-slate-600 transition-colors"
-            >
-              <div className="space-y-0.5">
-                <div className="flex items-center space-x-1.5 font-bold text-slate-900 dark:text-slate-100">
-                  <span className="text-blue-600 dark:text-blue-400">{flight.airline}</span>
-                  <span className="px-1 py-0.2 bg-slate-100 dark:bg-slate-700 rounded text-slate-600 dark:text-slate-300">{flight.flightNo}</span>
-                  {flight.isLive && (
-                    <span className="px-1 py-0.2 bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 rounded text-[9px]">LIVE</span>
-                  )}
-                </div>
-                <div className="text-slate-500 dark:text-slate-400 flex items-center space-x-1">
-                  <span>{flight.depAirport} ({flight.depAirportCode})</span>
-                  <span>➔</span>
-                  <span className="font-semibold text-slate-700 dark:text-slate-300">{flight.arrAirport} ({flight.arrAirportCode})</span>
-                </div>
-              </div>
+          schedules.map((flight, idx) => {
+            const isOutbound = flight.direction === "OUTBOUND" || flight.arrAirportCode === selectedAirportCode;
 
-              <div className="text-right space-y-0.5">
-                <div className="font-extrabold text-blue-700 dark:text-blue-300 flex items-center justify-end space-x-1">
-                  <Clock className="w-2.5 h-2.5" />
-                  <span>{flight.departureTime} ~ {flight.arrivalTime}</span>
+            return (
+              <div
+                key={`${flight.flightNo}-${idx}`}
+                className="p-2 bg-white dark:bg-slate-800/80 rounded-lg border border-slate-100 dark:border-slate-700/80 flex items-center justify-between text-[10px] hover:border-slate-300 dark:hover:border-slate-600 transition-colors"
+              >
+                <div className="space-y-0.5">
+                  <div className="flex items-center space-x-1 font-bold text-slate-900 dark:text-slate-100">
+                    <span
+                      className={`px-1 py-0.2 rounded text-[9px] font-black ${
+                        isOutbound
+                          ? "bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300"
+                          : "bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300"
+                      }`}
+                    >
+                      {isOutbound ? "🛫 한국➔일본" : "🛬 일본➔한국"}
+                    </span>
+                    <span className="text-blue-600 dark:text-blue-400">{flight.airline}</span>
+                    <span className="px-1 py-0.2 bg-slate-100 dark:bg-slate-700 rounded text-slate-600 dark:text-slate-300">{flight.flightNo}</span>
+                    {flight.isLive && (
+                      <span className="px-1 py-0.2 bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 rounded text-[9px]">LIVE</span>
+                    )}
+                  </div>
+                  <div className="text-slate-500 dark:text-slate-400 flex items-center space-x-1 font-medium">
+                    <span className={isOutbound ? "font-semibold text-slate-700 dark:text-slate-300" : ""}>
+                      {flight.depAirport} ({flight.depAirportCode})
+                    </span>
+                    <span>➔</span>
+                    <span className={!isOutbound ? "font-semibold text-slate-700 dark:text-slate-300" : ""}>
+                      {flight.arrAirport} ({flight.arrAirportCode})
+                    </span>
+                  </div>
                 </div>
-                <div className="text-[9px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center justify-end space-x-0.5">
-                  <Calendar className="w-2.5 h-2.5" />
-                  <span>{flight.days}</span>
+
+                <div className="text-right space-y-0.5">
+                  <div className="font-extrabold text-blue-700 dark:text-blue-300 flex items-center justify-end space-x-1">
+                    <Clock className="w-2.5 h-2.5" />
+                    <span>{flight.departureTime} ~ {flight.arrivalTime}</span>
+                  </div>
+                  <div className="text-[9px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center justify-end space-x-0.5">
+                    <Calendar className="w-2.5 h-2.5" />
+                    <span>{flight.days}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))
+            );
+          })
         )}
       </div>
     </div>
   );
 };
+
