@@ -412,8 +412,10 @@ const FLIGHT_DATABASE: FlightSchedule[] = [
   { airline: "피치항공", flightNo: "MM652", depAirport: "인천", depAirportCode: "ICN", arrAirport: "도쿄 나리타", arrAirportCode: "NRT", departureTime: "13:35", arrivalTime: "16:15", days: "매일", aircraft: "A320", direction: "OUTBOUND" },
 
   // -- Busan (PUS) / Cheongju (CJJ) -> Narita (NRT) --
-  { airline: "에어부산", flightNo: "BX111", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "도쿄 나리타", arrAirportCode: "NRT", departureTime: "08:05", arrivalTime: "10:10", days: "매일", direction: "OUTBOUND" },
-  { airline: "티웨이항공", flightNo: "TW527", depAirport: "청주", depAirportCode: "CJJ", arrAirport: "도쿄 나리타", arrAirportCode: "NRT", departureTime: "09:30", arrivalTime: "11:40", days: "매일", direction: "OUTBOUND" },
+  { airline: "에어부산", flightNo: "BX111", depAirport: "김해(부산)", depAirportCode: "PUS", arrAirport: "도쿄 나리타", arrAirportCode: "NRT", departureTime: "08:05", arrivalTime: "10:10", days: "매일", aircraft: "A321-200 / A321neo", direction: "OUTBOUND" },
+  { airline: "에어로케이", flightNo: "RF392", depAirport: "청주", depAirportCode: "CJJ", arrAirport: "도쿄 나리타", arrAirportCode: "NRT", departureTime: "07:25", arrivalTime: "09:40", days: "매일", aircraft: "A320-200", direction: "OUTBOUND" },
+  { airline: "에어로케이", flightNo: "RF322", depAirport: "청주", depAirportCode: "CJJ", arrAirport: "도쿄 나리타", arrAirportCode: "NRT", departureTime: "09:30", arrivalTime: "11:50", days: "매일", aircraft: "A320-200", direction: "OUTBOUND" },
+  { airline: "에어로케이", flightNo: "RF324", depAirport: "청주", depAirportCode: "CJJ", arrAirport: "도쿄 나리타", arrAirportCode: "NRT", departureTime: "16:15", arrivalTime: "18:45", days: "매일", aircraft: "A320-200", direction: "OUTBOUND" },
 
   // Inbound (Tokyo -> Korea)
   // -- Haneda (HND) -> Gimpo (GMP) Official Timetable --
@@ -467,8 +469,10 @@ const FLIGHT_DATABASE: FlightSchedule[] = [
   { airline: "피치항공", flightNo: "MM651", depAirport: "도쿄 나리타", depAirportCode: "NRT", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "09:30", arrivalTime: "12:25", days: "매일", aircraft: "A320", direction: "INBOUND" },
 
   // -- Narita (NRT) -> Busan (PUS) / Cheongju (CJJ) --
-  { airline: "에어부산", flightNo: "BX112", depAirport: "도쿄 나리타", depAirportCode: "NRT", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "11:10", arrivalTime: "13:30", days: "매일", direction: "INBOUND" },
-  { airline: "티웨이항공", flightNo: "TW528", depAirport: "도쿄 나리타", depAirportCode: "NRT", arrAirport: "청주", arrAirportCode: "CJJ", departureTime: "12:40", arrivalTime: "15:00", days: "매일", direction: "INBOUND" },
+  { airline: "에어부산", flightNo: "BX112", depAirport: "도쿄 나리타", depAirportCode: "NRT", arrAirport: "김해(부산)", arrAirportCode: "PUS", departureTime: "11:10", arrivalTime: "13:30", days: "매일", aircraft: "A321-200 / A321neo", direction: "INBOUND" },
+  { airline: "에어로케이", flightNo: "RF391", depAirport: "도쿄 나리타", depAirportCode: "NRT", arrAirport: "청주", arrAirportCode: "CJJ", departureTime: "10:40", arrivalTime: "13:05", days: "매일", aircraft: "A320-200", direction: "INBOUND" },
+  { airline: "에어로케이", flightNo: "RF321", depAirport: "도쿄 나리타", depAirportCode: "NRT", arrAirport: "청주", arrAirportCode: "CJJ", departureTime: "13:05", arrivalTime: "15:30", days: "매일", aircraft: "A320-200", direction: "INBOUND" },
+  { airline: "에어로케이", flightNo: "RF323", depAirport: "도쿄 나리타", depAirportCode: "NRT", arrAirport: "청주", arrAirportCode: "CJJ", departureTime: "19:35", arrivalTime: "21:55", days: "매일", aircraft: "A320-200", direction: "INBOUND" },
 
   // ----------------------------------------------------
   // 6. Sapporo Chitose (CTS) - 삿포로
@@ -563,13 +567,11 @@ const FLIGHT_DATABASE: FlightSchedule[] = [
   // ----------------------------------------------------
   // 12. Kumamoto (KMJ) - 구마모토
   // ----------------------------------------------------
-  { airline: "대한항공", flightNo: "KE797", depAirport: "인천", depAirportCode: "ICN", arrAirport: "구마모토", arrAirportCode: "KMJ", departureTime: "15:50", arrivalTime: "17:25", days: "월,수,금,일", aircraft: "A321neo", direction: "OUTBOUND" },
-  { airline: "아시아나항공", flightNo: "OZ158", depAirport: "인천", depAirportCode: "ICN", arrAirport: "구마모토", arrAirportCode: "KMJ", departureTime: "10:20", arrivalTime: "11:50", days: "목,일", aircraft: "A321neo / A321-200", direction: "OUTBOUND" },
-  { airline: "티웨이항공", flightNo: "TW295", depAirport: "인천", depAirportCode: "ICN", arrAirport: "구마모토", arrAirportCode: "KMJ", departureTime: "07:45", arrivalTime: "09:15", days: "매일", aircraft: "B737-800", direction: "OUTBOUND" },
+  { airline: "대한항공", flightNo: "KE2155", depAirport: "인천", depAirportCode: "ICN", arrAirport: "구마모토", arrAirportCode: "KMJ", departureTime: "17:05", arrivalTime: "18:35", days: "매일", aircraft: "A220-300", direction: "OUTBOUND" },
+  { airline: "티웨이항공", flightNo: "TW287", depAirport: "인천", depAirportCode: "ICN", arrAirport: "구마모토", arrAirportCode: "KMJ", departureTime: "07:55", arrivalTime: "09:25", days: "매일", aircraft: "B737-800", direction: "OUTBOUND" },
   // Return
-  { airline: "대한항공", flightNo: "KE798", depAirport: "구마모토", depAirportCode: "KMJ", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "18:35", arrivalTime: "20:15", days: "월,수,금,일", aircraft: "A321neo", direction: "INBOUND" },
-  { airline: "아시아나항공", flightNo: "OZ157", depAirport: "구마모토", depAirportCode: "KMJ", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "12:50", arrivalTime: "14:20", days: "목,일", aircraft: "A321neo / A321-200", direction: "INBOUND" },
-  { airline: "티웨이항공", flightNo: "TW296", depAirport: "구마모토", depAirportCode: "KMJ", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "10:15", arrivalTime: "11:45", days: "매일", aircraft: "B737-800", direction: "INBOUND" },
+  { airline: "대한항공", flightNo: "KE2156", depAirport: "구마모토", depAirportCode: "KMJ", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "19:35", arrivalTime: "21:20", days: "매일", aircraft: "A220-300", direction: "INBOUND" },
+  { airline: "티웨이항공", flightNo: "TW288", depAirport: "구마모토", depAirportCode: "KMJ", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "10:25", arrivalTime: "12:00", days: "매일", aircraft: "B737-800", direction: "INBOUND" },
 
   // ----------------------------------------------------
   // 13. Kagoshima (KOJ) - 가고시마
