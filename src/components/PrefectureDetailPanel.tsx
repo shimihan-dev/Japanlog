@@ -256,9 +256,9 @@ export const PrefectureDetailPanel: React.FC<PrefectureDetailPanelProps> = ({
 };
 
 // Sub-component for Direct Flight Schedules & Gateway Airport Real-time Fetcher
-import { fetchLiveAirportFlights, hasGimpoFlightsForAirport, PREFECTURE_AIRPORTS_MAP } from "../services/flightService";
+import { fetchLiveAirportFlights, hasGimpoFlightsForAirport, getAerotypeUrl, PREFECTURE_AIRPORTS_MAP } from "../services/flightService";
 import type { FlightSchedule } from "../services/flightService";
-import { Clock, Calendar, RefreshCw, AlertCircle, ArrowLeftRight, PlaneTakeoff, PlaneLanding } from "lucide-react";
+import { Clock, Calendar, RefreshCw, AlertCircle, ArrowLeftRight, PlaneTakeoff, PlaneLanding, ExternalLink } from "lucide-react";
 
 const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) => {
   const airportConfig = PREFECTURE_AIRPORTS_MAP[prefCode] || {
@@ -458,46 +458,74 @@ const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) =>
             return (
               <div
                 key={`${flight.flightNo}-${idx}`}
-                className="p-2 bg-white dark:bg-slate-800/80 rounded-lg border border-slate-100 dark:border-slate-700/80 flex items-center justify-between text-[10px] gap-2 hover:border-slate-300 dark:hover:border-slate-600 transition-colors"
+                className="p-2 bg-white dark:bg-slate-800/80 rounded-lg border border-slate-100 dark:border-slate-700/80 hover:border-slate-300 dark:hover:border-slate-600 transition-colors space-y-1.5"
               >
-                <div className="space-y-0.5 min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-1 font-bold text-slate-900 dark:text-slate-100">
-                    <span
-                      className={`px-1.5 py-0.2 rounded text-[9px] font-black shrink-0 whitespace-nowrap ${
-                        isOutbound
-                          ? "bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300"
-                          : "bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300"
-                      }`}
-                    >
-                      {isOutbound ? "🛫 한국➔일본" : "🛬 일본➔한국"}
-                    </span>
-                    <span className="text-blue-600 dark:text-blue-400 font-bold shrink-0 whitespace-nowrap">{flight.airline}</span>
-                    <span className="px-1 py-0.2 bg-slate-100 dark:bg-slate-700 rounded text-slate-600 dark:text-slate-300 font-mono text-[9px] shrink-0 whitespace-nowrap">{flight.flightNo}</span>
-                    {flight.isLive && (
-                      <span className="px-1 py-0.2 bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 rounded text-[9px] shrink-0 whitespace-nowrap">LIVE</span>
-                    )}
+                <div className="flex items-center justify-between text-[10px] gap-2">
+                  <div className="space-y-0.5 min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-1 font-bold text-slate-900 dark:text-slate-100">
+                      <span
+                        className={`px-1.5 py-0.2 rounded text-[9px] font-black shrink-0 whitespace-nowrap ${
+                          isOutbound
+                            ? "bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300"
+                            : "bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300"
+                        }`}
+                      >
+                        {isOutbound ? "🛫 한국➔일본" : "🛬 일본➔한국"}
+                      </span>
+                      <span className="text-blue-600 dark:text-blue-400 font-bold shrink-0 whitespace-nowrap">{flight.airline}</span>
+                      <span className="px-1 py-0.2 bg-slate-100 dark:bg-slate-700 rounded text-slate-600 dark:text-slate-300 font-mono text-[9px] shrink-0 whitespace-nowrap">{flight.flightNo}</span>
+                      {flight.isLive && (
+                        <span className="px-1 py-0.2 bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 rounded text-[9px] shrink-0 whitespace-nowrap">LIVE</span>
+                      )}
+                    </div>
+                    <div className="text-slate-500 dark:text-slate-400 flex items-center space-x-1 font-medium text-[10px] whitespace-nowrap overflow-hidden text-ellipsis">
+                      <span className={isOutbound ? "font-semibold text-slate-700 dark:text-slate-300" : ""}>
+                        {flight.depAirport} ({flight.depAirportCode})
+                      </span>
+                      <span>➔</span>
+                      <span className={!isOutbound ? "font-semibold text-slate-700 dark:text-slate-300" : ""}>
+                        {flight.arrAirport} ({flight.arrAirportCode})
+                      </span>
+                    </div>
                   </div>
-                  <div className="text-slate-500 dark:text-slate-400 flex items-center space-x-1 font-medium text-[10px] whitespace-nowrap overflow-hidden text-ellipsis">
-                    <span className={isOutbound ? "font-semibold text-slate-700 dark:text-slate-300" : ""}>
-                      {flight.depAirport} ({flight.depAirportCode})
-                    </span>
-                    <span>➔</span>
-                    <span className={!isOutbound ? "font-semibold text-slate-700 dark:text-slate-300" : ""}>
-                      {flight.arrAirport} ({flight.arrAirportCode})
-                    </span>
+
+                  <div className="text-right space-y-0.5 shrink-0 whitespace-nowrap pl-1">
+                    <div className="font-extrabold text-blue-700 dark:text-blue-300 flex items-center justify-end space-x-1 text-[11px] whitespace-nowrap">
+                      <Clock className="w-3 h-3 shrink-0" />
+                      <span className="whitespace-nowrap">{flight.departureTime} ~ {flight.arrivalTime}</span>
+                    </div>
+                    <div className="text-[9px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center justify-end space-x-0.5 whitespace-nowrap">
+                      <Calendar className="w-2.5 h-2.5 shrink-0" />
+                      <span className="whitespace-nowrap">{flight.days}</span>
+                    </div>
                   </div>
                 </div>
 
-                <div className="text-right space-y-0.5 shrink-0 whitespace-nowrap pl-1">
-                  <div className="font-extrabold text-blue-700 dark:text-blue-300 flex items-center justify-end space-x-1 text-[11px] whitespace-nowrap">
-                    <Clock className="w-3 h-3 shrink-0" />
-                    <span className="whitespace-nowrap">{flight.departureTime} ~ {flight.arrivalTime}</span>
+                {/* Aerotype Aircraft Badges */}
+                {flight.aircraft && (
+                  <div className="flex flex-wrap items-center gap-1 pt-1 border-t border-slate-100 dark:border-slate-700/50 text-[9px]">
+                    <span className="text-slate-400 dark:text-slate-500 font-medium shrink-0 flex items-center gap-0.5">
+                      ✈️ 기종:
+                    </span>
+                    {flight.aircraft.split("/").map((model, mIdx) => {
+                      const trimmedModel = model.trim();
+                      const aerotypeUrl = getAerotypeUrl(trimmedModel);
+                      return (
+                        <a
+                          key={mIdx}
+                          href={aerotypeUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title={`Aerotype에서 ${trimmedModel} 기종 상세정보 보기`}
+                          className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded bg-sky-50 hover:bg-sky-100 dark:bg-sky-950/70 dark:hover:bg-sky-900/80 text-sky-700 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/60 font-semibold text-[9px] transition-all hover:scale-105"
+                        >
+                          <span>{trimmedModel}</span>
+                          <ExternalLink className="w-2 h-2 text-sky-500 shrink-0" />
+                        </a>
+                      );
+                    })}
                   </div>
-                  <div className="text-[9px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center justify-end space-x-0.5 whitespace-nowrap">
-                    <Calendar className="w-2.5 h-2.5 shrink-0" />
-                    <span className="whitespace-nowrap">{flight.days}</span>
-                  </div>
-                </div>
+                )}
               </div>
             );
           })

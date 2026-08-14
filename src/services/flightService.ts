@@ -29,6 +29,13 @@ const korApiKey = (import.meta.env.VITE_KOR_AIRPORT_API_KEY || "").trim();
 
 export const isFlightApiConfigured = Boolean(icnApiKey || korApiKey);
 
+export const AEROTYPE_BASE_URL = "https://aerotype-iota.vercel.app/";
+
+export function getAerotypeUrl(aircraftModel: string): string {
+  const cleaned = aircraftModel.trim();
+  return `${AEROTYPE_BASE_URL}?id=${encodeURIComponent(cleaned)}`;
+}
+
 export const PREFECTURE_AIRPORTS_MAP: Record<number, PrefectureAirportConfig> = {
   1: { hasDirectFlight: true, airports: [{ code: "CTS", name: "삿포로 신치토세" }] },
   2: { hasDirectFlight: true, airports: [{ code: "AOJ", name: "아오모리 공항" }] },
