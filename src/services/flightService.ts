@@ -582,6 +582,14 @@ const FLIGHT_DATABASE: FlightSchedule[] = [
   { airline: "아시아나항공", flightNo: "OZ151", depAirport: "센다이", depAirportCode: "SDJ", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "12:50", arrivalTime: "15:15", days: "화,금,일", direction: "INBOUND" },
 ];
 
+export function hasGimpoFlightsForAirport(airportCode: string): boolean {
+  return FLIGHT_DATABASE.some(
+    (f) =>
+      (f.arrAirportCode === airportCode || f.depAirportCode === airportCode) &&
+      (f.depAirportCode === "GMP" || f.arrAirportCode === "GMP")
+  );
+}
+
 export async function fetchLiveAirportFlights(
   airportCode: string,
   koreanAirportFilter: string = "ALL",
