@@ -607,9 +607,9 @@ const FLIGHT_DATABASE: FlightSchedule[] = [
   // ----------------------------------------------------
   // 17. Okayama (OKJ) - 오카야마
   // ----------------------------------------------------
-  { airline: "대한항공", flightNo: "KE773", depAirport: "인천", depAirportCode: "ICN", arrAirport: "오카야마", arrAirportCode: "OKJ", departureTime: "08:00", arrivalTime: "09:30", days: "매일", aircraft: "B737-8 / A321neo", direction: "OUTBOUND" },
+  { airline: "대한항공", flightNo: "KE773", depAirport: "인천", depAirportCode: "ICN", arrAirport: "오카야마", arrAirportCode: "OKJ", departureTime: "08:00", arrivalTime: "09:30", days: "매일", aircraft: "A220-300", direction: "OUTBOUND" },
   // Return
-  { airline: "대한항공", flightNo: "KE774", depAirport: "오카야마", depAirportCode: "OKJ", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "10:30", arrivalTime: "12:10", days: "매일", aircraft: "B737-8 / A321neo", direction: "INBOUND" },
+  { airline: "대한항공", flightNo: "KE774", depAirport: "오카야마", depAirportCode: "OKJ", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "10:30", arrivalTime: "12:10", days: "매일", aircraft: "A220-300", direction: "INBOUND" },
 
   // ----------------------------------------------------
   // 18. Nagasaki (NGS) - 나가사키
