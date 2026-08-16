@@ -45,6 +45,9 @@ const AEROTYPE_MODEL_ALIAS_MAP: Record<string, string> = {
   // Airbus Series
   "A321-200": "A321",
   "A320-200": "A320",
+
+  // Boeing 767 Series
+  "B767-300ER": "767-300ER",
 };
 
 export function getAerotypeUrl(aircraftModel: string): string {
@@ -361,18 +364,18 @@ const FLIGHT_DATABASE: FlightSchedule[] = [
   // ----------------------------------------------------
   // Outbound (Korea -> Tokyo)
   // -- Gimpo (GMP) -> Haneda (HND) Official Timetable --
-  { airline: "대한항공", flightNo: "KE2101", depAirport: "김포", depAirportCode: "GMP", arrAirport: "도쿄 하네다", arrAirportCode: "HND", departureTime: "09:00", arrivalTime: "11:20", days: "매일", direction: "OUTBOUND" },
-  { airline: "대한항공", flightNo: "KE2103", depAirport: "김포", depAirportCode: "GMP", arrAirport: "도쿄 하네다", arrAirportCode: "HND", departureTime: "16:10", arrivalTime: "18:30", days: "매일", direction: "OUTBOUND" },
-  { airline: "대한항공", flightNo: "KE2105", depAirport: "김포", depAirportCode: "GMP", arrAirport: "도쿄 하네다", arrAirportCode: "HND", departureTime: "18:40", arrivalTime: "21:00", days: "매일", direction: "OUTBOUND" },
-  { airline: "아시아나항공", flightNo: "OZ1085", depAirport: "김포", depAirportCode: "GMP", arrAirport: "도쿄 하네다", arrAirportCode: "HND", departureTime: "08:40", arrivalTime: "10:45", days: "매일", direction: "OUTBOUND" },
-  { airline: "아시아나항공", flightNo: "OZ1045", depAirport: "김포", depAirportCode: "GMP", arrAirport: "도쿄 하네다", arrAirportCode: "HND", departureTime: "15:45", arrivalTime: "17:50", days: "매일", direction: "OUTBOUND" },
-  { airline: "아시아나항공", flightNo: "OZ1065", depAirport: "김포", depAirportCode: "GMP", arrAirport: "도쿄 하네다", arrAirportCode: "HND", departureTime: "19:50", arrivalTime: "22:00", days: "매일", direction: "OUTBOUND" },
-  { airline: "일본항공", flightNo: "JL90", depAirport: "김포", depAirportCode: "GMP", arrAirport: "도쿄 하네다", arrAirportCode: "HND", departureTime: "07:55", arrivalTime: "10:00", days: "매일", direction: "OUTBOUND" },
-  { airline: "일본항공", flightNo: "JL92", depAirport: "김포", depAirportCode: "GMP", arrAirport: "도쿄 하네다", arrAirportCode: "HND", departureTime: "12:05", arrivalTime: "14:15", days: "매일", direction: "OUTBOUND" },
-  { airline: "일본항공", flightNo: "JL94", depAirport: "김포", depAirportCode: "GMP", arrAirport: "도쿄 하네다", arrAirportCode: "HND", departureTime: "19:20", arrivalTime: "21:30", days: "매일", direction: "OUTBOUND" },
-  { airline: "전일본공수(ANA)", flightNo: "NH862", depAirport: "김포", depAirportCode: "GMP", arrAirport: "도쿄 하네다", arrAirportCode: "HND", departureTime: "07:40", arrivalTime: "09:50", days: "매일", direction: "OUTBOUND" },
-  { airline: "전일본공수(ANA)", flightNo: "NH864", depAirport: "김포", depAirportCode: "GMP", arrAirport: "도쿄 하네다", arrAirportCode: "HND", departureTime: "12:40", arrivalTime: "14:55", days: "매일", direction: "OUTBOUND" },
-  { airline: "전일본공수(ANA)", flightNo: "NH868", depAirport: "김포", depAirportCode: "GMP", arrAirport: "도쿄 하네다", arrAirportCode: "HND", departureTime: "19:55", arrivalTime: "22:15", days: "매일", direction: "OUTBOUND" },
+  { airline: "대한항공", flightNo: "KE2101", depAirport: "김포", depAirportCode: "GMP", arrAirport: "도쿄 하네다", arrAirportCode: "HND", departureTime: "09:00", arrivalTime: "11:20", days: "매일", aircraft: "B787-10 / A330-300", direction: "OUTBOUND" },
+  { airline: "대한항공", flightNo: "KE2103", depAirport: "김포", depAirportCode: "GMP", arrAirport: "도쿄 하네다", arrAirportCode: "HND", departureTime: "16:10", arrivalTime: "18:30", days: "매일", aircraft: "B787-10 / A330-300", direction: "OUTBOUND" },
+  { airline: "대한항공", flightNo: "KE2105", depAirport: "김포", depAirportCode: "GMP", arrAirport: "도쿄 하네다", arrAirportCode: "HND", departureTime: "18:40", arrivalTime: "21:00", days: "매일", aircraft: "B787-10 / A330-300", direction: "OUTBOUND" },
+  { airline: "아시아나항공", flightNo: "OZ1085", depAirport: "김포", depAirportCode: "GMP", arrAirport: "도쿄 하네다", arrAirportCode: "HND", departureTime: "08:40", arrivalTime: "10:45", days: "매일", aircraft: "A330-300 / A321-200", direction: "OUTBOUND" },
+  { airline: "아시아나항공", flightNo: "OZ1045", depAirport: "김포", depAirportCode: "GMP", arrAirport: "도쿄 하네다", arrAirportCode: "HND", departureTime: "15:45", arrivalTime: "17:50", days: "매일", aircraft: "A330-300 / A321-200", direction: "OUTBOUND" },
+  { airline: "아시아나항공", flightNo: "OZ1065", depAirport: "김포", depAirportCode: "GMP", arrAirport: "도쿄 하네다", arrAirportCode: "HND", departureTime: "19:50", arrivalTime: "22:00", days: "매일", aircraft: "A330-300 / A321-200", direction: "OUTBOUND" },
+  { airline: "일본항공", flightNo: "JL90", depAirport: "김포", depAirportCode: "GMP", arrAirport: "도쿄 하네다", arrAirportCode: "HND", departureTime: "07:55", arrivalTime: "10:00", days: "매일", aircraft: "B787-8 / B787-9", direction: "OUTBOUND" },
+  { airline: "일본항공", flightNo: "JL92", depAirport: "김포", depAirportCode: "GMP", arrAirport: "도쿄 하네다", arrAirportCode: "HND", departureTime: "12:05", arrivalTime: "14:15", days: "매일", aircraft: "B787-8 / B787-9", direction: "OUTBOUND" },
+  { airline: "일본항공", flightNo: "JL94", depAirport: "김포", depAirportCode: "GMP", arrAirport: "도쿄 하네다", arrAirportCode: "HND", departureTime: "19:20", arrivalTime: "21:30", days: "매일", aircraft: "B787-8 / B787-9", direction: "OUTBOUND" },
+  { airline: "전일본공수(ANA)", flightNo: "NH862", depAirport: "김포", depAirportCode: "GMP", arrAirport: "도쿄 하네다", arrAirportCode: "HND", departureTime: "07:40", arrivalTime: "09:50", days: "매일", aircraft: "B787-8 / B767-300ER", direction: "OUTBOUND" },
+  { airline: "전일본공수(ANA)", flightNo: "NH864", depAirport: "김포", depAirportCode: "GMP", arrAirport: "도쿄 하네다", arrAirportCode: "HND", departureTime: "12:40", arrivalTime: "14:55", days: "매일", aircraft: "B787-8 / B767-300ER", direction: "OUTBOUND" },
+  { airline: "전일본공수(ANA)", flightNo: "NH868", depAirport: "김포", depAirportCode: "GMP", arrAirport: "도쿄 하네다", arrAirportCode: "HND", departureTime: "19:55", arrivalTime: "22:15", days: "매일", aircraft: "B787-8 / B767-300ER", direction: "OUTBOUND" },
 
   // -- Incheon (ICN) -> Narita (NRT) Official Timetable --
   { airline: "대한항공", flightNo: "KE703", depAirport: "인천", depAirportCode: "ICN", arrAirport: "도쿄 나리타", arrAirportCode: "NRT", departureTime: "10:10", arrivalTime: "12:40", days: "매일", aircraft: "A380-800 / B787-10 / A330-300 / B777-300ER / B777-300 / B747-8", direction: "OUTBOUND" },
@@ -419,18 +422,18 @@ const FLIGHT_DATABASE: FlightSchedule[] = [
 
   // Inbound (Tokyo -> Korea)
   // -- Haneda (HND) -> Gimpo (GMP) Official Timetable --
-  { airline: "대한항공", flightNo: "KE2106", depAirport: "도쿄 하네다", depAirportCode: "HND", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "09:20", arrivalTime: "11:45", days: "매일", direction: "INBOUND" },
-  { airline: "대한항공", flightNo: "KE2102", depAirport: "도쿄 하네다", depAirportCode: "HND", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "12:30", arrivalTime: "14:50", days: "매일", direction: "INBOUND" },
-  { airline: "대한항공", flightNo: "KE2104", depAirport: "도쿄 하네다", depAirportCode: "HND", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "19:45", arrivalTime: "22:05", days: "매일", direction: "INBOUND" },
-  { airline: "아시아나항공", flightNo: "OZ1055", depAirport: "도쿄 하네다", depAirportCode: "HND", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "09:00", arrivalTime: "11:20", days: "매일", direction: "INBOUND" },
-  { airline: "아시아나항공", flightNo: "OZ1075", depAirport: "도쿄 하네다", depAirportCode: "HND", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "12:05", arrivalTime: "14:25", days: "매일", direction: "INBOUND" },
-  { airline: "아시아나항공", flightNo: "OZ1035", depAirport: "도쿄 하네다", depAirportCode: "HND", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "20:05", arrivalTime: "22:25", days: "매일", direction: "INBOUND" },
-  { airline: "일본항공", flightNo: "JL91", depAirport: "도쿄 하네다", depAirportCode: "HND", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "08:25", arrivalTime: "10:45", days: "매일", direction: "INBOUND" },
-  { airline: "일본항공", flightNo: "JL93", depAirport: "도쿄 하네다", depAirportCode: "HND", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "15:40", arrivalTime: "18:00", days: "매일", direction: "INBOUND" },
-  { airline: "일본항공", flightNo: "JL95", depAirport: "도쿄 하네다", depAirportCode: "HND", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "19:30", arrivalTime: "21:50", days: "매일", direction: "INBOUND" },
-  { airline: "전일본공수(ANA)", flightNo: "NH861", depAirport: "도쿄 하네다", depAirportCode: "HND", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "08:40", arrivalTime: "11:05", days: "매일", direction: "INBOUND" },
-  { airline: "전일본공수(ANA)", flightNo: "NH865", depAirport: "도쿄 하네다", depAirportCode: "HND", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "16:10", arrivalTime: "18:35", days: "매일", direction: "INBOUND" },
-  { airline: "전일본공수(ANA)", flightNo: "NH867", depAirport: "도쿄 하네다", depAirportCode: "HND", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "20:05", arrivalTime: "22:20", days: "매일", direction: "INBOUND" },
+  { airline: "대한항공", flightNo: "KE2106", depAirport: "도쿄 하네다", depAirportCode: "HND", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "09:20", arrivalTime: "11:45", days: "매일", aircraft: "B787-10 / A330-300", direction: "INBOUND" },
+  { airline: "대한항공", flightNo: "KE2102", depAirport: "도쿄 하네다", depAirportCode: "HND", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "12:30", arrivalTime: "14:50", days: "매일", aircraft: "B787-10 / A330-300", direction: "INBOUND" },
+  { airline: "대한항공", flightNo: "KE2104", depAirport: "도쿄 하네다", depAirportCode: "HND", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "19:45", arrivalTime: "22:05", days: "매일", aircraft: "B787-10 / A330-300", direction: "INBOUND" },
+  { airline: "아시아나항공", flightNo: "OZ1055", depAirport: "도쿄 하네다", depAirportCode: "HND", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "09:00", arrivalTime: "11:20", days: "매일", aircraft: "A330-300 / A321-200", direction: "INBOUND" },
+  { airline: "아시아나항공", flightNo: "OZ1075", depAirport: "도쿄 하네다", depAirportCode: "HND", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "12:05", arrivalTime: "14:25", days: "매일", aircraft: "A330-300 / A321-200", direction: "INBOUND" },
+  { airline: "아시아나항공", flightNo: "OZ1035", depAirport: "도쿄 하네다", depAirportCode: "HND", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "20:05", arrivalTime: "22:25", days: "매일", aircraft: "A330-300 / A321-200", direction: "INBOUND" },
+  { airline: "일본항공", flightNo: "JL91", depAirport: "도쿄 하네다", depAirportCode: "HND", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "08:25", arrivalTime: "10:45", days: "매일", aircraft: "B787-8 / B787-9", direction: "INBOUND" },
+  { airline: "일본항공", flightNo: "JL93", depAirport: "도쿄 하네다", depAirportCode: "HND", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "15:40", arrivalTime: "18:00", days: "매일", aircraft: "B787-8 / B787-9", direction: "INBOUND" },
+  { airline: "일본항공", flightNo: "JL95", depAirport: "도쿄 하네다", depAirportCode: "HND", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "19:30", arrivalTime: "21:50", days: "매일", aircraft: "B787-8 / B787-9", direction: "INBOUND" },
+  { airline: "전일본공수(ANA)", flightNo: "NH861", depAirport: "도쿄 하네다", depAirportCode: "HND", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "08:40", arrivalTime: "11:05", days: "매일", aircraft: "B787-8 / B767-300ER", direction: "INBOUND" },
+  { airline: "전일본공수(ANA)", flightNo: "NH865", depAirport: "도쿄 하네다", depAirportCode: "HND", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "16:10", arrivalTime: "18:35", days: "매일", aircraft: "B787-8 / B767-300ER", direction: "INBOUND" },
+  { airline: "전일본공수(ANA)", flightNo: "NH867", depAirport: "도쿄 하네다", depAirportCode: "HND", arrAirport: "김포", arrAirportCode: "GMP", departureTime: "20:05", arrivalTime: "22:20", days: "매일", aircraft: "B787-8 / B767-300ER", direction: "INBOUND" },
 
   // -- Narita (NRT) -> Incheon (ICN) Official Timetable --
   { airline: "대한항공", flightNo: "KE704", depAirport: "도쿄 나리타", depAirportCode: "NRT", arrAirport: "인천", arrAirportCode: "ICN", departureTime: "14:00", arrivalTime: "16:40", days: "매일", aircraft: "A380-800 / B787-10 / A330-300 / B777-300ER / B777-300 / B747-8", direction: "INBOUND" },
