@@ -211,9 +211,25 @@ export const JapanMap: React.FC<JapanMapProps> = ({
       let centroid = rawCentroid;
       if (rawCentroid && !isNaN(rawCentroid[0]) && !isNaN(rawCentroid[1])) {
         let [cx, cy] = rawCentroid;
-        if (code === 30) cy -= 4; // Wakayama label Y shift
-        if (code === 46) { cx += 5; cy -= 30; } // Kagoshima label Y shift
-        if (code === 42) { cx += 10; cy -= 5; } // Nagasaki label shift
+        // Specific manual label offset adjustments for 47 prefectures to guarantee zero text overlaps
+        if (code === 4) { cx += 14; cy += 2; }   // Miyagi (shift right towards Sendai coast)
+        if (code === 6) { cx -= 14; cy -= 2; }   // Yamagata (shift left towards Sea of Japan)
+        if (code === 11) { cx -= 4; cy -= 4; }   // Saitama
+        if (code === 12) { cx += 8; cy += 4; }   // Chiba
+        if (code === 13) { cx -= 8; cy += 2; }   // Tokyo
+        if (code === 14) { cx -= 2; cy += 6; }   // Kanagawa
+        if (code === 15) { cx -= 6; cy += 10; }  // Niigata (adjust for Sado island)
+        if (code === 17) { cx -= 8; cy += 12; }  // Ishikawa (shift south towards Kanazawa)
+        if (code === 26) { cy -= 8; }            // Kyoto (shift north)
+        if (code === 27) { cx -= 6; cy += 6; }   // Osaka
+        if (code === 29) { cx += 4; cy += 6; }   // Nara
+        if (code === 30) { cy -= 4; }            // Wakayama
+        if (code === 31) { cx += 8; }            // Tottori
+        if (code === 32) { cx -= 8; }            // Shimane
+        if (code === 37) { cy -= 6; }            // Kagawa
+        if (code === 41) { cx -= 6; cy += 2; }   // Saga
+        if (code === 42) { cx += 10; cy -= 5; }  // Nagasaki
+        if (code === 46) { cx += 5; cy -= 30; }  // Kagoshima
         centroid = [cx, cy];
       }
 
