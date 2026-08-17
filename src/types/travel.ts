@@ -32,3 +32,22 @@ export interface TravelRecordsMap {
 }
 
 export type SortOption = "code" | "name" | "recent" | "cities";
+
+export interface TripCityItem {
+  prefectureCode: number;
+  cityNameKo: string;
+}
+
+export interface Trip {
+  id: string;
+  title: string;
+  startDate?: string; // YYYY.MM.DD or YYYY.MM
+  endDate?: string;
+  emoji?: string; // e.g. "🧳", "🌸", "🍜", "✈️"
+  description?: string;
+  prefectures: number[]; // e.g. [1] or [13, 14]
+  cities: TripCityItem[];
+  highlights?: string[];
+  createdAt: string;
+  updatedAt: string;
+}

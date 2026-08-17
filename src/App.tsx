@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "./hooks/useAuth";
 import { useTravelRecords } from "./hooks/useTravelRecords";
+import { useTrips } from "./hooks/useTrips";
 import { calculateTravelStats } from "./utils/statistics";
 import { Header } from "./components/Header";
 import { SmartQuickAddBar } from "./components/SmartQuickAddBar";
@@ -14,6 +15,8 @@ import { ConfirmModal } from "./components/ConfirmModal";
 import { AuthModal } from "./components/AuthModal";
 import { ShareCardModal } from "./components/ShareCardModal";
 import { TravelUtilityWidget } from "./components/TravelUtilityWidget";
+import { TripModal } from "./components/TripModal";
+import type { Trip } from "./types/travel";
 
 import { PREFECTURES } from "./data/prefectures";
 
@@ -40,9 +43,21 @@ export const App: React.FC = () => {
     resetAll,
   } = useTravelRecords(user);
 
+  const {
+    trips,
+    selectedTripId,
+    selectedTrip,
+    setSelectedTripId,
+    addTrip,
+    updateTrip,
+    deleteTrip,
+  } = useTrips();
+
   const [showResetModal, setShowResetModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
+  const [showTripModal, setShowTripModal] = useState(false);
+  const [editingTrip, setEditingTrip] = useState<Trip | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
     const saved = localStorage.getItem("japan-travel-map-theme");
@@ -138,9 +153,21 @@ export const App: React.FC = () => {
             <TravelUtilityWidget selectedCode={selectedCode} />
             <LeftSidebarTabs
               records={records}
+              trips={trips}
+              selectedTripId={selectedTripId}
               selectedCode={selectedCode}
               selectedRegion={selectedRegion}
               onSelectPrefecture={handleSelectPrefecture}
+              onSelectTrip={(id) => setSelectedTripId(id)}
+              onOpenCreateTripModal={() => {
+                setEditingTrip(null);
+                setShowTripModal(true);
+              }}
+              onEditTrip={(trip) => {
+                setEditingTrip(trip);
+                setShowTripModal(true);
+              }}
+              onDeleteTrip={(id) => deleteTrip(id)}
               onClearRegion={() => setSelectedRegion(null)}
             />
           </div>
@@ -151,8 +178,10 @@ export const App: React.FC = () => {
               records={records}
               selectedCode={selectedCode}
               selectedRegion={selectedRegion}
+              selectedTrip={selectedTrip}
               onSelectPrefecture={handleSelectPrefecture}
               onClearRegion={() => setSelectedRegion(null)}
+              onClearTrip={() => setSelectedTripId(null)}
               isDarkMode={isDarkMode}
             />
             <RegionOverview
@@ -182,11 +211,28 @@ export const App: React.FC = () => {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#111827] py-4 mt-8 transition-colors duration-200">
+      <footer className="border-t border-slate-200/80 dark:border-slate-800 bg-[#FFFFFF] dark:bg-[#111827] py-4 mt-8 transition-colors duration-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-slate-400 dark:text-slate-500">
           <p>© 2026 Japanlog — 일본 47개 도도부현 여행 방문 및 경유 시각화 웹앱</p>
         </div>
       </footer>
+
+      {/* Trip Modal */}
+      <TripModal
+        isOpen={showTripModal}
+        onClose={() => {
+          setShowTripModal(false);
+          setEditingTrip(null);
+        }}
+        onSave={(data) => {
+          if (editingTrip) {
+            updateTrip(editingTrip.id, data);
+          } else {
+            addTrip(data);
+          }
+        }}
+        editingTrip={editingTrip}
+      />
 
       {/* Auth Modal */}
       <AuthModal

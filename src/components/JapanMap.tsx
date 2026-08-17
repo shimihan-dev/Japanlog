@@ -1,18 +1,20 @@
 import React, { useEffect, useState, useMemo, useRef } from "react";
 import * as d3Geo from "d3-geo";
-import type { TravelRecordsMap, VisitStatus } from "../types/travel";
+import type { TravelRecordsMap, VisitStatus, Trip } from "../types/travel";
 import { PREFECTURE_MAP_BY_CODE } from "../data/prefectures";
 import { SHINKANSEN_LINES } from "../data/shinkansenRoutes";
 import { MapLegend } from "./MapLegend";
-import { X, Train, ZoomIn, ZoomOut, RotateCcw, MapPin } from "lucide-react";
+import { X, Train, ZoomIn, ZoomOut, RotateCcw, MapPin, Luggage } from "lucide-react";
 import { getCityCoordinates } from "../data/cityCoordinates";
 
 interface JapanMapProps {
   records: TravelRecordsMap;
   selectedCode: number | null;
   selectedRegion?: string | null;
+  selectedTrip?: Trip | null;
   onSelectPrefecture: (code: number) => void;
   onClearRegion?: () => void;
+  onClearTrip?: () => void;
   isDarkMode?: boolean;
 }
 
@@ -81,8 +83,10 @@ export const JapanMap: React.FC<JapanMapProps> = ({
   records,
   selectedCode,
   selectedRegion = null,
+  selectedTrip = null,
   onSelectPrefecture,
   onClearRegion,
+  onClearTrip,
   isDarkMode = false,
 }) => {
   const [geoFeatures, setGeoFeatures] = useState<GeoFeature[]>([]);
@@ -297,6 +301,27 @@ export const JapanMap: React.FC<JapanMapProps> = ({
       }
     }
   }, [selectedRegion]);
+
+  // Camera Auto-Focus when Trip is selected
+  useEffect(() => {
+    if (!selectedTrip || selectedTrip.prefectures.length === 0) return;
+    const firstCode = selectedTrip.prefectures[0];
+    const coords = PREFECTURE_MAINLAND_COORDS[firstCode];
+    if (coords) {
+      const proj = firstCode === 47
+        ? d3Geo.geoMercator().center([127.98, 26.47]).scale(5400).translate([690, 780])
+        : d3Geo.geoMercator().center([137.5, 38.0]).scale(2500).translate([850 / 2 + 10, 920 / 2 - 10]);
+
+      const pt = proj(coords);
+      if (pt) {
+        setZoom(2.2);
+        setPan({
+          x: Math.round(425 - pt[0] * 2.2),
+          y: Math.round(460 - pt[1] * 2.2),
+        });
+      }
+    }
+  }, [selectedTrip]);
 
   // Load GeoJSON data for 47 prefectures
   useEffect(() => {
@@ -556,7 +581,23 @@ export const JapanMap: React.FC<JapanMapProps> = ({
           </button>
         </div>
 
-        {selectedRegion && (
+        {selectedTrip && (
+          <div className="flex items-center space-x-2 px-3 py-1 bg-rose-600 dark:bg-cyan-500 text-white dark:text-slate-900 rounded-xl text-xs font-bold shadow-2xs animate-in fade-in duration-150">
+            <Luggage className="w-3.5 h-3.5" />
+            <span>선택 여행: {selectedTrip.emoji || "🧳"} {selectedTrip.title}</span>
+            {onClearTrip && (
+              <button
+                onClick={onClearTrip}
+                className="p-0.5 rounded-full hover:bg-white/20 dark:hover:bg-slate-900/20 transition-colors"
+                title="여행 강조 해제"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+        )}
+
+        {selectedRegion && !selectedTrip && (
           <div className="flex items-center space-x-2 px-3 py-1 bg-blue-600 dark:bg-cyan-500 text-white dark:text-slate-900 rounded-xl text-xs font-bold shadow-2xs animate-in fade-in duration-150">
             <span>단일 권역 강조: {selectedRegion}</span>
             {onClearRegion && (
