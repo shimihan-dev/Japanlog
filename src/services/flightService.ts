@@ -248,12 +248,21 @@ const EXACT_AEROLOPA_PATH_MAP: Record<string, string> = {
 
   // Air Busan (bx)
   "bx-A320": "bx-320",
+  "bx-A320-200": "bx-320",
+  "bx-320": "bx-320",
   "bx-A321": "bx-321-1",
+  "bx-A321-200": "bx-321-1",
+  "bx-321-200": "bx-321-1",
+  "bx-321": "bx-321-1",
   "bx-A321neo": "bx-32q-1",
+  "bx-A321-200neo": "bx-32q-1",
+  "bx-32q": "bx-32q-1",
 
   // Air Seoul (rs)
   "rs-A321": "rs-321-1",
   "rs-A321-200": "rs-321-1",
+  "rs-321-200": "rs-321-1",
+  "rs-321": "rs-321-1",
 };
 
 export function getAeroLopaUrl(airline: string, aircraftModel: string): string {
