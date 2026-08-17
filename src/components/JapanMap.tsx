@@ -4,7 +4,7 @@ import type { TravelRecordsMap, VisitStatus } from "../types/travel";
 import { PREFECTURE_MAP_BY_CODE } from "../data/prefectures";
 import { SHINKANSEN_LINES } from "../data/shinkansenRoutes";
 import { MapLegend } from "./MapLegend";
-import { X, Train } from "lucide-react";
+import { X, Train, ZoomIn, ZoomOut, RotateCcw } from "lucide-react";
 
 interface JapanMapProps {
   records: TravelRecordsMap;
@@ -38,6 +38,91 @@ export const JapanMap: React.FC<JapanMapProps> = ({
   const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(null);
   const [showShinkansen, setShowShinkansen] = useState<boolean>(true);
   const mapContainerRef = useRef<HTMLDivElement>(null);
+
+  // Zoom & Pan State
+  const [zoom, setZoom] = useState<number>(1);
+  const [pan, setPan] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const dragStartRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const panStartRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+
+  const handleZoomIn = () => {
+    setZoom((prev) => Math.min(5, Math.round((prev + 0.25) * 100) / 100));
+  };
+
+  const handleZoomOut = () => {
+    setZoom((prev) => {
+      const next = Math.max(1, Math.round((prev - 0.25) * 100) / 100);
+      if (next === 1) setPan({ x: 0, y: 0 });
+      return next;
+    });
+  };
+
+  const handleResetZoom = () => {
+    setZoom(1);
+    setPan({ x: 0, y: 0 });
+  };
+
+  // Wheel Zoom Handler
+  const handleWheel = (e: React.WheelEvent) => {
+    // Zoom centered on map container
+    const delta = e.deltaY < 0 ? 0.15 : -0.15;
+    setZoom((prev) => {
+      const next = Math.min(5, Math.max(1, Math.round((prev + delta) * 100) / 100));
+      if (next === 1) setPan({ x: 0, y: 0 });
+      return next;
+    });
+  };
+
+  // Mouse Drag Handlers
+  const handleMouseDown = (e: React.MouseEvent) => {
+    // Only drag on primary left click
+    if (e.button !== 0) return;
+    setIsDragging(true);
+    dragStartRef.current = { x: e.clientX, y: e.clientY };
+    panStartRef.current = { ...pan };
+  };
+
+  const handleMouseMoveMap = (e: React.MouseEvent) => {
+    if (isDragging) {
+      const dx = e.clientX - dragStartRef.current.x;
+      const dy = e.clientY - dragStartRef.current.y;
+      setPan({
+        x: panStartRef.current.x + dx,
+        y: panStartRef.current.y + dy,
+      });
+    }
+  };
+
+  const handleMouseUpMap = () => {
+    if (isDragging) {
+      setIsDragging(false);
+    }
+  };
+
+  // Touch Drag Handlers for Mobile
+  const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length === 1) {
+      touchStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+      panStartRef.current = { ...pan };
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartRef.current && e.touches.length === 1) {
+      const dx = e.touches[0].clientX - touchStartRef.current.x;
+      const dy = e.touches[0].clientY - touchStartRef.current.y;
+      setPan({
+        x: panStartRef.current.x + dx,
+        y: panStartRef.current.y + dy,
+      });
+    }
+  };
+
+  const handleTouchEnd = () => {
+    touchStartRef.current = null;
+  };
 
   // Load GeoJSON data for 47 prefectures
   useEffect(() => {
@@ -251,8 +336,64 @@ export const JapanMap: React.FC<JapanMapProps> = ({
         )}
       </div>
 
-      {/* SVG Container */}
-      <svg viewBox="0 0 850 920" className="w-full h-auto max-h-[850px] drop-shadow-sm select-none">
+      {/* Floating Zoom & Pan Controls Pad */}
+      <div className="absolute top-16 right-6 z-20 flex flex-col bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-slate-800 rounded-2xl shadow-lg p-1.5 space-y-1 transition-all">
+        <button
+          type="button"
+          onClick={handleZoomIn}
+          disabled={zoom >= 5}
+          className="p-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          title="지도 확대 (+)"
+        >
+          <ZoomIn className="w-4 h-4" />
+        </button>
+        <div className="text-[10px] font-extrabold text-center text-blue-600 dark:text-cyan-400 py-0.5 select-none font-mono">
+          {Math.round(zoom * 100)}%
+        </div>
+        <button
+          type="button"
+          onClick={handleZoomOut}
+          disabled={zoom <= 1}
+          className="p-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          title="지도 축소 (-)"
+        >
+          <ZoomOut className="w-4 h-4" />
+        </button>
+        <button
+          type="button"
+          onClick={handleResetZoom}
+          disabled={zoom === 1 && pan.x === 0 && pan.y === 0}
+          className="p-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          title="지도 화면 초기화"
+        >
+          <RotateCcw className="w-4 h-4" />
+        </button>
+      </div>
+
+      {/* SVG Container with Zoom & Drag Support */}
+      <svg
+        viewBox="0 0 850 920"
+        onWheel={handleWheel}
+        onMouseDown={handleMouseDown}
+        onMouseMove={(e) => {
+          handleMouseMoveMap(e);
+        }}
+        onMouseUp={handleMouseUpMap}
+        onMouseLeave={() => {
+          handleMouseLeave();
+          handleMouseUpMap();
+        }}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        className={`w-full h-auto max-h-[850px] drop-shadow-sm select-none ${
+          zoom > 1 || pan.x !== 0 || pan.y !== 0
+            ? isDragging
+              ? "cursor-grabbing"
+              : "cursor-grab"
+            : "cursor-default"
+        }`}
+      >
         <defs>
           <linearGradient id="light-visited-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
             <stop offset="0%" stopColor="#3B82F6" />
@@ -275,140 +416,146 @@ export const JapanMap: React.FC<JapanMapProps> = ({
           </filter>
         </defs>
 
-        {/* Okinawa Bottom-Right Corner Inset Line */}
-        <path
-          d="M 520 900 L 520 720 L 830 720"
-          fill="none"
-          stroke={isDarkMode ? "#38BDF8" : "#94A3B8"}
-          strokeOpacity={isDarkMode ? "0.4" : "1"}
-          strokeWidth="1.2"
-        />
+        {/* Master Zoom & Pan Transform Group */}
+        <g
+          transform={`translate(${425 + pan.x}, ${460 + pan.y}) scale(${zoom}) translate(-425, -460)`}
+          className="transition-transform duration-75 origin-center"
+        >
+          {/* Okinawa Bottom-Right Corner Inset Line */}
+          <path
+            d="M 520 900 L 520 720 L 830 720"
+            fill="none"
+            stroke={isDarkMode ? "#38BDF8" : "#94A3B8"}
+            strokeOpacity={isDarkMode ? "0.4" : "1"}
+            strokeWidth="1.2"
+          />
 
-        {/* Prefectures Path Layers */}
-        <g filter="url(#map-drop-shadow)">
-          {featurePaths.map(({ code, d, centroid }: { code: number; d: string; centroid: [number, number] }) => {
-            const pref = PREFECTURE_MAP_BY_CODE.get(code);
-            const record = records[code];
-            const status: VisitStatus = record?.status || "unvisited";
-            const isSelected = selectedCode === code;
-            const isRegionSelected = Boolean(selectedRegion && pref?.region === selectedRegion);
-            const isHovered = hoveredCode === code;
+          {/* Prefectures Path Layers */}
+          <g filter="url(#map-drop-shadow)">
+            {featurePaths.map(({ code, d, centroid }: { code: number; d: string; centroid: [number, number] }) => {
+              const pref = PREFECTURE_MAP_BY_CODE.get(code);
+              const record = records[code];
+              const status: VisitStatus = record?.status || "unvisited";
+              const isSelected = selectedCode === code;
+              const isRegionSelected = Boolean(selectedRegion && pref?.region === selectedRegion);
+              const isHovered = hoveredCode === code;
 
-            return (
-              <g key={`pref-group-${code}`}>
-                <path
-                  d={d}
-                  fill={getFillStyle(status, isHovered, isRegionSelected)}
-                  stroke={
-                    isSelected
-                      ? (isDarkMode ? "#00F0FF" : "#1D4ED8")
-                      : isRegionSelected
-                      ? (isDarkMode ? "#38BDF8" : "#2563EB")
-                      : isHovered
-                      ? (isDarkMode ? "#94A3B8" : "#64748B")
-                      : (isDarkMode ? "#0F172A" : "#FFFFFF")
-                  }
-                  strokeWidth={isSelected ? 3.5 : isRegionSelected ? 2.5 : 1.2}
-                  strokeLinejoin="round"
-                  className="transition-all duration-150 cursor-pointer hover:brightness-110"
-                  onClick={() => onSelectPrefecture(code)}
-                  onMouseMove={(e) => handleMouseMove(e, code)}
-                  onMouseLeave={handleMouseLeave}
-                  style={
-                    isDarkMode && (status === "visited" || isRegionSelected)
-                      ? { filter: "drop-shadow(0 0 6px rgba(56, 189, 248, 0.4))" }
-                      : undefined
-                  }
-                />
-
-                {/* Prefecture Label */}
-                {pref && centroid && !isNaN(centroid[0]) && !isNaN(centroid[1]) && (
-                  <text
-                    x={centroid[0]}
-                    y={centroid[1]}
-                    textAnchor="middle"
-                    dominantBaseline="middle"
-                    pointerEvents="none"
+              return (
+                <g key={`pref-group-${code}`}>
+                  <path
+                    d={d}
+                    fill={getFillStyle(status, isHovered, isRegionSelected)}
+                    stroke={
+                      isSelected
+                        ? (isDarkMode ? "#00F0FF" : "#1D4ED8")
+                        : isRegionSelected
+                        ? (isDarkMode ? "#38BDF8" : "#2563EB")
+                        : isHovered
+                        ? (isDarkMode ? "#94A3B8" : "#64748B")
+                        : (isDarkMode ? "#0F172A" : "#FFFFFF")
+                    }
+                    strokeWidth={isSelected ? 3.5 : isRegionSelected ? 2.5 : 1.2}
                     strokeLinejoin="round"
-                    className={`text-[10px] font-semibold transition-all ${
-                      status === "visited"
-                        ? "fill-white"
-                        : isDarkMode
-                        ? "fill-slate-200"
-                        : "fill-slate-700"
-                    } ${isSelected ? "text-[11px] font-extrabold fill-blue-900 dark:fill-cyan-200" : ""}`}
-                    style={{
-                      paintOrder: "stroke fill",
-                      stroke: status === "visited"
-                        ? (isDarkMode ? "rgba(2, 132, 199, 0.9)" : "rgba(30, 64, 175, 0.4)")
-                        : (isDarkMode ? "#0F172A" : "#FFFFFF"),
-                      strokeWidth: status === "visited" ? "2px" : "2.5px",
-                    }}
-                  >
-                    {pref.nameKo}
-                  </text>
-                )}
-              </g>
-            );
-          })}
-        </g>
+                    className="transition-all duration-150 cursor-pointer hover:brightness-110"
+                    onClick={() => onSelectPrefecture(code)}
+                    onMouseMove={(e) => handleMouseMove(e, code)}
+                    onMouseLeave={handleMouseLeave}
+                    style={
+                      isDarkMode && (status === "visited" || isRegionSelected)
+                        ? { filter: "drop-shadow(0 0 6px rgba(56, 189, 248, 0.4))" }
+                        : undefined
+                    }
+                  />
 
-        {/* 🚄 Shinkansen Railway Overlay Layer */}
-        {showShinkansen && (
-          <g className="pointer-events-none transition-all duration-300">
-            {projectedShinkansenLines.map((line) => (
-              <g key={line.id}>
-                {/* Underglow for Railway Line */}
-                <path
-                  d={line.pathD}
-                  fill="none"
-                  stroke={isDarkMode ? line.darkColor : line.color}
-                  strokeWidth="5.5"
-                  strokeOpacity="0.4"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                {/* Main Railway Line (Dashed Style) */}
-                <path
-                  d={line.pathD}
-                  fill="none"
-                  stroke={isDarkMode ? line.darkColor : line.color}
-                  strokeWidth="2.8"
-                  strokeDasharray="6 4"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-
-                {/* Station Dots & Name Labels */}
-                {line.projectedStations.map((st, idx) => (
-                  <g key={`${line.id}-${st.nameKo}-${idx}`}>
-                    <circle
-                      cx={st.px}
-                      cy={st.py}
-                      r="3.5"
-                      fill="#FFFFFF"
-                      stroke={isDarkMode ? line.darkColor : line.color}
-                      strokeWidth="2"
-                      className="shadow-sm"
-                    />
+                  {/* Prefecture Label */}
+                  {pref && centroid && !isNaN(centroid[0]) && !isNaN(centroid[1]) && (
                     <text
-                      x={st.px + 5}
-                      y={st.py - 5}
-                      className="text-[8px] font-extrabold fill-slate-800 dark:fill-white"
+                      x={centroid[0]}
+                      y={centroid[1]}
+                      textAnchor="middle"
+                      dominantBaseline="middle"
+                      pointerEvents="none"
+                      strokeLinejoin="round"
+                      className={`text-[10px] font-semibold transition-all ${
+                        status === "visited"
+                          ? "fill-white"
+                          : isDarkMode
+                          ? "fill-slate-200"
+                          : "fill-slate-700"
+                      } ${isSelected ? "text-[11px] font-extrabold fill-blue-900 dark:fill-cyan-200" : ""}`}
                       style={{
                         paintOrder: "stroke fill",
-                        stroke: isDarkMode ? "#0F172A" : "#FFFFFF",
-                        strokeWidth: "2px",
+                        stroke: status === "visited"
+                          ? (isDarkMode ? "rgba(2, 132, 199, 0.9)" : "rgba(30, 64, 175, 0.4)")
+                          : (isDarkMode ? "#0F172A" : "#FFFFFF"),
+                        strokeWidth: status === "visited" ? "2px" : "2.5px",
                       }}
                     >
-                      {st.nameKo}
+                      {pref.nameKo}
                     </text>
-                  </g>
-                ))}
-              </g>
-            ))}
+                  )}
+                </g>
+              );
+            })}
           </g>
-        )}
+
+          {/* 🚄 Shinkansen Railway Overlay Layer */}
+          {showShinkansen && (
+            <g className="pointer-events-none transition-all duration-300">
+              {projectedShinkansenLines.map((line) => (
+                <g key={line.id}>
+                  {/* Underglow for Railway Line */}
+                  <path
+                    d={line.pathD}
+                    fill="none"
+                    stroke={isDarkMode ? line.darkColor : line.color}
+                    strokeWidth="5.5"
+                    strokeOpacity="0.4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                  {/* Main Railway Line (Dashed Style) */}
+                  <path
+                    d={line.pathD}
+                    fill="none"
+                    stroke={isDarkMode ? line.darkColor : line.color}
+                    strokeWidth="2.8"
+                    strokeDasharray="6 4"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+
+                  {/* Station Dots & Name Labels */}
+                  {line.projectedStations.map((st, idx) => (
+                    <g key={`${line.id}-${st.nameKo}-${idx}`}>
+                      <circle
+                        cx={st.px}
+                        cy={st.py}
+                        r="3.5"
+                        fill="#FFFFFF"
+                        stroke={isDarkMode ? line.darkColor : line.color}
+                        strokeWidth="2"
+                        className="shadow-sm"
+                      />
+                      <text
+                        x={st.px + 5}
+                        y={st.py - 5}
+                        className="text-[8px] font-extrabold fill-slate-800 dark:fill-white"
+                        style={{
+                          paintOrder: "stroke fill",
+                          stroke: isDarkMode ? "#0F172A" : "#FFFFFF",
+                          strokeWidth: "2px",
+                        }}
+                      >
+                        {st.nameKo}
+                      </text>
+                    </g>
+                  ))}
+                </g>
+              ))}
+            </g>
+          )}
+        </g>
       </svg>
 
       {/* Tooltip */}
