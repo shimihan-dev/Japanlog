@@ -25,6 +25,57 @@ interface GeoFeature {
   geometry: any;
 }
 
+// Explicit, precise mainland WGS84 coordinates for all 47 Japanese prefectures to prevent island-distorted centroids
+const PREFECTURE_MAINLAND_COORDS: Record<number, [number, number]> = {
+  1: [142.50, 43.60],  // 홋카이도
+  2: [140.75, 40.80],  // 아오모리현
+  3: [141.30, 39.50],  // 이와테현
+  4: [140.92, 38.30],  // 미야기현
+  5: [140.30, 39.70],  // 아키타현
+  6: [140.05, 38.40],  // 야마가타현
+  7: [140.40, 37.40],  // 후쿠시마현
+  8: [140.40, 36.35],  // 이바라키현
+  9: [139.80, 36.60],  // 토치기현
+  10: [139.00, 36.50], // 군마현
+  11: [139.30, 35.95], // 사이타마현
+  12: [140.20, 35.45], // 치바현
+  13: [139.50, 35.68], // 도쿄도
+  14: [139.30, 35.40], // 가나가와현
+  15: [138.90, 37.45], // 니가타현
+  16: [137.15, 36.65], // 도야마현
+  17: [136.70, 36.80], // 이시카와현
+  18: [136.15, 35.90], // 후쿠이현
+  19: [138.60, 35.60], // 야마나시현
+  20: [138.00, 36.10], // 나가노현
+  21: [137.00, 35.70], // 기후현
+  22: [138.30, 35.00], // 시즈오카현
+  23: [137.00, 35.05], // 아이치현
+  24: [136.40, 34.50], // 미에현
+  25: [136.15, 35.20], // 시가현
+  26: [135.55, 35.25], // 교토부
+  27: [135.50, 34.65], // 오사카부
+  28: [134.80, 35.10], // 효고현
+  29: [135.80, 34.40], // 나라현
+  30: [135.35, 33.90], // 와카야마현
+  31: [133.80, 35.40], // 돗토리현
+  32: [132.70, 35.00], // 시마네현
+  33: [133.90, 34.80], // 오카야마현
+  34: [132.60, 34.50], // 히로시마현
+  35: [131.50, 34.15], // 야마구치현
+  36: [134.30, 33.90], // 도쿠시마현
+  37: [134.00, 34.25], // 카가와현
+  38: [132.80, 33.75], // 에히메현
+  39: [133.30, 33.50], // 고치현
+  40: [130.55, 33.55], // 후쿠오카현
+  41: [130.15, 33.25], // 사가현
+  42: [129.88, 32.75], // 나가사키현
+  43: [130.72, 32.68], // 구마모토현
+  44: [131.45, 33.20], // 오이타현
+  45: [131.35, 32.10], // 미야자키현
+  46: [130.50, 31.60], // 가고시마현
+  47: [127.90, 26.50], // 오키나와현
+};
+
 export const JapanMap: React.FC<JapanMapProps> = ({
   records,
   selectedCode,
@@ -177,12 +228,11 @@ export const JapanMap: React.FC<JapanMapProps> = ({
     });
   }, [geoFeatures]);
 
-  // Unified Mercator Projection for natural contiguous Japan (Hokkaido sitting naturally above Aomori)
+  // Unified Mercator Projection for natural contiguous Japan
   const { featurePaths, projectedShinkansenLines } = useMemo(() => {
     const width = 850;
     const height = 920;
 
-    // Single unified projection mapping Hokkaido naturally above Aomori over Tsugaru Strait with complete unclipped coverage
     const mainProjection = d3Geo
       .geoMercator()
       .center([137.5, 38.0])
@@ -201,37 +251,19 @@ export const JapanMap: React.FC<JapanMapProps> = ({
     const paths = processedGeoFeatures.map((feat: any) => {
       const code = feat.properties.id;
       let pathGenerator = mainPath;
+      let proj = mainProjection;
       if (code === 47) {
         pathGenerator = okinawaPath;
+        proj = okinawaProjection;
       }
 
       const d = pathGenerator(feat as any) || "";
-      const rawCentroid = pathGenerator.centroid(feat as any);
-
-      let centroid = rawCentroid;
-      if (rawCentroid && !isNaN(rawCentroid[0]) && !isNaN(rawCentroid[1])) {
-        let [cx, cy] = rawCentroid;
-        // Specific manual label offset adjustments for 47 prefectures to guarantee zero text overlaps
-        if (code === 4) { cx += 14; cy += 2; }   // Miyagi (shift right towards Sendai coast)
-        if (code === 6) { cx -= 14; cy -= 2; }   // Yamagata (shift left towards Sea of Japan)
-        if (code === 11) { cx -= 4; cy -= 4; }   // Saitama
-        if (code === 12) { cx += 8; cy += 4; }   // Chiba
-        if (code === 13) { cx -= 8; cy += 2; }   // Tokyo
-        if (code === 14) { cx -= 2; cy += 6; }   // Kanagawa
-        if (code === 15) { cx -= 6; cy += 10; }  // Niigata (adjust for Sado island)
-        if (code === 17) { cx -= 8; cy += 12; }  // Ishikawa (shift south towards Kanazawa)
-        if (code === 26) { cy -= 8; }            // Kyoto (shift north)
-        if (code === 27) { cx -= 6; cy += 6; }   // Osaka
-        if (code === 29) { cx += 4; cy += 6; }   // Nara
-        if (code === 30) { cy -= 4; }            // Wakayama
-        if (code === 31) { cx += 8; }            // Tottori
-        if (code === 32) { cx -= 8; }            // Shimane
-        if (code === 37) { cy -= 6; }            // Kagawa
-        if (code === 41) { cx -= 6; cy += 2; }   // Saga
-        if (code === 42) { cx += 10; cy -= 5; }  // Nagasaki
-        if (code === 46) { cx += 5; cy -= 30; }  // Kagoshima
-        centroid = [cx, cy];
-      }
+      
+      // Calculate precise label position using explicit mainland coordinates
+      const mainlandCoords = PREFECTURE_MAINLAND_COORDS[code];
+      let centroid: [number, number] = mainlandCoords
+        ? (proj(mainlandCoords) as [number, number])
+        : (pathGenerator.centroid(feat as any) as [number, number]);
 
       return { code, feature: feat, d, centroid };
     });
@@ -446,9 +478,9 @@ export const JapanMap: React.FC<JapanMapProps> = ({
             strokeWidth="1.2"
           />
 
-          {/* Prefectures Path Layers */}
+          {/* Prefectures Path Layer */}
           <g filter="url(#map-drop-shadow)">
-            {featurePaths.map(({ code, d, centroid }: { code: number; d: string; centroid: [number, number] }) => {
+            {featurePaths.map(({ code, d }: { code: number; d: string }) => {
               const pref = PREFECTURE_MAP_BY_CODE.get(code);
               const record = records[code];
               const status: VisitStatus = record?.status || "unvisited";
@@ -457,60 +489,31 @@ export const JapanMap: React.FC<JapanMapProps> = ({
               const isHovered = hoveredCode === code;
 
               return (
-                <g key={`pref-group-${code}`}>
-                  <path
-                    d={d}
-                    fill={getFillStyle(status, isHovered, isRegionSelected)}
-                    stroke={
-                      isSelected
-                        ? (isDarkMode ? "#00F0FF" : "#1D4ED8")
-                        : isRegionSelected
-                        ? (isDarkMode ? "#38BDF8" : "#2563EB")
-                        : isHovered
-                        ? (isDarkMode ? "#94A3B8" : "#64748B")
-                        : (isDarkMode ? "#0F172A" : "#FFFFFF")
-                    }
-                    strokeWidth={isSelected ? 3.5 : isRegionSelected ? 2.5 : 1.2}
-                    strokeLinejoin="round"
-                    className="transition-all duration-150 cursor-pointer hover:brightness-110"
-                    onClick={() => onSelectPrefecture(code)}
-                    onMouseMove={(e) => handleMouseMove(e, code)}
-                    onMouseLeave={handleMouseLeave}
-                    style={
-                      isDarkMode && (status === "visited" || isRegionSelected)
-                        ? { filter: "drop-shadow(0 0 6px rgba(56, 189, 248, 0.4))" }
-                        : undefined
-                    }
-                  />
-
-                  {/* Prefecture Label */}
-                  {pref && centroid && !isNaN(centroid[0]) && !isNaN(centroid[1]) && (
-                    <text
-                      x={centroid[0]}
-                      y={centroid[1]}
-                      textAnchor="middle"
-                      dominantBaseline="middle"
-                      pointerEvents="none"
-                      strokeLinejoin="round"
-                      className={`text-[10px] font-semibold transition-all ${
-                        status === "visited"
-                          ? "fill-white"
-                          : isDarkMode
-                          ? "fill-slate-200"
-                          : "fill-slate-700"
-                      } ${isSelected ? "text-[11px] font-extrabold fill-blue-900 dark:fill-cyan-200" : ""}`}
-                      style={{
-                        paintOrder: "stroke fill",
-                        stroke: status === "visited"
-                          ? (isDarkMode ? "rgba(2, 132, 199, 0.9)" : "rgba(30, 64, 175, 0.4)")
-                          : (isDarkMode ? "#0F172A" : "#FFFFFF"),
-                        strokeWidth: status === "visited" ? "2px" : "2.5px",
-                      }}
-                    >
-                      {pref.nameKo}
-                    </text>
-                  )}
-                </g>
+                <path
+                  key={`pref-path-${code}`}
+                  d={d}
+                  fill={getFillStyle(status, isHovered, isRegionSelected)}
+                  stroke={
+                    isSelected
+                      ? (isDarkMode ? "#00F0FF" : "#1D4ED8")
+                      : isRegionSelected
+                      ? (isDarkMode ? "#38BDF8" : "#2563EB")
+                      : isHovered
+                      ? (isDarkMode ? "#94A3B8" : "#64748B")
+                      : (isDarkMode ? "#0F172A" : "#FFFFFF")
+                  }
+                  strokeWidth={isSelected ? 3.5 : isRegionSelected ? 2.5 : 1.2}
+                  strokeLinejoin="round"
+                  className="transition-all duration-150 cursor-pointer hover:brightness-110"
+                  onClick={() => onSelectPrefecture(code)}
+                  onMouseMove={(e) => handleMouseMove(e, code)}
+                  onMouseLeave={handleMouseLeave}
+                  style={
+                    isDarkMode && (status === "visited" || isRegionSelected)
+                      ? { filter: "drop-shadow(0 0 6px rgba(56, 189, 248, 0.4))" }
+                      : undefined
+                  }
+                />
               );
             })}
           </g>
@@ -571,6 +574,45 @@ export const JapanMap: React.FC<JapanMapProps> = ({
               ))}
             </g>
           )}
+
+          {/* Dedicated Top Layer for Prefecture Text Labels (Guarantees zero overlap with polygon shapes) */}
+          <g className="pointer-events-none">
+            {featurePaths.map(({ code, centroid }: { code: number; centroid: [number, number] }) => {
+              const pref = PREFECTURE_MAP_BY_CODE.get(code);
+              const record = records[code];
+              const status: VisitStatus = record?.status || "unvisited";
+              const isSelected = selectedCode === code;
+
+              if (!pref || !centroid || isNaN(centroid[0]) || isNaN(centroid[1])) return null;
+
+              return (
+                <text
+                  key={`pref-label-${code}`}
+                  x={centroid[0]}
+                  y={centroid[1]}
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                  strokeLinejoin="round"
+                  className={`text-[10px] font-bold transition-all ${
+                    status === "visited"
+                      ? "fill-white"
+                      : isDarkMode
+                      ? "fill-slate-100"
+                      : "fill-slate-800"
+                  } ${isSelected ? "text-[11px] font-extrabold fill-blue-950 dark:fill-cyan-200" : ""}`}
+                  style={{
+                    paintOrder: "stroke fill",
+                    stroke: status === "visited"
+                      ? (isDarkMode ? "rgba(2, 132, 199, 0.9)" : "rgba(30, 64, 175, 0.5)")
+                      : (isDarkMode ? "#0F172A" : "#FFFFFF"),
+                    strokeWidth: status === "visited" ? "2.5px" : "3px",
+                  }}
+                >
+                  {pref.nameKo}
+                </text>
+              );
+            })}
+          </g>
         </g>
       </svg>
 
