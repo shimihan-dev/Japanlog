@@ -129,15 +129,60 @@ export const JapanMap: React.FC<JapanMapProps> = ({
     setPan({ x: 0, y: 0 });
   };
 
-  // Wheel Zoom Handler
+  // Cursor-Centered Wheel Zoom Handler (Figma & Google Maps style)
   const handleWheel = (e: React.WheelEvent) => {
-    // Zoom centered on map container
-    const delta = e.deltaY < 0 ? 0.15 : -0.15;
-    setZoom((prev) => {
-      const next = Math.min(5, Math.max(1, Math.round((prev + delta) * 100) / 100));
-      if (next === 1) setPan({ x: 0, y: 0 });
-      return next;
-    });
+    e.preventDefault();
+    if (!mapContainerRef.current) return;
+
+    const bounds = mapContainerRef.current.getBoundingClientRect();
+    // Normalize mouse position to SVG viewBox coordinate system (0..850, 0..920)
+    const mouseX = ((e.clientX - bounds.left) / bounds.width) * 850;
+    const mouseY = ((e.clientY - bounds.top) / bounds.height) * 920;
+
+    const zoomStep = e.deltaY < 0 ? 0.25 : -0.25;
+    const oldZoom = zoom;
+    const newZoom = Math.min(5, Math.max(1, Math.round((oldZoom + zoomStep) * 100) / 100));
+
+    if (newZoom === oldZoom) return;
+
+    if (newZoom === 1) {
+      setZoom(1);
+      setPan({ x: 0, y: 0 });
+      return;
+    }
+
+    // Scale ratio around cursor position
+    const scaleFactor = newZoom / oldZoom;
+    const dx = (mouseX - (425 + pan.x)) * (1 - scaleFactor);
+    const dy = (mouseY - (460 + pan.y)) * (1 - scaleFactor);
+
+    setZoom(newZoom);
+    setPan((prevPan) => ({
+      x: Math.round(prevPan.x + dx),
+      y: Math.round(prevPan.y + dy),
+    }));
+  };
+
+  // Double-Click Zoom In centered on click location
+  const handleDoubleClick = (e: React.MouseEvent) => {
+    if (!mapContainerRef.current) return;
+    const bounds = mapContainerRef.current.getBoundingClientRect();
+    const mouseX = ((e.clientX - bounds.left) / bounds.width) * 850;
+    const mouseY = ((e.clientY - bounds.top) / bounds.height) * 920;
+
+    const oldZoom = zoom;
+    const newZoom = Math.min(5, Math.round((oldZoom * 1.5) * 100) / 100);
+    if (newZoom === oldZoom) return;
+
+    const scaleFactor = newZoom / oldZoom;
+    const dx = (mouseX - (425 + pan.x)) * (1 - scaleFactor);
+    const dy = (mouseY - (460 + pan.y)) * (1 - scaleFactor);
+
+    setZoom(newZoom);
+    setPan((prevPan) => ({
+      x: Math.round(prevPan.x + dx),
+      y: Math.round(prevPan.y + dy),
+    }));
   };
 
   // Mouse Drag Handlers
@@ -202,6 +247,47 @@ export const JapanMap: React.FC<JapanMapProps> = ({
     setCityPinTooltipPos({ x: clampedX, y: clampedY });
     setHoveredCityPin(pin);
   };
+
+  // Camera Auto-Focus when Region is selected
+  useEffect(() => {
+    if (!selectedRegion) {
+      return;
+    }
+
+    const regionFocusMap: Record<string, { zoom: number; coords: [number, number] }> = {
+      "홋카이도": { zoom: 1.8, coords: [142.50, 43.60] },
+      "도호쿠": { zoom: 2.2, coords: [140.50, 39.50] },
+      "동북": { zoom: 2.2, coords: [140.50, 39.50] },
+      "관동": { zoom: 2.8, coords: [139.70, 35.80] },
+      "간동": { zoom: 2.8, coords: [139.70, 35.80] },
+      "중부": { zoom: 2.3, coords: [137.50, 36.00] },
+      "주부": { zoom: 2.3, coords: [137.50, 36.00] },
+      "관서": { zoom: 2.8, coords: [135.50, 34.80] },
+      "간사이": { zoom: 2.8, coords: [135.50, 34.80] },
+      "중국": { zoom: 2.6, coords: [133.00, 34.80] },
+      "주고쿠": { zoom: 2.6, coords: [133.00, 34.80] },
+      "시코쿠": { zoom: 3.2, coords: [133.50, 33.80] },
+      "규슈": { zoom: 2.5, coords: [130.50, 32.80] },
+      "큐슈": { zoom: 2.5, coords: [130.50, 32.80] },
+      "오키나와": { zoom: 3.0, coords: [127.90, 26.50] },
+    };
+
+    const target = regionFocusMap[selectedRegion];
+    if (target) {
+      const proj = selectedRegion === "오키나와"
+        ? d3Geo.geoMercator().center([127.98, 26.47]).scale(5400).translate([690, 780])
+        : d3Geo.geoMercator().center([137.5, 38.0]).scale(2500).translate([850 / 2 + 10, 920 / 2 - 10]);
+
+      const pt = proj(target.coords);
+      if (pt) {
+        setZoom(target.zoom);
+        setPan({
+          x: Math.round(425 - pt[0]),
+          y: Math.round(460 - pt[1]),
+        });
+      }
+    }
+  }, [selectedRegion]);
 
   // Load GeoJSON data for 47 prefectures
   useEffect(() => {
@@ -515,6 +601,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
       <svg
         viewBox="0 0 850 920"
         onWheel={handleWheel}
+        onDoubleClick={handleDoubleClick}
         onMouseDown={handleMouseDown}
         onMouseMove={(e) => {
           handleMouseMoveMap(e);
@@ -561,7 +648,10 @@ export const JapanMap: React.FC<JapanMapProps> = ({
         {/* Master Zoom & Pan Transform Group */}
         <g
           transform={`translate(${425 + pan.x}, ${460 + pan.y}) scale(${zoom}) translate(-425, -460)`}
-          className="transition-transform duration-75 origin-center"
+          style={{
+            transition: isDragging ? "none" : "transform 0.3s cubic-bezier(0.2, 0, 0.2, 1)",
+            transformOrigin: "center center",
+          }}
         >
           {/* Okinawa Bottom-Right Corner Inset Line */}
           <path
