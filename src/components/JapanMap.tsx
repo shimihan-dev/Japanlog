@@ -733,9 +733,13 @@ export const JapanMap: React.FC<JapanMapProps> = ({
                       <circle
                         cx={pin.px}
                         cy={pin.py}
-                        r="9"
-                        className="fill-red-500/30 dark:fill-cyan-400/40 animate-ping pointer-events-none"
-                      />
+                        r="4"
+                        fill={isDarkMode ? "#00F0FF" : "#EF4444"}
+                        className="pointer-events-none"
+                      >
+                        <animate attributeName="r" values="4;18;4" dur="2s" repeatCount="indefinite" />
+                        <animate attributeName="opacity" values="0.7;0;0.7" dur="2s" repeatCount="indefinite" />
+                      </circle>
                     )}
 
                     {/* Pin Marker Outer Circle */}
