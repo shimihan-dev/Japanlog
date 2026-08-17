@@ -58,8 +58,43 @@ export const App: React.FC = () => {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [showTripModal, setShowTripModal] = useState(false);
+  const [tripModalMode, setTripModalMode] = useState<"existing" | "new">("new");
   const [editingTrip, setEditingTrip] = useState<Trip | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
+
+  const handleSaveTrip = (
+    data: Omit<Trip, "id" | "createdAt" | "updatedAt">,
+    autoSyncMap: boolean
+  ) => {
+    let savedTripId = "";
+    if (editingTrip) {
+      updateTrip(editingTrip.id, data);
+      savedTripId = editingTrip.id;
+    } else {
+      const newTrip = addTrip(data);
+      savedTripId = newTrip.id;
+    }
+
+    // Auto sync map when autoSyncMap is true
+    if (autoSyncMap) {
+      // 1. Mark all trip prefectures as visited on the map
+      data.prefectures.forEach((prefCode) => {
+        updateStatus(prefCode, "visited");
+      });
+
+      // 2. Add city pins to map records
+      data.cities.forEach((c) => {
+        addCity(c.prefectureCode, {
+          cityNameKo: c.cityNameKo,
+          visitedAt: data.startDate,
+        });
+      });
+    }
+
+    if (savedTripId) {
+      setSelectedTripId(savedTripId);
+    }
+  };
 
   const handleLoadSampleClick = () => {
     // If user has existing visits or cities, ask for confirmation before overwriting
@@ -170,8 +205,9 @@ export const App: React.FC = () => {
               selectedRegion={selectedRegion}
               onSelectPrefecture={handleSelectPrefecture}
               onSelectTrip={(id) => setSelectedTripId(id)}
-              onOpenCreateTripModal={() => {
+              onOpenCreateTripModal={(mode) => {
                 setEditingTrip(null);
+                setTripModalMode(mode);
                 setShowTripModal(true);
               }}
               onEditTrip={(trip) => {
@@ -235,14 +271,10 @@ export const App: React.FC = () => {
           setShowTripModal(false);
           setEditingTrip(null);
         }}
-        onSave={(data) => {
-          if (editingTrip) {
-            updateTrip(editingTrip.id, data);
-          } else {
-            addTrip(data);
-          }
-        }}
+        onSave={handleSaveTrip}
         editingTrip={editingTrip}
+        records={records}
+        initialMode={tripModalMode}
       />
 
       {/* Auth Modal */}

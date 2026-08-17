@@ -13,7 +13,7 @@ interface LeftSidebarTabsProps {
   selectedRegion?: string | null;
   onSelectPrefecture: (code: number) => void;
   onSelectTrip: (tripId: string | null) => void;
-  onOpenCreateTripModal: () => void;
+  onOpenCreateTripModal: (mode: "existing" | "new") => void;
   onEditTrip: (trip: Trip) => void;
   onDeleteTrip: (tripId: string) => void;
   onClearRegion?: () => void;
