@@ -714,6 +714,8 @@ export const JapanMap: React.FC<JapanMapProps> = ({
               {projectedCityPins.map((pin) => {
                 const isPrefSelected = selectedCode === pin.prefectureCode;
                 const isHovered = hoveredCityPin?.id === pin.id;
+                // Show text badge label if: map is zoomed in (zoom >= 1.4), OR this prefecture is selected, OR this pin is hovered
+                const showBadgeText = zoom >= 1.4 || isPrefSelected || isHovered;
 
                 return (
                   <g
@@ -728,18 +730,18 @@ export const JapanMap: React.FC<JapanMapProps> = ({
                     onMouseLeave={() => setHoveredCityPin(null)}
                     className="cursor-pointer group"
                   >
-                    {/* Pulsing ring for selected prefecture cities */}
-                    {isPrefSelected && (
+                    {/* Ring highlight for selected or hovered pins */}
+                    {(isPrefSelected || isHovered) && (
                       <circle
                         cx={pin.px}
                         cy={pin.py}
-                        r="4"
-                        fill={isDarkMode ? "#00F0FF" : "#EF4444"}
+                        r="8.5"
+                        fill="none"
+                        stroke={isDarkMode ? "#00F0FF" : "#EF4444"}
+                        strokeWidth="1.5"
+                        strokeOpacity="0.6"
                         className="pointer-events-none"
-                      >
-                        <animate attributeName="r" values="4;18;4" dur="2s" repeatCount="indefinite" />
-                        <animate attributeName="opacity" values="0.7;0;0.7" dur="2s" repeatCount="indefinite" />
-                      </circle>
+                      />
                     )}
 
                     {/* Pin Marker Outer Circle */}
@@ -750,7 +752,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
                       fill={isDarkMode ? "#00F0FF" : "#EF4444"}
                       stroke="#FFFFFF"
                       strokeWidth="1.5"
-                      className="transition-all shadow-md group-hover:scale-125"
+                      className="transition-all shadow-md"
                     />
 
                     {/* Pin Center Dot */}
@@ -762,31 +764,33 @@ export const JapanMap: React.FC<JapanMapProps> = ({
                       className="pointer-events-none"
                     />
 
-                    {/* City Name Badge Label */}
-                    <g transform={`translate(${pin.px}, ${pin.py - 12})`} className="pointer-events-none">
-                      <rect
-                        x="-24"
-                        y="-10"
-                        width="48"
-                        height="13"
-                        rx="3.5"
-                        fill={isDarkMode ? "rgba(15, 23, 42, 0.9)" : "rgba(255, 255, 255, 0.92)"}
-                        stroke={isDarkMode ? "#38BDF8" : "#F87171"}
-                        strokeWidth="0.8"
-                        className="drop-shadow-xs"
-                      />
-                      <text
-                        x="0"
-                        y="-2"
-                        textAnchor="middle"
-                        dominantBaseline="middle"
-                        className={`text-[8px] font-extrabold select-none ${
-                          isDarkMode ? "fill-cyan-300" : "fill-red-600"
-                        }`}
-                      >
-                        {pin.cityNameKo.length > 5 ? `${pin.cityNameKo.slice(0, 4)}..` : pin.cityNameKo}
-                      </text>
-                    </g>
+                    {/* City Name Badge Label (Rendered adaptively when zoomed in, selected, or hovered) */}
+                    {showBadgeText && (
+                      <g transform={`translate(${pin.px}, ${pin.py - 12})`} className="pointer-events-none transition-all duration-150 animate-in fade-in">
+                        <rect
+                          x="-24"
+                          y="-10"
+                          width="48"
+                          height="13"
+                          rx="3.5"
+                          fill={isDarkMode ? "rgba(15, 23, 42, 0.9)" : "rgba(255, 255, 255, 0.92)"}
+                          stroke={isDarkMode ? "#38BDF8" : "#F87171"}
+                          strokeWidth="0.8"
+                          className="drop-shadow-xs"
+                        />
+                        <text
+                          x="0"
+                          y="-2"
+                          textAnchor="middle"
+                          dominantBaseline="middle"
+                          className={`text-[8px] font-extrabold select-none ${
+                            isDarkMode ? "fill-cyan-300" : "fill-red-600"
+                          }`}
+                        >
+                          {pin.cityNameKo.length > 5 ? `${pin.cityNameKo.slice(0, 4)}..` : pin.cityNameKo}
+                        </text>
+                      </g>
+                    )}
                   </g>
                 );
               })}
