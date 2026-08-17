@@ -524,15 +524,12 @@ export const JapanMap: React.FC<JapanMapProps> = ({
     setTooltipPos(null);
   };
 
-  const getFillStyle = (status: VisitStatus, isHovered: boolean, isRegionSelected: boolean) => {
+  const getFillStyle = (status: VisitStatus, isHovered: boolean, _isRegionSelected: boolean) => {
     if (status === "visited") {
       return isDarkMode ? "url(#neon-visited-gradient)" : "url(#light-visited-gradient)";
     }
     if (status === "transit") {
       return isDarkMode ? "#065F46" : "#A7F3D0";
-    }
-    if (isRegionSelected) {
-      return isDarkMode ? "#1E3A8A" : "#DBEAFE";
     }
     return isHovered
       ? (isDarkMode ? "#334155" : "#CBD5E1")

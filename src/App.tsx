@@ -91,6 +91,7 @@ export const App: React.FC = () => {
 
   const handleSelectPrefecture = (code: number) => {
     setSelectedCode(code);
+    setSelectedRegion(null);
   };
 
   const handleSelectRegion = (regionName: string) => {
