@@ -144,6 +144,118 @@ const AIRCRAFT_AEROLOPA_SLUG_MAP: Record<string, string> = {
   "767-300ER": "763",
 };
 
+// Exact crawled AeroLOPA seat map layout URLs for major Korea-Japan airlines & fleet variants
+const EXACT_AEROLOPA_PATH_MAP: Record<string, string> = {
+  // Korean Air (ke)
+  "ke-B787-9": "ke-789-1",
+  "ke-787-9": "ke-789-1",
+  "ke-B787-10": "ke-781",
+  "ke-787-10": "ke-781",
+  "ke-A350-900": "ke-359",
+  "ke-350-900": "ke-359",
+  "ke-A321neo": "ke-32q",
+  "ke-A321-200": "ke-32q",
+  "ke-A321": "ke-32q",
+  "ke-B737-8": "ke-7m8-2",
+  "ke-737-8": "ke-7m8-2",
+  "ke-B737-MAX8": "ke-7m8-2",
+  "ke-B737-800": "ke-738",
+  "ke-737-800": "ke-738",
+  "ke-B737-900": "ke-739",
+  "ke-B737-900ER": "ke-739er",
+  "ke-A380-800": "ke-388-m",
+  "ke-A380": "ke-388-m",
+  "ke-A330-300": "ke-333-1",
+  "ke-A330-200": "ke-333-1",
+  "ke-B777-300ER": "ke-77w-1",
+  "ke-B777-200ER": "ke-773",
+  "ke-A220-300": "ke-223",
+
+  // Asiana Airlines (oz)
+  "oz-A350-900": "oz-359",
+  "oz-350-900": "oz-359",
+  "oz-A380-800": "oz-388-m",
+  "oz-A380": "oz-388-m",
+  "oz-A321neo": "oz-32q-1",
+  "oz-A321-200": "oz-321",
+  "oz-A321": "oz-321",
+  "oz-A330-300": "oz-333-1",
+  "oz-B777-200ER": "oz-772-1",
+
+  // Japan Airlines (jl)
+  "jl-A350-900": "jl-359-x11",
+  "jl-350-900": "jl-359-x11",
+  "jl-A350-1000": "jl-351",
+  "jl-B787-8": "jl-788-e12",
+  "jl-787-8": "jl-788-e12",
+  "jl-B787-9": "jl-789-e91",
+  "jl-787-9": "jl-789-e91",
+  "jl-B737-800": "jl-738-v40",
+  "jl-737-800": "jl-738-v40",
+  "jl-B767-300ER": "jl-763-a25",
+  "jl-B777-300ER": "jl-77w-w84",
+
+  // ANA (nh)
+  "nh-B787-8": "nh-788-2",
+  "nh-787-8": "nh-788-2",
+  "nh-B787-9": "nh-789-1",
+  "nh-787-9": "nh-789-1",
+  "nh-B787-10": "nh-781",
+  "nh-787-10": "nh-781",
+  "nh-A321neo": "nh-32n",
+  "nh-B737-800": "nh-738",
+  "nh-737-800": "nh-738",
+  "nh-A380-800": "nh-388-m",
+  "nh-B777-300ER": "nh-77w-1",
+
+  // Jeju Air (7c)
+  "7c-B737-800": "7c-738-1",
+  "7c-737-800": "7c-738-1",
+  "7c-B737-8": "7c-7m8",
+  "7c-737-8": "7c-7m8",
+  "7c-B737-MAX8": "7c-7m8",
+
+  // Jin Air (lj)
+  "lj-B737-800": "lj-738",
+  "lj-738": "lj-738",
+  "lj-B737-900": "lj-739",
+  "lj-B777-200ER": "lj-772",
+  "lj-B737-8": "lj-7m8",
+  "lj-737-8": "lj-7m8",
+
+  // T'way Air (tw)
+  "tw-A330-300": "tw-333",
+  "tw-A330-200": "tw-332-1",
+  "tw-B737-800": "tw-738",
+  "tw-737-800": "tw-738",
+  "tw-B737-8": "tw-7m8",
+  "tw-737-8": "tw-7m8",
+  "tw-B777-300ER": "tw-77w-1",
+
+  // Air Premia (yp)
+  "yp-B787-9": "yp-789-1",
+  "yp-787-9": "yp-789-1",
+
+  // ZIPAIR (zg)
+  "zg-B787-8": "zg-788",
+  "zg-787-8": "zg-788",
+
+  // Peach (mm)
+  "mm-A320-200": "mm-320",
+  "mm-A320": "mm-320",
+  "mm-A320neo": "mm-32n",
+  "mm-A321neo": "mm-32q-1",
+
+  // Air Busan (bx)
+  "bx-A320": "bx-320",
+  "bx-A321": "bx-321-1",
+  "bx-A321neo": "bx-32q-1",
+
+  // Air Seoul (rs)
+  "rs-A321": "rs-321-1",
+  "rs-A321-200": "rs-321-1",
+};
+
 export function getAeroLopaUrl(airline: string, aircraftModel: string): string {
   const cleanAirline = airline.trim();
   const cleanModel = aircraftModel.trim();
@@ -160,11 +272,19 @@ export function getAeroLopaUrl(airline: string, aircraftModel: string): string {
     return `${AEROLOPA_BASE_URL}`;
   }
 
+  // 1. Direct exact crawled path lookup
+  const exactKey = `${airlineCode}-${cleanModel}`;
+  if (EXACT_AEROLOPA_PATH_MAP[exactKey]) {
+    return `${AEROLOPA_BASE_URL}/${EXACT_AEROLOPA_PATH_MAP[exactKey]}`;
+  }
+
+  // 2. Generic model slug fallback
   const modelSlug = AIRCRAFT_AEROLOPA_SLUG_MAP[cleanModel];
   if (modelSlug) {
     return `${AEROLOPA_BASE_URL}/${airlineCode}-${modelSlug}`;
   }
 
+  // 3. Airline fleet overview fallback
   return `${AEROLOPA_BASE_URL}/${airlineCode}`;
 }
 
