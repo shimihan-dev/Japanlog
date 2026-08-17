@@ -4,7 +4,8 @@ import type { TravelRecordsMap, VisitStatus } from "../types/travel";
 import { PREFECTURE_MAP_BY_CODE } from "../data/prefectures";
 import { SHINKANSEN_LINES } from "../data/shinkansenRoutes";
 import { MapLegend } from "./MapLegend";
-import { X, Train, ZoomIn, ZoomOut, RotateCcw } from "lucide-react";
+import { X, Train, ZoomIn, ZoomOut, RotateCcw, MapPin } from "lucide-react";
+import { getCityCoordinates } from "../data/cityCoordinates";
 
 interface JapanMapProps {
   records: TravelRecordsMap;
@@ -88,6 +89,20 @@ export const JapanMap: React.FC<JapanMapProps> = ({
   const [hoveredCode, setHoveredCode] = useState<number | null>(null);
   const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(null);
   const [showShinkansen, setShowShinkansen] = useState<boolean>(true);
+  const [showCityPins, setShowCityPins] = useState<boolean>(true);
+  const [hoveredCityPin, setHoveredCityPin] = useState<{
+    id: string;
+    cityNameKo: string;
+    cityNameJa?: string;
+    visitedAt?: string;
+    notes?: string;
+    prefectureCode: number;
+    prefectureNameKo: string;
+    px: number;
+    py: number;
+  } | null>(null);
+  const [cityPinTooltipPos, setCityPinTooltipPos] = useState<{ x: number; y: number } | null>(null);
+
   const mapContainerRef = useRef<HTMLDivElement>(null);
 
   // Zoom & Pan State
@@ -175,6 +190,19 @@ export const JapanMap: React.FC<JapanMapProps> = ({
     touchStartRef.current = null;
   };
 
+  const handleCityPinHover = (e: React.MouseEvent, pin: any) => {
+    if (!mapContainerRef.current) return;
+    const containerBounds = mapContainerRef.current.getBoundingClientRect();
+    const rawX = e.clientX - containerBounds.left;
+    const rawY = e.clientY - containerBounds.top;
+
+    const clampedX = Math.max(90, Math.min(containerBounds.width - 90, rawX));
+    const clampedY = Math.max(60, rawY - 10);
+
+    setCityPinTooltipPos({ x: clampedX, y: clampedY });
+    setHoveredCityPin(pin);
+  };
+
   // Load GeoJSON data for 47 prefectures
   useEffect(() => {
     fetch("/japan.geojson")
@@ -229,7 +257,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
   }, [geoFeatures]);
 
   // Unified Mercator Projection for natural contiguous Japan
-  const { featurePaths, projectedShinkansenLines } = useMemo(() => {
+  const { featurePaths, projectedShinkansenLines, projectedCityPins } = useMemo(() => {
     const width = 850;
     const height = 920;
 
@@ -304,8 +332,59 @@ export const JapanMap: React.FC<JapanMapProps> = ({
       };
     });
 
-    return { featurePaths: paths, projectedShinkansenLines };
-  }, [processedGeoFeatures]);
+    // Collect and project city pins for all visited/recorded cities
+    const projectedCityPins: Array<{
+      id: string;
+      cityNameKo: string;
+      cityNameJa?: string;
+      visitedAt?: string;
+      notes?: string;
+      prefectureCode: number;
+      prefectureNameKo: string;
+      px: number;
+      py: number;
+    }> = [];
+
+    Object.values(records).forEach((rec) => {
+      if (!rec.cities || rec.cities.length === 0) return;
+      const pref = PREFECTURE_MAP_BY_CODE.get(rec.prefectureCode);
+      const proj = rec.prefectureCode === 47 ? okinawaProjection : mainProjection;
+      const baseCoords = PREFECTURE_MAINLAND_COORDS[rec.prefectureCode];
+
+      rec.cities.forEach((c: any, idx: number) => {
+        let coords = getCityCoordinates(c.cityNameKo, rec.prefectureCode);
+
+        // Fallback for custom entries without database coordinates
+        if (!coords && baseCoords) {
+          const angle = idx * 1.25;
+          const radius = 0.08 + idx * 0.04;
+          coords = [
+            baseCoords[0] + Math.cos(angle) * radius,
+            baseCoords[1] + Math.sin(angle) * radius,
+          ];
+        }
+
+        if (coords) {
+          const pt = proj(coords);
+          if (pt && !isNaN(pt[0]) && !isNaN(pt[1])) {
+            projectedCityPins.push({
+              id: c.id,
+              cityNameKo: c.cityNameKo,
+              cityNameJa: c.cityNameJa,
+              visitedAt: c.visitedAt,
+              notes: c.notes,
+              prefectureCode: rec.prefectureCode,
+              prefectureNameKo: pref?.nameKo || "",
+              px: pt[0],
+              py: pt[1],
+            });
+          }
+        }
+      });
+    });
+
+    return { featurePaths: paths, projectedShinkansenLines, projectedCityPins };
+  }, [processedGeoFeatures, records]);
 
   const handleMouseMove = (e: React.MouseEvent, code: number) => {
     if (!mapContainerRef.current) return;
@@ -365,6 +444,20 @@ export const JapanMap: React.FC<JapanMapProps> = ({
           >
             <Train className="w-3.5 h-3.5" />
             <span>신칸센 노선도</span>
+          </button>
+
+          {/* City Pins Layer Toggle */}
+          <button
+            onClick={() => setShowCityPins(!showCityPins)}
+            className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-xl text-xs font-bold transition-all border shadow-2xs ${
+              showCityPins
+                ? "bg-rose-600 dark:bg-cyan-500 text-white dark:text-slate-900 border-rose-500 dark:border-cyan-400 shadow-rose-500/20"
+                : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700"
+            }`}
+            title="방문 도시 핀 마커 표시/숨김"
+          >
+            <MapPin className="w-3.5 h-3.5" />
+            <span>도시 핀 ({projectedCityPins.length})</span>
           </button>
         </div>
 
@@ -430,6 +523,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
         onMouseLeave={() => {
           handleMouseLeave();
           handleMouseUpMap();
+          setHoveredCityPin(null);
         }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
@@ -575,7 +669,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
             </g>
           )}
 
-          {/* Dedicated Top Layer for Prefecture Text Labels (Guarantees zero overlap with polygon shapes) */}
+          {/* Dedicated Top Layer for Prefecture Text Labels */}
           <g className="pointer-events-none">
             {featurePaths.map(({ code, centroid }: { code: number; centroid: [number, number] }) => {
               const pref = PREFECTURE_MAP_BY_CODE.get(code);
@@ -613,11 +707,92 @@ export const JapanMap: React.FC<JapanMapProps> = ({
               );
             })}
           </g>
+
+          {/* 📍 Interactive City Pins Layer */}
+          {showCityPins && projectedCityPins.length > 0 && (
+            <g className="city-pins-layer">
+              {projectedCityPins.map((pin) => {
+                const isPrefSelected = selectedCode === pin.prefectureCode;
+                const isHovered = hoveredCityPin?.id === pin.id;
+
+                return (
+                  <g
+                    key={`city-pin-${pin.id}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onSelectPrefecture(pin.prefectureCode);
+                    }}
+                    onMouseEnter={(e) => {
+                      handleCityPinHover(e, pin);
+                    }}
+                    onMouseLeave={() => setHoveredCityPin(null)}
+                    className="cursor-pointer group"
+                  >
+                    {/* Pulsing ring for selected prefecture cities */}
+                    {isPrefSelected && (
+                      <circle
+                        cx={pin.px}
+                        cy={pin.py}
+                        r="9"
+                        className="fill-red-500/30 dark:fill-cyan-400/40 animate-ping pointer-events-none"
+                      />
+                    )}
+
+                    {/* Pin Marker Outer Circle */}
+                    <circle
+                      cx={pin.px}
+                      cy={pin.py}
+                      r={isHovered || isPrefSelected ? "5.5" : "4"}
+                      fill={isDarkMode ? "#00F0FF" : "#EF4444"}
+                      stroke="#FFFFFF"
+                      strokeWidth="1.5"
+                      className="transition-all shadow-md group-hover:scale-125"
+                    />
+
+                    {/* Pin Center Dot */}
+                    <circle
+                      cx={pin.px}
+                      cy={pin.py}
+                      r="1.6"
+                      fill="#FFFFFF"
+                      className="pointer-events-none"
+                    />
+
+                    {/* City Name Badge Label */}
+                    <g transform={`translate(${pin.px}, ${pin.py - 12})`} className="pointer-events-none">
+                      <rect
+                        x="-24"
+                        y="-10"
+                        width="48"
+                        height="13"
+                        rx="3.5"
+                        fill={isDarkMode ? "rgba(15, 23, 42, 0.9)" : "rgba(255, 255, 255, 0.92)"}
+                        stroke={isDarkMode ? "#38BDF8" : "#F87171"}
+                        strokeWidth="0.8"
+                        className="drop-shadow-xs"
+                      />
+                      <text
+                        x="0"
+                        y="-2"
+                        textAnchor="middle"
+                        dominantBaseline="middle"
+                        className={`text-[8px] font-extrabold select-none ${
+                          isDarkMode ? "fill-cyan-300" : "fill-red-600"
+                        }`}
+                      >
+                        {pin.cityNameKo.length > 5 ? `${pin.cityNameKo.slice(0, 4)}..` : pin.cityNameKo}
+                      </text>
+                    </g>
+                  </g>
+                );
+              })}
+            </g>
+          )}
         </g>
       </svg>
 
-      {/* Tooltip */}
-      {tooltipPos && hoveredPref && (
+      {/* Prefecture Tooltip */}
+      {tooltipPos && hoveredPref && !hoveredCityPin && (
         <div
           style={{
             left: `${tooltipPos.x}px`,
@@ -646,6 +821,34 @@ export const JapanMap: React.FC<JapanMapProps> = ({
                 ? "경유함"
                 : "미방문"}
             </span>
+          </div>
+        </div>
+      )}
+
+      {/* City Pin Tooltip Card */}
+      {cityPinTooltipPos && hoveredCityPin && (
+        <div
+          style={{
+            left: `${cityPinTooltipPos.x}px`,
+            top: `${cityPinTooltipPos.y}px`,
+          }}
+          className="absolute pointer-events-none transform -translate-x-1/2 -translate-y-full z-40 bg-slate-900/95 text-white text-xs px-3 py-2 rounded-xl shadow-xl backdrop-blur-md space-y-1 border border-slate-700 animate-in fade-in duration-100 min-w-[140px]"
+        >
+          <div className="font-extrabold flex items-center space-x-1.5 text-rose-400 dark:text-cyan-300 border-b border-slate-800 pb-1">
+            <MapPin className="w-3.5 h-3.5" />
+            <span>{hoveredCityPin.cityNameKo}</span>
+            {hoveredCityPin.cityNameJa && (
+              <span className="text-[10px] text-slate-400 font-normal">({hoveredCityPin.cityNameJa})</span>
+            )}
+          </div>
+          <div className="text-[11px] text-slate-300 space-y-0.5 pt-0.5">
+            <div>소속: <span className="font-semibold text-slate-200">{hoveredCityPin.prefectureNameKo}</span></div>
+            {hoveredCityPin.visitedAt && (
+              <div>방문 시기: <span className="font-semibold text-amber-300">{hoveredCityPin.visitedAt}</span></div>
+            )}
+            {hoveredCityPin.notes && (
+              <div className="text-slate-400 italic text-[10px] truncate max-w-[180px]">"{hoveredCityPin.notes}"</div>
+            )}
           </div>
         </div>
       )}
