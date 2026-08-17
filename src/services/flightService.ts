@@ -56,6 +56,107 @@ export function getAerotypeUrl(aircraftModel: string): string {
   return `${AEROTYPE_BASE_URL}?id=${encodeURIComponent(targetId)}`;
 }
 
+export const AEROLOPA_BASE_URL = "https://www.aerolopa.com";
+
+const AIRLINE_AEROLOPA_CODE_MAP: Record<string, string> = {
+  "대한항공": "ke",
+  "Korean Air": "ke",
+  "KE": "ke",
+  "KAL": "ke",
+  "아시아나항공": "oz",
+  "아시아나": "oz",
+  "Asiana Airlines": "oz",
+  "OZ": "oz",
+  "AAR": "oz",
+  "일본항공": "jl",
+  "JAL": "jl",
+  "Japan Airlines": "jl",
+  "JL": "jl",
+  "전일본공수": "nh",
+  "ANA": "nh",
+  "All Nippon Airways": "nh",
+  "NH": "nh",
+  "에어프레미아": "yp",
+  "Air Premia": "yp",
+  "YP": "yp",
+  "피치항공": "mm",
+  "Peach": "mm",
+  "MM": "mm",
+  "제주항공": "7c",
+  "Jeju Air": "7c",
+  "7C": "7c",
+  "진에어": "lj",
+  "Jin Air": "lj",
+  "LJ": "lj",
+  "티웨이항공": "tw",
+  "티웨이": "tw",
+  "T'way Air": "tw",
+  "TW": "tw",
+  "에어부산": "bx",
+  "Air Busan": "bx",
+  "BX": "bx",
+  "에어서울": "rs",
+  "Air Seoul": "rs",
+  "RS": "rs",
+  "ZIPAIR": "zg",
+  "ZG": "zg",
+};
+
+const AIRCRAFT_AEROLOPA_SLUG_MAP: Record<string, string> = {
+  "B787-9": "789",
+  "787-9": "789",
+  "B787-10": "781",
+  "787-10": "781",
+  "B787-8": "788",
+  "787-8": "788",
+  "A350-900": "359",
+  "350-900": "359",
+  "A350-1000": "351",
+  "350-1000": "351",
+  "A321neo": "321",
+  "A321-200": "321",
+  "A321": "321",
+  "A320": "320",
+  "A320neo": "320",
+  "B777-300ER": "77w",
+  "777-300ER": "77w",
+  "B777-200ER": "772",
+  "777-200ER": "772",
+  "B737-8": "738",
+  "B737-MAX8": "738",
+  "737-8": "738",
+  "B737-800": "738",
+  "737-800": "738",
+  "A380-800": "388",
+  "A380": "388",
+  "B767-300ER": "763",
+  "767-300ER": "763",
+};
+
+export function getAeroLopaUrl(airline: string, aircraftModel: string): string {
+  const cleanAirline = airline.trim();
+  const cleanModel = aircraftModel.trim();
+
+  let airlineCode = "";
+  for (const [key, code] of Object.entries(AIRLINE_AEROLOPA_CODE_MAP)) {
+    if (cleanAirline.includes(key)) {
+      airlineCode = code;
+      break;
+    }
+  }
+
+  if (!airlineCode) {
+    return `${AEROLOPA_BASE_URL}`;
+  }
+
+  const modelSlug = AIRCRAFT_AEROLOPA_SLUG_MAP[cleanModel];
+  if (modelSlug) {
+    return `${AEROLOPA_BASE_URL}/${airlineCode}-${modelSlug}`;
+  }
+
+  return `${AEROLOPA_BASE_URL}/${airlineCode}`;
+}
+
 export const PREFECTURE_AIRPORTS_MAP: Record<number, PrefectureAirportConfig> = {
   1: { hasDirectFlight: true, airports: [{ code: "CTS", name: "삿포로 신치토세" }] },
   2: { hasDirectFlight: true, airports: [{ code: "AOJ", name: "아오모리 공항" }] },

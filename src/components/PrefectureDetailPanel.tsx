@@ -256,7 +256,7 @@ export const PrefectureDetailPanel: React.FC<PrefectureDetailPanelProps> = ({
 };
 
 // Sub-component for Direct Flight Schedules & Gateway Airport Real-time Fetcher
-import { fetchLiveAirportFlights, hasGimpoFlightsForAirport, getAerotypeUrl, PREFECTURE_AIRPORTS_MAP } from "../services/flightService";
+import { fetchLiveAirportFlights, hasGimpoFlightsForAirport, getAerotypeUrl, getAeroLopaUrl, PREFECTURE_AIRPORTS_MAP } from "../services/flightService";
 import type { FlightSchedule } from "../services/flightService";
 import { Clock, Calendar, RefreshCw, AlertCircle, ArrowLeftRight, PlaneTakeoff, PlaneLanding, ExternalLink } from "lucide-react";
 
@@ -501,27 +501,41 @@ const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) =>
                   </div>
                 </div>
 
-                {/* Aerotype Aircraft Badges */}
+                {/* Aerotype Aircraft Spec & AeroLOPA Seat Map Badges */}
                 {flight.aircraft && (
-                  <div className="flex flex-wrap items-center gap-1 pt-1 border-t border-slate-100 dark:border-slate-700/50 text-[9px]">
+                  <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-slate-100 dark:border-slate-700/50 text-[9px]">
                     <span className="text-slate-400 dark:text-slate-500 font-medium shrink-0 flex items-center gap-0.5">
                       ✈️ 기종:
                     </span>
                     {flight.aircraft.split("/").map((model, mIdx) => {
                       const trimmedModel = model.trim();
                       const aerotypeUrl = getAerotypeUrl(trimmedModel);
+                      const aerolopaUrl = getAeroLopaUrl(flight.airline, trimmedModel);
+
                       return (
-                        <a
-                          key={mIdx}
-                          href={aerotypeUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          title={`Aerotype에서 ${trimmedModel} 기종 상세정보 보기`}
-                          className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded bg-sky-50 hover:bg-sky-100 dark:bg-sky-950/70 dark:hover:bg-sky-900/80 text-sky-700 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/60 font-semibold text-[9px] transition-all hover:scale-105"
-                        >
-                          <span>{trimmedModel}</span>
-                          <ExternalLink className="w-2 h-2 text-sky-500 shrink-0" />
-                        </a>
+                        <React.Fragment key={mIdx}>
+                          <a
+                            href={aerotypeUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title={`Aerotype에서 ${trimmedModel} 기종 스펙 보기`}
+                            className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded bg-sky-50 hover:bg-sky-100 dark:bg-sky-950/70 dark:hover:bg-sky-900/80 text-sky-700 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/60 font-semibold text-[9px] transition-all hover:scale-105"
+                          >
+                            <span>{trimmedModel}</span>
+                            <ExternalLink className="w-2 h-2 text-sky-500 shrink-0" />
+                          </a>
+
+                          <a
+                            href={aerolopaUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            title={`AeroLOPA에서 ${flight.airline} ${trimmedModel} 초고화질 좌석배치도 보기`}
+                            className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/70 dark:hover:bg-indigo-900/80 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800/60 font-extrabold text-[9px] transition-all hover:scale-105"
+                          >
+                            <span>💺 AeroLOPA 좌석배치도</span>
+                            <ExternalLink className="w-2 h-2 text-indigo-500 shrink-0" />
+                          </a>
+                        </React.Fragment>
                       );
                     })}
                   </div>
