@@ -718,7 +718,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
                 return (
                   <g
                     key={`city-pin-${pin.id}`}
-                    onClick={(e) => {
+                    onClick={(e) => {https://127.0.0.1:56819/static/artifacts/5749eb85-7e1b-4b02-b870-1f7521e3f75a/.user_uploaded/media_1786933402627.png?csrf=95abda78-1981-48bf-aa62-33866725ce03
                       e.stopPropagation();
                       onSelectPrefecture(pin.prefectureCode);
                     }}
@@ -728,18 +728,30 @@ export const JapanMap: React.FC<JapanMapProps> = ({
                     onMouseLeave={() => setHoveredCityPin(null)}
                     className="cursor-pointer group"
                   >
-                    {/* Pulsing ring for selected prefecture cities */}
+                    {/* Target highlight ring for selected prefecture cities */}
                     {isPrefSelected && (
-                      <circle
-                        cx={pin.px}
-                        cy={pin.py}
-                        r="4"
-                        fill={isDarkMode ? "#00F0FF" : "#EF4444"}
-                        className="pointer-events-none"
-                      >
-                        <animate attributeName="r" values="4;18;4" dur="2s" repeatCount="indefinite" />
-                        <animate attributeName="opacity" values="0.7;0;0.7" dur="2s" repeatCount="indefinite" />
-                      </circle>
+                      <>
+                        <circle
+                          cx={pin.px}
+                          cy={pin.py}
+                          r="8.5"
+                          fill="none"
+                          stroke={isDarkMode ? "#00F0FF" : "#EF4444"}
+                          strokeWidth="1.5"
+                          strokeOpacity="0.6"
+                          className="pointer-events-none"
+                        />
+                        <circle
+                          cx={pin.px}
+                          cy={pin.py}
+                          r="12"
+                          fill="none"
+                          stroke={isDarkMode ? "#00F0FF" : "#EF4444"}
+                          strokeWidth="0.8"
+                          strokeOpacity="0.3"
+                          className="pointer-events-none"
+                        />
+                      </>
                     )}
 
                     {/* Pin Marker Outer Circle */}
@@ -750,7 +762,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
                       fill={isDarkMode ? "#00F0FF" : "#EF4444"}
                       stroke="#FFFFFF"
                       strokeWidth="1.5"
-                      className="transition-all shadow-md group-hover:scale-125"
+                      className="transition-all shadow-md"
                     />
 
                     {/* Pin Center Dot */}
