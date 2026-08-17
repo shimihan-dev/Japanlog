@@ -71,22 +71,30 @@ export function useTravelRecords(user: User | null = null) {
         const localData = loadTravelRecords();
         const cloudData = (data?.records || {}) as TravelRecordsMap;
 
+        // Check if local data is just sample data
+        const isSampleLocalData = Object.values(localData).some((pref) =>
+          pref.cities?.some((c: CityVisit) => c.id.startsWith("sample-"))
+        );
+
         if (Object.keys(cloudData).length > 0) {
-          // Merge local and cloud records seamlessly
-          const merged = mergeRecords(localData, cloudData);
+          // Merge local (if non-sample) and cloud records
+          const dataToMerge = isSampleLocalData ? {} : localData;
+          const merged = mergeRecords(dataToMerge, cloudData);
           if (isMounted) setRecords(merged);
 
-          // Save merged data back to cloud
           await supabase.from("user_travel_records").upsert({
             user_id: user!.id,
             records: merged,
             updated_at: new Date().toISOString(),
           });
-        } else if (Object.keys(localData).length > 0) {
-          // First time cloud sync for this user: Upload current local records
+        } else {
+          // New user logging in: if local data was just sample data, start with clean empty records
+          const initialRecords = isSampleLocalData ? {} : localData;
+          if (isMounted) setRecords(initialRecords);
+
           await supabase.from("user_travel_records").upsert({
             user_id: user!.id,
-            records: localData,
+            records: initialRecords,
             updated_at: new Date().toISOString(),
           });
         }

@@ -1,14 +1,44 @@
 import { useState, useEffect, useCallback } from "react";
 import type { Trip } from "../types/travel";
-import { loadTrips, saveTrips, getSampleTrips } from "../utils/storage";
+import { getSampleTrips } from "../utils/storage";
+import type { User } from "@supabase/supabase-js";
 
-export function useTrips() {
-  const [trips, setTrips] = useState<Trip[]>(() => loadTrips());
+export function useTrips(user: User | null = null) {
+  const storageKey = user ? `japan-travel-map-trips-${user.id}` : "japan-travel-map-trips-guest";
+
+  const [trips, setTrips] = useState<Trip[]>(() => {
+    try {
+      const raw = localStorage.getItem(storageKey);
+      if (raw) return JSON.parse(raw);
+      return user ? [] : getSampleTrips();
+    } catch {
+      return user ? [] : getSampleTrips();
+    }
+  });
+
   const [selectedTripId, setSelectedTripId] = useState<string | null>(null);
 
+  // Sync state whenever user session changes (login/logout)
   useEffect(() => {
-    saveTrips(trips);
-  }, [trips]);
+    try {
+      const raw = localStorage.getItem(storageKey);
+      if (raw) {
+        setTrips(JSON.parse(raw));
+      } else {
+        setTrips(user ? [] : getSampleTrips());
+      }
+    } catch {
+      setTrips(user ? [] : getSampleTrips());
+    }
+  }, [user, storageKey]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(trips));
+    } catch (err) {
+      console.error("Failed to save trips", err);
+    }
+  }, [trips, storageKey]);
 
   const addTrip = useCallback((tripData: Omit<Trip, "id" | "createdAt" | "updatedAt">) => {
     const now = new Date().toISOString();

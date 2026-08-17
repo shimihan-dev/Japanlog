@@ -51,7 +51,7 @@ export const App: React.FC = () => {
     addTrip,
     updateTrip,
     deleteTrip,
-  } = useTrips();
+  } = useTrips(user);
 
   const [showResetModal, setShowResetModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
