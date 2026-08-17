@@ -54,11 +54,21 @@ export const App: React.FC = () => {
   } = useTrips(user);
 
   const [showResetModal, setShowResetModal] = useState(false);
+  const [showSampleModal, setShowSampleModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
   const [showTripModal, setShowTripModal] = useState(false);
   const [editingTrip, setEditingTrip] = useState<Trip | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<string | null>(null);
+
+  const handleLoadSampleClick = () => {
+    // If user has existing visits or cities, ask for confirmation before overwriting
+    if (stats.visitedCount > 0 || stats.totalCitiesCount > 0) {
+      setShowSampleModal(true);
+    } else {
+      loadSample();
+    }
+  };
   const [isDarkMode, setIsDarkMode] = useState<boolean>(() => {
     const saved = localStorage.getItem("japan-travel-map-theme");
     if (saved) return saved === "dark";
@@ -102,7 +112,7 @@ export const App: React.FC = () => {
         isDarkMode={isDarkMode}
         user={user}
         onToggleDarkMode={() => setIsDarkMode((prev) => !prev)}
-        onLoadSample={loadSample}
+        onLoadSample={handleLoadSampleClick}
         onReset={() => setShowResetModal(true)}
         onOpenAuthModal={() => setShowAuthModal(true)}
         onSignOut={signOut}
@@ -251,6 +261,20 @@ export const App: React.FC = () => {
         stats={stats}
         records={records}
         userName={user?.email ? user.email.split("@")[0] : "여행가"}
+      />
+
+      {/* Sample Load Confirmation Modal */}
+      <ConfirmModal
+        isOpen={showSampleModal}
+        title="샘플 데이터 불러오기 ⚠️"
+        message="현재 작성 중인 내 여행 기록이 샘플 데이터로 교체됩니다. 계속하시겠습니까?"
+        confirmLabel="샘플 불러오기"
+        cancelLabel="취소 (내 기록 유지)"
+        onConfirm={() => {
+          loadSample();
+          setShowSampleModal(false);
+        }}
+        onCancel={() => setShowSampleModal(false)}
       />
 
       {/* Reset Confirmation Modal */}
