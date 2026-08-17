@@ -184,6 +184,15 @@ export function useTravelRecords(user: User | null = null) {
         updatedAt: new Date().toISOString(),
       };
 
+      // Prevent adding duplicate city entries with the same name in the same prefecture
+      const isDuplicate = existing.cities.some(
+        (c: CityVisit) => c.cityNameKo.trim().toLowerCase() === cityData.cityNameKo.trim().toLowerCase()
+      );
+
+      if (isDuplicate) {
+        return prev;
+      }
+
       const newCity: CityVisit = {
         id: `city-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
         ...cityData,

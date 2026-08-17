@@ -126,8 +126,8 @@ export const TripModal: React.FC<TripModalProps> = ({
     e.preventDefault();
     if (!title.trim()) return;
 
-    // autoSyncMap = true when mode is "new" (or when creating new trip)
-    const autoSyncMap = mode === "new" || !editingTrip;
+    // autoSyncMap = true ONLY when mode is "new" (never when grouping existing cities)
+    const autoSyncMap = mode === "new";
 
     onSave(
       {
