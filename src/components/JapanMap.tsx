@@ -113,15 +113,31 @@ export const JapanMap: React.FC<JapanMapProps> = ({
   const panStartRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
   const handleZoomIn = () => {
-    setZoom((prev) => Math.min(5, Math.round((prev + 0.25) * 100) / 100));
+    const oldZoom = zoom;
+    const newZoom = Math.min(5, Math.round((oldZoom + 0.25) * 100) / 100);
+    if (newZoom === oldZoom) return;
+    const scaleRatio = newZoom / oldZoom;
+    setZoom(newZoom);
+    setPan((prev) => ({
+      x: Math.round(425 - (425 - prev.x) * scaleRatio),
+      y: Math.round(460 - (460 - prev.y) * scaleRatio),
+    }));
   };
 
   const handleZoomOut = () => {
-    setZoom((prev) => {
-      const next = Math.max(1, Math.round((prev - 0.25) * 100) / 100);
-      if (next === 1) setPan({ x: 0, y: 0 });
-      return next;
-    });
+    const oldZoom = zoom;
+    const newZoom = Math.max(1, Math.round((oldZoom - 0.25) * 100) / 100);
+    if (newZoom === 1) {
+      setZoom(1);
+      setPan({ x: 0, y: 0 });
+      return;
+    }
+    const scaleRatio = newZoom / oldZoom;
+    setZoom(newZoom);
+    setPan((prev) => ({
+      x: Math.round(425 - (425 - prev.x) * scaleRatio),
+      y: Math.round(460 - (460 - prev.y) * scaleRatio),
+    }));
   };
 
   const handleResetZoom = () => {
@@ -129,17 +145,17 @@ export const JapanMap: React.FC<JapanMapProps> = ({
     setPan({ x: 0, y: 0 });
   };
 
-  // Cursor-Centered Wheel Zoom Handler (Figma & Google Maps style)
+  // Cursor-Centered Wheel Zoom Handler (Figma & Google Maps style - Pure (0,0) origin)
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
     if (!mapContainerRef.current) return;
 
     const bounds = mapContainerRef.current.getBoundingClientRect();
-    // Normalize mouse position to SVG viewBox coordinate system (0..850, 0..920)
-    const mouseX = ((e.clientX - bounds.left) / bounds.width) * 850;
-    const mouseY = ((e.clientY - bounds.top) / bounds.height) * 920;
+    // SVG viewBox scale ratio for container vs viewBox 850x920
+    const viewBoxX = ((e.clientX - bounds.left) / bounds.width) * 850;
+    const viewBoxY = ((e.clientY - bounds.top) / bounds.height) * 920;
 
-    const zoomStep = e.deltaY < 0 ? 0.25 : -0.25;
+    const zoomStep = e.deltaY < 0 ? 0.2 : -0.2;
     const oldZoom = zoom;
     const newZoom = Math.min(5, Math.max(1, Math.round((oldZoom + zoomStep) * 100) / 100));
 
@@ -151,38 +167,31 @@ export const JapanMap: React.FC<JapanMapProps> = ({
       return;
     }
 
-    // Scale ratio around cursor position
-    const scaleFactor = newZoom / oldZoom;
-    const dx = (mouseX - (425 + pan.x)) * (1 - scaleFactor);
-    const dy = (mouseY - (460 + pan.y)) * (1 - scaleFactor);
+    const scaleRatio = newZoom / oldZoom;
+    const newPanX = Math.round(viewBoxX - (viewBoxX - pan.x) * scaleRatio);
+    const newPanY = Math.round(viewBoxY - (viewBoxY - pan.y) * scaleRatio);
 
     setZoom(newZoom);
-    setPan((prevPan) => ({
-      x: Math.round(prevPan.x + dx),
-      y: Math.round(prevPan.y + dy),
-    }));
+    setPan({ x: newPanX, y: newPanY });
   };
 
   // Double-Click Zoom In centered on click location
   const handleDoubleClick = (e: React.MouseEvent) => {
     if (!mapContainerRef.current) return;
     const bounds = mapContainerRef.current.getBoundingClientRect();
-    const mouseX = ((e.clientX - bounds.left) / bounds.width) * 850;
-    const mouseY = ((e.clientY - bounds.top) / bounds.height) * 920;
+    const viewBoxX = ((e.clientX - bounds.left) / bounds.width) * 850;
+    const viewBoxY = ((e.clientY - bounds.top) / bounds.height) * 920;
 
     const oldZoom = zoom;
     const newZoom = Math.min(5, Math.round((oldZoom * 1.5) * 100) / 100);
     if (newZoom === oldZoom) return;
 
-    const scaleFactor = newZoom / oldZoom;
-    const dx = (mouseX - (425 + pan.x)) * (1 - scaleFactor);
-    const dy = (mouseY - (460 + pan.y)) * (1 - scaleFactor);
+    const scaleRatio = newZoom / oldZoom;
+    const newPanX = Math.round(viewBoxX - (viewBoxX - pan.x) * scaleRatio);
+    const newPanY = Math.round(viewBoxY - (viewBoxY - pan.y) * scaleRatio);
 
     setZoom(newZoom);
-    setPan((prevPan) => ({
-      x: Math.round(prevPan.x + dx),
-      y: Math.round(prevPan.y + dy),
-    }));
+    setPan({ x: newPanX, y: newPanY });
   };
 
   // Mouse Drag Handlers
@@ -282,8 +291,8 @@ export const JapanMap: React.FC<JapanMapProps> = ({
       if (pt) {
         setZoom(target.zoom);
         setPan({
-          x: Math.round(425 - pt[0]),
-          y: Math.round(460 - pt[1]),
+          x: Math.round(425 - pt[0] * target.zoom),
+          y: Math.round(460 - pt[1] * target.zoom),
         });
       }
     }
@@ -647,10 +656,10 @@ export const JapanMap: React.FC<JapanMapProps> = ({
 
         {/* Master Zoom & Pan Transform Group */}
         <g
-          transform={`translate(${425 + pan.x}, ${460 + pan.y}) scale(${zoom}) translate(-425, -460)`}
+          transform={`translate(${pan.x}, ${pan.y}) scale(${zoom})`}
           style={{
             transition: isDragging ? "none" : "transform 0.3s cubic-bezier(0.2, 0, 0.2, 1)",
-            transformOrigin: "center center",
+            transformOrigin: "0 0",
           }}
         >
           {/* Okinawa Bottom-Right Corner Inset Line */}
