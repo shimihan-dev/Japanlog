@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import type { PrefectureRecord, VisitStatus, CityVisit } from "../types/travel";
+import type { PrefectureRecord, VisitStatus, CityVisit, Trip } from "../types/travel";
 import { PREFECTURE_MAP_BY_CODE } from "../data/prefectures";
 import { PREFECTURE_ACCESS_INFO } from "../data/transitRoutes";
 import { StatusSelector } from "./StatusSelector";
@@ -11,6 +11,7 @@ import { MapPin, Plus, Plane, Train, Building2 } from "lucide-react";
 interface PrefectureDetailPanelProps {
   selectedCode: number | null;
   record?: PrefectureRecord;
+  trips?: Trip[];
   onUpdateStatus: (code: number, status: VisitStatus) => void;
   onAddCity: (code: number, city: Omit<CityVisit, "id">) => void;
   onUpdateCity: (code: number, cityId: string, city: Partial<CityVisit>) => void;
@@ -21,6 +22,7 @@ interface PrefectureDetailPanelProps {
 export const PrefectureDetailPanel: React.FC<PrefectureDetailPanelProps> = ({
   selectedCode,
   record,
+  trips = [],
   onUpdateStatus,
   onAddCity,
   onUpdateCity,
@@ -140,6 +142,9 @@ export const PrefectureDetailPanel: React.FC<PrefectureDetailPanelProps> = ({
             {!showAddForm && !editingCity && (
               <CityVisitList
                 cities={cities}
+                prefectureCode={selectedCode}
+                record={record}
+                trips={trips}
                 onEdit={(c) => setEditingCity(c)}
                 onDelete={(cityId) => onDeleteCity(selectedCode, cityId)}
               />

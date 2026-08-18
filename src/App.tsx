@@ -226,6 +226,7 @@ export const App: React.FC = () => {
               selectedCode={selectedCode}
               selectedRegion={selectedRegion}
               selectedTrip={selectedTrip}
+              trips={trips}
               onSelectPrefecture={handleSelectPrefecture}
               onClearRegion={() => setSelectedRegion(null)}
               onClearTrip={() => setSelectedTripId(null)}
@@ -243,6 +244,7 @@ export const App: React.FC = () => {
             <PrefectureDetailPanel
               selectedCode={selectedCode}
               record={selectedCode ? records[selectedCode] : undefined}
+              trips={trips}
               onUpdateStatus={updateStatus}
               onAddCity={addCity}
               onUpdateCity={updateCity}

@@ -6,12 +6,14 @@ import { SHINKANSEN_LINES } from "../data/shinkansenRoutes";
 import { MapLegend } from "./MapLegend";
 import { X, Train, ZoomIn, ZoomOut, RotateCcw, MapPin, Luggage } from "lucide-react";
 import { getCityCoordinates } from "../data/cityCoordinates";
+import { getCityVisitHistory } from "../utils/visitHistory";
 
 interface JapanMapProps {
   records: TravelRecordsMap;
   selectedCode: number | null;
   selectedRegion?: string | null;
   selectedTrip?: Trip | null;
+  trips?: Trip[];
   onSelectPrefecture: (code: number) => void;
   onClearRegion?: () => void;
   onClearTrip?: () => void;
@@ -84,6 +86,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
   selectedCode,
   selectedRegion = null,
   selectedTrip = null,
+  trips = [],
   onSelectPrefecture,
   onClearRegion,
   onClearTrip,
@@ -104,6 +107,8 @@ export const JapanMap: React.FC<JapanMapProps> = ({
     prefectureNameKo: string;
     px: number;
     py: number;
+    visitCount: number;
+    history: any[];
   } | null>(null);
   const [cityPinTooltipPos, setCityPinTooltipPos] = useState<{ x: number; y: number } | null>(null);
 
@@ -463,6 +468,8 @@ export const JapanMap: React.FC<JapanMapProps> = ({
       prefectureNameKo: string;
       px: number;
       py: number;
+      visitCount: number;
+      history: any[];
     }> = [];
 
     const seenPinKeys = new Set<string>();
@@ -482,6 +489,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
         if (seenPinKeys.has(pinKey)) return;
         seenPinKeys.add(pinKey);
 
+        const summary = getCityVisitHistory(rec.prefectureCode, c.cityNameKo, rec, trips);
         let coords = getCityCoordinates(c.cityNameKo, rec.prefectureCode);
 
         // Fallback for custom entries without database coordinates
@@ -501,12 +509,14 @@ export const JapanMap: React.FC<JapanMapProps> = ({
               id: c.id,
               cityNameKo: c.cityNameKo,
               cityNameJa: c.cityNameJa,
-              visitedAt: c.visitedAt,
+              visitedAt: summary.lastVisitedAt || c.visitedAt,
               notes: c.notes,
               prefectureCode: rec.prefectureCode,
               prefectureNameKo: pref?.nameKo || "",
               px: pt[0],
               py: pt[1],
+              visitCount: summary.visitCount,
+              history: summary.history,
             });
           }
         }
@@ -514,7 +524,7 @@ export const JapanMap: React.FC<JapanMapProps> = ({
     });
 
     return { featurePaths: paths, projectedShinkansenLines, projectedCityPins };
-  }, [processedGeoFeatures, records]);
+  }, [processedGeoFeatures, records, trips]);
 
   const handleMouseMove = (e: React.MouseEvent, code: number) => {
     if (!mapContainerRef.current) return;
@@ -910,6 +920,27 @@ export const JapanMap: React.FC<JapanMapProps> = ({
                       fill="#FFFFFF"
                       className="pointer-events-none"
                     />
+
+                    {/* Multi-Visit Count Badge (e.g. x2, x3, x5) */}
+                    {pin.visitCount > 1 && (
+                      <g transform={`translate(${pin.px + 7}, ${pin.py - 7})`} className="pointer-events-none">
+                        <circle
+                          r="6"
+                          fill={isDarkMode ? "#0284C7" : "#DC2626"}
+                          stroke="#FFFFFF"
+                          strokeWidth="1.2"
+                          className="shadow-sm"
+                        />
+                        <text
+                          x="0"
+                          y="2.5"
+                          textAnchor="middle"
+                          className="text-[7.5px] font-black fill-white"
+                        >
+                          {`x${pin.visitCount}`}
+                        </text>
+                      </g>
+                    )}
 
                     {/* City Name Badge Label (Rendered adaptively when zoomed in, selected, or hovered) */}
                     {showBadgeText && (
