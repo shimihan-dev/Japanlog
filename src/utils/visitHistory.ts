@@ -6,8 +6,10 @@ export interface CityVisitHistoryItem {
   tripId?: string;
   title: string;
   dateRange?: string;
+  startDate?: string;
   emoji?: string;
   notes?: string;
+  visitRound?: number;
 }
 
 export interface CityVisitSummary {
@@ -39,6 +41,7 @@ export function getCityVisitHistory(
         tripId: t.id,
         title: t.title,
         dateRange,
+        startDate: t.startDate,
         emoji: t.emoji || "✈️",
         notes: t.description,
       });
@@ -55,14 +58,30 @@ export function getCityVisitHistory(
         source: "direct",
         title: directCity.notes || `${cityNameKo} 개인 기록`,
         dateRange: directCity.visitedAt,
+        startDate: directCity.visitedAt,
         emoji: "📍",
         notes: directCity.notes,
       });
     }
   }
 
+  // 3. Sort history chronologically ASCENDING (oldest date first -> 1차, 2차, ...)
+  const getSortKey = (item: CityVisitHistoryItem) => {
+    const raw = item.startDate || item.dateRange || "";
+    const digits = raw.replace(/\D/g, "");
+    return digits || "00000000";
+  };
+
+  history.sort((a, b) => getSortKey(a).localeCompare(getSortKey(b)));
+
+  // 4. Assign visit round numbers (1차, 2차, ...) chronologically
+  history.forEach((item, index) => {
+    item.visitRound = index + 1;
+  });
+
   const visitCount = Math.max(1, history.length);
-  const lastVisitedAt = history[0]?.dateRange || directCity?.visitedAt || record?.lastVisitedAt;
+  const latestItem = history[history.length - 1];
+  const lastVisitedAt = latestItem?.dateRange || directCity?.visitedAt || record?.lastVisitedAt;
 
   return { visitCount, history, lastVisitedAt };
 }

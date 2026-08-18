@@ -134,7 +134,7 @@ export const CityVisitList: React.FC<CityVisitListProps> = ({
                       <div className="flex items-center justify-between">
                         <span className="font-bold text-slate-800 dark:text-slate-200 flex items-center space-x-1">
                           <span>{h.emoji || "✈️"}</span>
-                          <span>{idx + 1}차: {h.title}</span>
+                          <span>{h.visitRound || idx + 1}차: {h.title}</span>
                         </span>
                         {h.dateRange && (
                           <span className="text-[10px] font-semibold text-blue-600 dark:text-cyan-300 bg-blue-50/80 dark:bg-cyan-950/60 px-1.5 py-0.2 rounded border border-blue-100 dark:border-cyan-900/60">
