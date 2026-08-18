@@ -25,34 +25,42 @@ export async function fetchLiveJpyExchangeRate(): Promise<ExchangeRateData> {
     return cachedRate;
   }
 
-  // 1. Official Hana Bank Live Notice Rate API (Naver Stock Hana Bank FX Endpoint)
-  try {
-    const res = await fetch("https://api.stock.naver.com/marketindex/exchange/FX_JPYKRW");
-    if (res.ok) {
-      const data = await res.json();
-      const info = data.exchangeInfo;
-      const rawPrice = info?.closePrice || info?.calcPrice;
-      const basePrice = typeof rawPrice === "number" ? rawPrice : parseFloat(rawPrice);
+  // 1. Official Hana Bank Live Notice Rate API (Naver Stock Hana Bank FX Endpoints)
+  const hanaEndpoints = [
+    "/api/naver-fx/marketindex/exchange/FX_JPYKRW",
+    "/api/hanabank/FX_JPYKRW",
+    "https://api.stock.naver.com/marketindex/exchange/FX_JPYKRW",
+  ];
 
-      if (!isNaN(basePrice) && basePrice > 0) {
-        const degree = info?.degreeCount ? `${info.degreeCount}회차 ` : "";
-        const timeStr = info?.localTradedAt
-          ? new Date(info.localTradedAt).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })
-          : new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" });
+  for (const endpoint of hanaEndpoints) {
+    try {
+      const res = await fetch(endpoint);
+      if (res.ok) {
+        const data = await res.json();
+        const info = data.exchangeInfo;
+        const rawPrice = info?.closePrice || info?.calcPrice;
+        const basePrice = typeof rawPrice === "number" ? rawPrice : parseFloat(rawPrice);
 
-        cachedRate = {
-          jpyToKrw: basePrice / 100,
-          rate100Jpy: Number(basePrice.toFixed(2)),
-          lastUpdated: `하나은행 ${degree}(${timeStr} 기준)`,
-          providerName: "하나은행 고시",
-          isLive: true,
-        };
-        lastFetchTime = now;
-        return cachedRate;
+        if (!isNaN(basePrice) && basePrice > 0) {
+          const degree = info?.degreeCount ? `${info.degreeCount}회차 ` : "";
+          const timeStr = info?.localTradedAt
+            ? new Date(info.localTradedAt).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })
+            : new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" });
+
+          cachedRate = {
+            jpyToKrw: basePrice / 100,
+            rate100Jpy: Number(basePrice.toFixed(2)),
+            lastUpdated: `하나은행 ${degree}(${timeStr} 기준)`,
+            providerName: "하나은행 고시",
+            isLive: true,
+          };
+          lastFetchTime = now;
+          return cachedRate;
+        }
       }
+    } catch {
+      // Try next proxy
     }
-  } catch (err) {
-    console.warn("Naver Hana Bank API error, falling back to CORS proxies:", err);
   }
 
   // 2. Backup: Dunamu Hana Bank CORS proxy

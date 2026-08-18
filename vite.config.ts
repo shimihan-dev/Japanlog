@@ -11,8 +11,16 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/data-go/, ''),
       },
+      '/api/naver-fx': {
+        target: 'https://api.stock.naver.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/naver-fx/, ''),
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)',
+        },
+      },
       '/api/hanabank': {
-        target: 'https://quotation-api-cdn.dunamu.com/v1/forex/recent',
+        target: 'https://api.stock.naver.com/marketindex/exchange',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/hanabank/, ''),
       },
