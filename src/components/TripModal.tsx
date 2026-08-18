@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import type { Trip, TravelRecordsMap, CityVisit } from "../types/travel";
 import { PREFECTURES, PREFECTURE_MAP_BY_CODE } from "../data/prefectures";
-import { X, Calendar, MapPin, Sparkles, Plus, Trash2, ListFilter, CheckCircle2 } from "lucide-react";
+import { X, Calendar, MapPin, Sparkles, Plus, ListFilter, CheckCircle2 } from "lucide-react";
 
 interface TripModalProps {
   isOpen: boolean;
@@ -139,10 +139,7 @@ export const TripModal: React.FC<TripModalProps> = ({
   const [emoji, setEmoji] = useState("🧳");
   const [description, setDescription] = useState("");
   const [selectedPrefectures, setSelectedPrefectures] = useState<number[]>([]);
-  const [cityInput, setCityInput] = useState("");
   const [cities, setCities] = useState<{ prefectureCode: number; cityNameKo: string }[]>([]);
-  const [highlights, setHighlights] = useState<string[]>([]);
-  const [highlightInput, setHighlightInput] = useState("");
 
   // Collect all existing visited cities from user records
   const existingVisitedCities = useMemo(() => {
@@ -172,7 +169,6 @@ export const TripModal: React.FC<TripModalProps> = ({
       setDescription(editingTrip.description || "");
       setSelectedPrefectures(editingTrip.prefectures || []);
       setCities(editingTrip.cities || []);
-      setHighlights(editingTrip.highlights || []);
     } else {
       setTitle("");
       setStartDate("");
@@ -181,7 +177,6 @@ export const TripModal: React.FC<TripModalProps> = ({
       setDescription("");
       setSelectedPrefectures([]);
       setCities([]);
-      setHighlights([]);
     }
   }, [editingTrip, isOpen, initialMode]);
 
@@ -211,27 +206,6 @@ export const TripModal: React.FC<TripModalProps> = ({
     }
   };
 
-  const handleAddCity = () => {
-    if (!cityInput.trim()) return;
-    const prefCode = selectedPrefectures[0] || 13; // default to first selected or Tokyo
-    setCities((prev) => [...prev, { prefectureCode: prefCode, cityNameKo: cityInput.trim() }]);
-    setCityInput("");
-  };
-
-  const handleRemoveCity = (index: number) => {
-    setCities((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  const handleAddHighlight = () => {
-    if (!highlightInput.trim()) return;
-    setHighlights((prev) => [...prev, highlightInput.trim()]);
-    setHighlightInput("");
-  };
-
-  const handleRemoveHighlight = (index: number) => {
-    setHighlights((prev) => prev.filter((_, i) => i !== index));
-  };
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) return;
@@ -248,7 +222,6 @@ export const TripModal: React.FC<TripModalProps> = ({
         description: description.trim() || undefined,
         prefectures: selectedPrefectures,
         cities,
-        highlights: highlights.length > 0 ? highlights : undefined,
       },
       autoSyncMap
     );
@@ -424,114 +397,18 @@ export const TripModal: React.FC<TripModalProps> = ({
             </div>
           </div>
 
-          {/* Cities Input */}
-          <div>
-            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-              방문 도시 Tag 추가
-            </label>
-            <div className="flex space-x-2">
-              <input
-                type="text"
-                placeholder="예: 삿포로, 오타루, 신주쿠"
-                value={cityInput}
-                onChange={(e) => setCityInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleAddCity();
-                  }
-                }}
-                className="flex-1 px-3.5 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <button
-                type="button"
-                onClick={handleAddCity}
-                className="px-3.5 py-2 bg-slate-800 dark:bg-slate-700 text-white rounded-xl text-xs font-bold hover:bg-slate-700 dark:hover:bg-slate-600 transition-colors"
-              >
-                <Plus className="w-4 h-4" />
-              </button>
-            </div>
-            {cities.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 mt-2">
-                {cities.map((c, idx) => (
-                  <span
-                    key={idx}
-                    className="inline-flex items-center space-x-1 px-2.5 py-0.5 bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 rounded-lg text-[11px] font-semibold"
-                  >
-                    <span>📍 {c.cityNameKo}</span>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveCity(idx)}
-                      className="hover:text-red-900 dark:hover:text-red-100 ml-1"
-                    >
-                      ×
-                    </button>
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
-
-          {/* Highlights */}
+          {/* Combined Travel Highlights & Notes */}
           <div>
             <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center space-x-1">
               <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              <span>여행 하이라이트 / 기억나는 순간</span>
-            </label>
-            <div className="flex space-x-2">
-              <input
-                type="text"
-                placeholder="예: 오타루 운하 야경 투어, 징기스칸 로컬 맛집"
-                value={highlightInput}
-                onChange={(e) => setHighlightInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleAddHighlight();
-                  }
-                }}
-                className="flex-1 px-3.5 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
-              />
-              <button
-                type="button"
-                onClick={handleAddHighlight}
-                className="px-3.5 py-2 bg-amber-500 text-white rounded-xl text-xs font-bold hover:bg-amber-600 transition-colors"
-              >
-                <Plus className="w-4 h-4" />
-              </button>
-            </div>
-            {highlights.length > 0 && (
-              <ul className="mt-2 space-y-1">
-                {highlights.map((h, idx) => (
-                  <li
-                    key={idx}
-                    className="flex items-center justify-between text-xs bg-slate-50 dark:bg-slate-800/60 px-3 py-1.5 rounded-xl text-slate-700 dark:text-slate-300"
-                  >
-                    <span>✨ {h}</span>
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveHighlight(idx)}
-                      className="text-slate-400 hover:text-red-500"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          {/* Description */}
-          <div>
-            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-              여행 한줄 메모
+              <span>여행 하이라이트 & 메모 / 기억나는 순간</span>
             </label>
             <textarea
-              rows={2}
-              placeholder="자유롭게 여행에 관한 총평이나 후기를 입력하세요."
+              rows={3}
+              placeholder="예: 오타루 운하 야경 투어, 삿포로 징기스칸 맛집, 디즈니랜드 벚꽃 피크닉 등 여행의 기억나는 순간이나 후기를 자유롭게 작성하세요."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-2xl text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-amber-500 dark:focus:ring-cyan-400"
             />
           </div>
 
