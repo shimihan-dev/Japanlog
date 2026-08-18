@@ -81,6 +81,7 @@ export const CITY_COORDINATES_LIST: CityCoordinate[] = [
   { nameKo: "요코하마시", nameJa: "横浜市", prefectureCode: 14, coords: [139.638, 35.4437] },
   { nameKo: "하코네정", nameJa: "箱根町", prefectureCode: 14, coords: [139.0308, 35.2333] },
   { nameKo: "카마쿠라시", nameJa: "鎌倉市", prefectureCode: 14, coords: [139.5467, 35.3192] },
+  { nameKo: "가마쿠라시", nameJa: "鎌倉市", prefectureCode: 14, coords: [139.5467, 35.3192] },
   { nameKo: "후지사와시", nameJa: "藤沢市", prefectureCode: 14, coords: [139.4886, 35.3388] }, // 에노시마
   { nameKo: "카와사키시", nameJa: "川崎市", prefectureCode: 14, coords: [139.703, 35.5308] },
 
