@@ -46,8 +46,37 @@ function mergeRecords(local: TravelRecordsMap, cloud: TravelRecordsMap): TravelR
   return merged;
 }
 
+export function sanitizeDeduplicatedRecords(rawRecords: TravelRecordsMap): TravelRecordsMap {
+  const sanitized: TravelRecordsMap = {};
+
+  Object.entries(rawRecords).forEach(([codeStr, prefRecord]) => {
+    if (!prefRecord || !Array.isArray(prefRecord.cities)) {
+      sanitized[Number(codeStr)] = prefRecord;
+      return;
+    }
+
+    const seenNames = new Set<string>();
+    const uniqueCities: CityVisit[] = [];
+
+    prefRecord.cities.forEach((c: CityVisit) => {
+      const key = c.cityNameKo?.trim().toLowerCase();
+      if (key && !seenNames.has(key)) {
+        seenNames.add(key);
+        uniqueCities.push(c);
+      }
+    });
+
+    sanitized[Number(codeStr)] = {
+      ...prefRecord,
+      cities: uniqueCities,
+    };
+  });
+
+  return sanitized;
+}
+
 export function useTravelRecords(user: User | null = null) {
-  const [records, setRecords] = useState<TravelRecordsMap>(() => loadTravelRecords());
+  const [records, setRecords] = useState<TravelRecordsMap>(() => sanitizeDeduplicatedRecords(loadTravelRecords()));
   const [selectedCode, setSelectedCode] = useState<number | null>(40); // default selection: Fukuoka (40)
 
   // Sync & Merge with Supabase Cloud on User Login / Session Change
@@ -279,6 +308,10 @@ export function useTravelRecords(user: User | null = null) {
     setRecords({});
   }, []);
 
+  const cleanDuplicateCities = useCallback(() => {
+    setRecords((prev) => sanitizeDeduplicatedRecords(prev));
+  }, []);
+
   // Compute recent additions/modifications (last 5)
   const recentVisits = useMemo(() => {
     const list: { cityName: string; prefectureCode: number; visitedAt?: string; updatedAt: string }[] = [];
@@ -312,6 +345,7 @@ export function useTravelRecords(user: User | null = null) {
     updatePrefectureDetails,
     loadSample,
     resetAll,
+    cleanDuplicateCities,
     recentVisits,
   };
 }

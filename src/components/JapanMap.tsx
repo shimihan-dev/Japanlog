@@ -465,6 +465,8 @@ export const JapanMap: React.FC<JapanMapProps> = ({
       py: number;
     }> = [];
 
+    const seenPinKeys = new Set<string>();
+
     Object.values(records).forEach((rec) => {
       if (!rec.cities || rec.cities.length === 0) return;
       const pref = PREFECTURE_MAP_BY_CODE.get(rec.prefectureCode);
@@ -472,6 +474,14 @@ export const JapanMap: React.FC<JapanMapProps> = ({
       const baseCoords = PREFECTURE_MAINLAND_COORDS[rec.prefectureCode];
 
       rec.cities.forEach((c: any, idx: number) => {
+        const cleanName = c.cityNameKo?.trim()?.toLowerCase();
+        if (!cleanName) return;
+
+        // Deduplication key per prefecture code & city name
+        const pinKey = `${rec.prefectureCode}-${cleanName}`;
+        if (seenPinKeys.has(pinKey)) return;
+        seenPinKeys.add(pinKey);
+
         let coords = getCityCoordinates(c.cityNameKo, rec.prefectureCode);
 
         // Fallback for custom entries without database coordinates
