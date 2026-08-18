@@ -21,18 +21,46 @@ let lastFetchTime = 0;
 
 export async function fetchLiveJpyExchangeRate(): Promise<ExchangeRateData> {
   const now = Date.now();
-  if (cachedRate && now - lastFetchTime < 5 * 60 * 1000) {
+  if (cachedRate && now - lastFetchTime < 3 * 60 * 1000) {
     return cachedRate;
   }
 
-  // 1. Try Hana Bank via CORS proxy and direct endpoints
-  const hanaEndpoints = [
+  // 1. Official Hana Bank Live Notice Rate API (Naver Stock Hana Bank FX Endpoint)
+  try {
+    const res = await fetch("https://api.stock.naver.com/marketindex/exchange/FX_JPYKRW");
+    if (res.ok) {
+      const data = await res.json();
+      const info = data.exchangeInfo;
+      const rawPrice = info?.closePrice || info?.calcPrice;
+      const basePrice = typeof rawPrice === "number" ? rawPrice : parseFloat(rawPrice);
+
+      if (!isNaN(basePrice) && basePrice > 0) {
+        const degree = info?.degreeCount ? `${info.degreeCount}회차 ` : "";
+        const timeStr = info?.localTradedAt
+          ? new Date(info.localTradedAt).toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" })
+          : new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" });
+
+        cachedRate = {
+          jpyToKrw: basePrice / 100,
+          rate100Jpy: Number(basePrice.toFixed(2)),
+          lastUpdated: `하나은행 ${degree}(${timeStr} 기준)`,
+          providerName: "하나은행 고시",
+          isLive: true,
+        };
+        lastFetchTime = now;
+        return cachedRate;
+      }
+    }
+  } catch (err) {
+    console.warn("Naver Hana Bank API error, falling back to CORS proxies:", err);
+  }
+
+  // 2. Backup: Dunamu Hana Bank CORS proxy
+  const backupEndpoints = [
     "https://api.allorigins.win/raw?url=https://quotation-api-cdn.dunamu.com/v1/forex/recent?codes=FRX.KRWJPY",
-    "/api/hanabank?codes=FRX.KRWJPY",
-    "https://quotation-api-cdn.dunamu.com/v1/forex/recent?codes=FRX.KRWJPY",
   ];
 
-  for (const endpoint of hanaEndpoints) {
+  for (const endpoint of backupEndpoints) {
     try {
       const res = await fetch(endpoint);
       if (res.ok) {
@@ -58,16 +86,16 @@ export async function fetchLiveJpyExchangeRate(): Promise<ExchangeRateData> {
         }
       }
     } catch {
-      // Continue to next endpoint
+      // Continue
     }
   }
 
-  // 2. High-precision Open ER-API (open.er-api.com)
+  // 3. Fallback: High-precision Open ER-API (open.er-api.com)
   try {
     const res = await fetch("https://open.er-api.com/v6/latest/JPY");
     if (res.ok) {
       const data = await res.json();
-      const krwRate = data.rates?.KRW; // e.g. 8.877192
+      const krwRate = data.rates?.KRW;
       if (typeof krwRate === "number" && krwRate > 0) {
         const timeStr = new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" });
         const rate100 = Number((krwRate * 100).toFixed(2));
