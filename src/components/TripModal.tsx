@@ -12,7 +12,12 @@ interface TripModalProps {
   initialMode?: "existing" | "new";
 }
 
-const EMOJI_OPTIONS = ["🧳", "🌸", "🍜", "🚄", "⛩️", "❄️", "🍻", "✈️", "🌊", "♨️", "🏔️", "🎡"];
+const EMOJI_OPTIONS = [
+  "🧳", "🌸", "🍜", "🚄", "⛩️", "❄️", "🍻", "✈️", "🌊", "♨️",
+  "🏔️", "🎡", "🍣", "🍱", "🏯", "🗼", "🍡", "🍶", "🎏", "🛍️",
+  "📸", "🗺️", "🎋", "🏮", "🍢", "🍵", "🍦", "🎆", "⛷️", "🎮",
+  "🎒", "🚅", "🚗", "🍙", "🥟", "🍤"
+];
 
 export function formatSmartDateInput(input: string): string {
   if (!input) return "";
