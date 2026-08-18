@@ -308,6 +308,27 @@ export function useTravelRecords(user: User | null = null) {
     setRecords({});
   }, []);
 
+  const clearAllCityVisitDates = useCallback(() => {
+    setRecords((prev) => {
+      const updated: TravelRecordsMap = {};
+      Object.entries(prev).forEach(([codeStr, prefRecord]) => {
+        if (!prefRecord) return;
+        const code = Number(codeStr);
+        updated[code] = {
+          ...prefRecord,
+          firstVisitedAt: undefined,
+          lastVisitedAt: undefined,
+          cities: (prefRecord.cities || []).map((c: CityVisit) => ({
+            ...c,
+            visitedAt: undefined,
+          })),
+          updatedAt: new Date().toISOString(),
+        };
+      });
+      return updated;
+    });
+  }, []);
+
   const cleanDuplicateCities = useCallback(() => {
     setRecords((prev) => sanitizeDeduplicatedRecords(prev));
   }, []);
@@ -345,6 +366,7 @@ export function useTravelRecords(user: User | null = null) {
     updatePrefectureDetails,
     loadSample,
     resetAll,
+    clearAllCityVisitDates,
     cleanDuplicateCities,
     recentVisits,
   };

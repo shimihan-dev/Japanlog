@@ -87,17 +87,9 @@ export const CityVisitForm: React.FC<CityVisitFormProps> = ({
         </div>
       </div>
 
-      <div>
-        <label className="block text-[11px] font-semibold text-slate-600 dark:text-slate-400 mb-1">
-          방문 시기 (선택)
-        </label>
-        <input
-          type="text"
-          placeholder="예: 2026.08 또는 2026 여름"
-          value={visitedAt}
-          onChange={(e) => setVisitedAt(e.target.value)}
-          className="w-full text-xs px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-cyan-500"
-        />
+      {/* Info notice: Dates are linked exclusively through Travel Trips */}
+      <div className="p-2 rounded-lg bg-blue-50/80 dark:bg-blue-950/50 border border-blue-100 dark:border-blue-900/60 text-[10px] text-blue-700 dark:text-cyan-300 leading-relaxed">
+        💡 도시별 다녀온 날짜는 <b>[여행 회차 관리]</b>에서 해당 도시를 묶어 기록할 때 자동으로 부여되고 연동됩니다.
       </div>
 
       <div>

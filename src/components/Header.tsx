@@ -1,5 +1,5 @@
 import React from "react";
-import { Map, RotateCcw, Sparkles, Sun, Moon, User as UserIcon, LogOut, Cloud, Share2 } from "lucide-react";
+import { Map, RotateCcw, Sparkles, Sun, Moon, User as UserIcon, LogOut, Cloud, Share2, Calendar } from "lucide-react";
 import type { User } from "@supabase/supabase-js";
 
 interface HeaderProps {
@@ -8,6 +8,7 @@ interface HeaderProps {
   onToggleDarkMode: () => void;
   onLoadSample: () => void;
   onReset: () => void;
+  onClearDates?: () => void;
   onOpenAuthModal: () => void;
   onSignOut: () => void;
   onOpenShareModal?: () => void;
@@ -19,6 +20,7 @@ export const Header: React.FC<HeaderProps> = ({
   onToggleDarkMode,
   onLoadSample,
   onReset,
+  onClearDates,
   onOpenAuthModal,
   onSignOut,
   onOpenShareModal,
@@ -107,12 +109,23 @@ export const Header: React.FC<HeaderProps> = ({
             <Sparkles className="w-3.5 h-3.5 text-blue-500 dark:text-cyan-400" />
             <span className="hidden sm:inline">샘플 데이터</span>
           </button>
+          {onClearDates && (
+            <button
+              onClick={onClearDates}
+              className="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-medium text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/40 hover:bg-amber-100 dark:hover:bg-amber-950/80 rounded-lg transition-colors border border-amber-200/60 dark:border-amber-800/60"
+              title="도시 핀과 기록은 유지하고, 다녀온 날짜 기록만 초기화합니다."
+            >
+              <Calendar className="w-3.5 h-3.5 text-amber-500 dark:text-amber-400" />
+              <span className="hidden sm:inline">날짜만 초기화</span>
+            </button>
+          )}
+
           <button
             onClick={onReset}
             className="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors border border-slate-200 dark:border-slate-700"
           >
             <RotateCcw className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">초기화</span>
+            <span className="hidden sm:inline">전체 초기화</span>
           </button>
         </div>
       </div>

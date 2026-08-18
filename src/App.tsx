@@ -41,6 +41,7 @@ export const App: React.FC = () => {
     updatePrefectureDetails,
     loadSample,
     resetAll,
+    clearAllCityVisitDates,
   } = useTravelRecords(user);
 
   const {
@@ -54,6 +55,7 @@ export const App: React.FC = () => {
   } = useTrips(user);
 
   const [showResetModal, setShowResetModal] = useState(false);
+  const [showClearDatesModal, setShowClearDatesModal] = useState(false);
   const [showSampleModal, setShowSampleModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showShareModal, setShowShareModal] = useState(false);
@@ -150,6 +152,7 @@ export const App: React.FC = () => {
         onToggleDarkMode={() => setIsDarkMode((prev) => !prev)}
         onLoadSample={handleLoadSampleClick}
         onReset={() => setShowResetModal(true)}
+        onClearDates={() => setShowClearDatesModal(true)}
         onOpenAuthModal={() => setShowAuthModal(true)}
         onSignOut={signOut}
         onOpenShareModal={() => setShowShareModal(true)}
@@ -310,6 +313,20 @@ export const App: React.FC = () => {
           setShowSampleModal(false);
         }}
         onCancel={() => setShowSampleModal(false)}
+      />
+
+      {/* Clear Dates Confirmation Modal */}
+      <ConfirmModal
+        isOpen={showClearDatesModal}
+        title="도시별 방문 날짜만 초기화"
+        message="지도 위의 방문 현 상태와 도시 핀은 그대로 유지하고, 도시별 다녀온 날짜 기록만 초기화하시겠습니까? (이후 [여행 회차 관리]에서 기록 시 자동으로 연동됩니다.)"
+        confirmLabel="날짜만 초기화"
+        cancelLabel="취소"
+        onConfirm={() => {
+          clearAllCityVisitDates();
+          setShowClearDatesModal(false);
+        }}
+        onCancel={() => setShowClearDatesModal(false)}
       />
 
       {/* Reset Confirmation Modal */}
