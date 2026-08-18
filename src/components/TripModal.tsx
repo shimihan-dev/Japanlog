@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import type { Trip, TravelRecordsMap, CityVisit } from "../types/travel";
 import { PREFECTURES, PREFECTURE_MAP_BY_CODE } from "../data/prefectures";
 import { X, Calendar, MapPin, Sparkles, Plus, Trash2, ListFilter, CheckCircle2 } from "lucide-react";
@@ -13,6 +13,116 @@ interface TripModalProps {
 }
 
 const EMOJI_OPTIONS = ["🧳", "🌸", "🍜", "🚄", "⛩️", "❄️", "🍻", "✈️", "🌊", "♨️", "🏔️", "🎡"];
+
+export function formatSmartDateInput(input: string): string {
+  if (!input) return "";
+
+  // If input comes from <input type="date">, format "YYYY-MM-DD" -> "YYYY.MM.DD"
+  if (/^\d{4}-\d{2}-\d{2}$/.test(input)) {
+    return input.replace(/-/g, ".");
+  }
+
+  // Strip non-digits
+  const cleaned = input.replace(/\D/g, "");
+
+  // If user typed 8 digits "YYYYMMDD" (e.g. 20240810) -> "2024.08.10"
+  if (cleaned.length === 8) {
+    const yyyy = cleaned.slice(0, 4);
+    const mm = cleaned.slice(4, 6);
+    const dd = cleaned.slice(6, 8);
+    return `${yyyy}.${mm}.${dd}`;
+  }
+
+  // If user typed 6 digits "YYYYMM" (e.g. 202408) -> "2024.08"
+  if (cleaned.length === 6) {
+    const yyyy = cleaned.slice(0, 4);
+    const mm = cleaned.slice(4, 6);
+    return `${yyyy}.${mm}`;
+  }
+
+  return input;
+}
+
+const DateInputField: React.FC<{
+  label: string;
+  value: string;
+  onChange: (val: string) => void;
+  placeholder: string;
+}> = ({ label, value, onChange, placeholder }) => {
+  const dateInputRef = useRef<HTMLInputElement>(null);
+
+  // Convert "YYYY.MM.DD" to "YYYY-MM-DD" for native <input type="date">
+  const nativeDateValue = useMemo(() => {
+    if (/^\d{4}\.\d{2}\.\d{2}$/.test(value)) {
+      return value.replace(/\./g, "-");
+    }
+    return "";
+  }, [value]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    const formatted = formatSmartDateInput(val);
+    onChange(formatted);
+  };
+
+  const handleBlur = () => {
+    onChange(formatSmartDateInput(value));
+  };
+
+  return (
+    <div>
+      <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center justify-between">
+        <span className="flex items-center space-x-1">
+          <Calendar className="w-3.5 h-3.5 text-blue-500" />
+          <span>{label}</span>
+        </span>
+        <span className="text-[10px] font-normal text-slate-400 dark:text-slate-500">YYYYMMDD 입력 가능</span>
+      </label>
+
+      <div className="relative flex items-center">
+        <input
+          type="text"
+          placeholder={placeholder}
+          value={value}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          className="w-full pl-3.5 pr-9 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-cyan-400"
+        />
+
+        {/* Hidden Native Calendar Date Picker Input */}
+        <input
+          ref={dateInputRef}
+          type="date"
+          value={nativeDateValue}
+          onChange={(e) => {
+            if (e.target.value) {
+              onChange(e.target.value.replace(/-/g, "."));
+            }
+          }}
+          className="sr-only opacity-0 w-0 h-0 absolute"
+        />
+
+        {/* Calendar Picker Trigger Icon Button */}
+        <button
+          type="button"
+          onClick={() => {
+            if (dateInputRef.current) {
+              if ("showPicker" in dateInputRef.current && typeof (dateInputRef.current as any).showPicker === "function") {
+                (dateInputRef.current as any).showPicker();
+              } else {
+                dateInputRef.current.click();
+              }
+            }
+          }}
+          className="absolute right-2 p-1 text-slate-400 hover:text-blue-600 dark:hover:text-cyan-400 rounded-lg hover:bg-slate-200/60 dark:hover:bg-slate-700 transition-colors"
+          title="달력에서 날짜 선택하기"
+        >
+          <Calendar className="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+  );
+};
 
 export const TripModal: React.FC<TripModalProps> = ({
   isOpen,
@@ -239,32 +349,18 @@ export const TripModal: React.FC<TripModalProps> = ({
 
           {/* Date Range */}
           <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center space-x-1">
-                <Calendar className="w-3.5 h-3.5 text-blue-500" />
-                <span>시작일</span>
-              </label>
-              <input
-                type="text"
-                placeholder="2024.08.10"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                className="w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center space-x-1">
-                <Calendar className="w-3.5 h-3.5 text-blue-500" />
-                <span>종료일</span>
-              </label>
-              <input
-                type="text"
-                placeholder="2024.08.14"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                className="w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+            <DateInputField
+              label="시작일"
+              placeholder="2024.08.10 (또는 20240810)"
+              value={startDate}
+              onChange={setStartDate}
+            />
+            <DateInputField
+              label="종료일"
+              placeholder="2024.08.14 (또는 20240814)"
+              value={endDate}
+              onChange={setEndDate}
+            />
           </div>
 
           {/* Quick Picker for Existing Visited Cities (if mode === 'existing') */}
