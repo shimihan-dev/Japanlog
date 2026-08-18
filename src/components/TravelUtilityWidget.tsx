@@ -89,7 +89,7 @@ export const TravelUtilityWidget: React.FC<TravelUtilityWidgetProps> = ({ select
             <span className="text-slate-900 dark:text-slate-100">엔화 환율 계산기</span>
             <span className="px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950/80 text-blue-700 dark:text-cyan-300 text-[10px] font-bold border border-blue-200/60 dark:border-cyan-800/60 flex items-center space-x-1">
               <Landmark className="w-3 h-3" />
-              <span>하나은행 고시</span>
+              <span>{rateData?.providerName || "하나은행 고시"}</span>
             </span>
           </div>
 
@@ -97,7 +97,7 @@ export const TravelUtilityWidget: React.FC<TravelUtilityWidgetProps> = ({ select
             onClick={loadExchangeRate}
             disabled={loadingRate}
             className="p-1.5 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-            title="하나은행 환율 새로고침"
+            title="환율 새로고침"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loadingRate ? "animate-spin" : ""}`} />
           </button>
@@ -106,7 +106,7 @@ export const TravelUtilityWidget: React.FC<TravelUtilityWidgetProps> = ({ select
         {/* Rate Display Badge */}
         <div className="flex items-center justify-between text-xs bg-blue-50/80 dark:bg-slate-800/80 px-3 py-2 rounded-xl border border-blue-100 dark:border-slate-700/80">
           <span className="font-bold text-slate-800 dark:text-blue-200">
-            매매기준율: 100 JPY ➔ <span className="text-blue-600 dark:text-cyan-400 font-extrabold">{rateData?.rate100Jpy ?? 895} KRW</span>
+            매매기준율: 100 JPY ➔ <span className="text-blue-600 dark:text-cyan-400 font-extrabold">{rateData ? rateData.rate100Jpy.toFixed(2) : "895.00"} KRW</span>
           </span>
           <span className="text-[10px] text-slate-500 dark:text-slate-400">
             {rateData?.lastUpdated}
