@@ -921,27 +921,6 @@ export const JapanMap: React.FC<JapanMapProps> = ({
                       className="pointer-events-none"
                     />
 
-                    {/* Multi-Visit Count Badge (e.g. x2, x3, x5) */}
-                    {pin.visitCount > 1 && (
-                      <g transform={`translate(${pin.px + 7}, ${pin.py - 7})`} className="pointer-events-none">
-                        <circle
-                          r="6"
-                          fill={isDarkMode ? "#0284C7" : "#DC2626"}
-                          stroke="#FFFFFF"
-                          strokeWidth="1.2"
-                          className="shadow-sm"
-                        />
-                        <text
-                          x="0"
-                          y="2.5"
-                          textAnchor="middle"
-                          className="text-[7.5px] font-black fill-white"
-                        >
-                          {`x${pin.visitCount}`}
-                        </text>
-                      </g>
-                    )}
-
                     {/* City Name Badge Label (Rendered adaptively when zoomed in, selected, or hovered) */}
                     {showBadgeText && (
                       <g transform={`translate(${pin.px}, ${pin.py - 12})`} className="pointer-events-none transition-all duration-150 animate-in fade-in">
