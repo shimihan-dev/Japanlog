@@ -63,17 +63,20 @@ export const CITY_COORDINATES_LIST: CityCoordinate[] = [
   { nameKo: "치바시", nameJa: "千葉市", prefectureCode: 12, coords: [140.1233, 35.6073] },
 
   // 13. 도쿄도 (Tokyo) - Code 13
-  { nameKo: "신주쿠구", nameJa: "新宿区", prefectureCode: 13, coords: [139.7036, 35.6938] },
-  { nameKo: "시부야구", nameJa: "渋谷区", prefectureCode: 13, coords: [139.7016, 35.658] },
-  { nameKo: "시나가와구", nameJa: "品川区", prefectureCode: 13, coords: [139.7302, 35.6092] },
-  { nameKo: "중앙구", nameJa: "中央区", prefectureCode: 13, coords: [139.7719, 35.6707] }, // 긴자
-  { nameKo: "치요다구", nameJa: "千代田区", prefectureCode: 13, coords: [139.7536, 35.694] }, // 아키하바라/도쿄역
-  { nameKo: "미나토구", nameJa: "港区", prefectureCode: 13, coords: [139.7514, 35.6581] }, // 롯폰기/도쿄타워
-  { nameKo: "다이토구", nameJa: "台東区", prefectureCode: 13, coords: [139.7788, 35.7126] }, // 아사쿠사/우에노
-  { nameKo: "토시마구", nameJa: "豊島区", prefectureCode: 13, coords: [139.7167, 35.7289] }, // 이케부쿠로
-  { nameKo: "메구로구", nameJa: "目黒区", prefectureCode: 13, coords: [139.6982, 35.6415] },
-  { nameKo: "세타가야구", nameJa: "世田谷区", prefectureCode: 13, coords: [139.6532, 35.6466] },
-  { nameKo: "오타구", nameJa: "大田区", prefectureCode: 13, coords: [139.716, 35.5614] }, // 하네다
+  { nameKo: "도쿄", nameJa: "東京都", prefectureCode: 13, coords: [139.6917, 35.6895] },
+  { nameKo: "도쿄도", nameJa: "東京都", prefectureCode: 13, coords: [139.6917, 35.6895] },
+  { nameKo: "도쿄시", nameJa: "東京都", prefectureCode: 13, coords: [139.6917, 35.6895] },
+  { nameKo: "신주쿠구", nameJa: "新宿区", prefectureCode: 13, coords: [139.6917, 35.6895] },
+  { nameKo: "시부야구", nameJa: "渋谷区", prefectureCode: 13, coords: [139.6917, 35.6895] },
+  { nameKo: "시나가와구", nameJa: "品川区", prefectureCode: 13, coords: [139.6917, 35.6895] },
+  { nameKo: "중앙구", nameJa: "中央区", prefectureCode: 13, coords: [139.6917, 35.6895] },
+  { nameKo: "치요다구", nameJa: "千代田区", prefectureCode: 13, coords: [139.6917, 35.6895] },
+  { nameKo: "미나토구", nameJa: "港区", prefectureCode: 13, coords: [139.6917, 35.6895] },
+  { nameKo: "다이토구", nameJa: "台東区", prefectureCode: 13, coords: [139.6917, 35.6895] },
+  { nameKo: "토시마구", nameJa: "豊島区", prefectureCode: 13, coords: [139.6917, 35.6895] },
+  { nameKo: "메구로구", nameJa: "目黒区", prefectureCode: 13, coords: [139.6917, 35.6895] },
+  { nameKo: "세타가야구", nameJa: "世田谷区", prefectureCode: 13, coords: [139.6917, 35.6895] },
+  { nameKo: "오타구", nameJa: "大田区", prefectureCode: 13, coords: [139.6917, 35.6895] },
   { nameKo: "무사시노시", nameJa: "武蔵野市", prefectureCode: 13, coords: [139.5664, 35.7177] }, // 키치죠지
   { nameKo: "미타카시", nameJa: "三鷹市", prefectureCode: 13, coords: [139.5594, 35.6836] },
 

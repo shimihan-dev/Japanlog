@@ -9,15 +9,22 @@ export interface CityMatchResult {
 }
 
 /**
- * Normalizes city names for robust deduplication (e.g. '오사카' and '오사카시' -> '오사카')
+ * Normalizes city names for robust deduplication (e.g. '오사카' and '오사카시' -> '오사카', all Tokyo wards -> '도쿄')
  */
-export function normalizeCityKey(name: string): string {
+export function normalizeCityKey(name: string, prefectureCode?: number): string {
   if (!name) return "";
-  return name
-    .trim()
-    .toLowerCase()
-    .replace(/\s+/g, "")
-    .replace(/(특별시|광역시|특별자치시|특별자치도|시|부|도|정|촌|구)$/g, "");
+  const cleaned = name.trim().toLowerCase().replace(/\s+/g, "");
+
+  // Tokyo (Code 13) Ward Consolidation: All Tokyo wards/districts unify under '도쿄'
+  if (
+    prefectureCode === 13 ||
+    cleaned.includes("도쿄") ||
+    /신주쿠|시부야|미나토|긴자|아키하바라|롯폰기|아사쿠사|우에노|이케부쿠로|시나가와|메구로|세타가야|오타구|나카노|스기나미|치요다|다이토|중앙구/i.test(cleaned)
+  ) {
+    return "도쿄";
+  }
+
+  return cleaned.replace(/(특별시|광역시|특별자치시|특별자치도|시|부|도|정|촌|구)$/g, "");
 }
 
 interface LandmarkEntry {
@@ -87,22 +94,23 @@ const JAPAN_LANDMARKS: LandmarkEntry[] = [
   { names: ["치바", "chiba", "千葉"], cityNameKo: "치바시", cityNameJa: "千葉市", prefectureCode: 12, category: "주요 도시" },
 
   // 13. 도쿄도 (Tokyo) - Code 13
-  { names: ["신주쿠", "shinjuku", "新宿"], cityNameKo: "신주쿠구", cityNameJa: "新宿区", prefectureCode: 13, category: "도쿄 23구" },
-  { names: ["시부야", "shibuya", "渋谷", "하치코"], cityNameKo: "시부야구", cityNameJa: "渋谷区", prefectureCode: 13, category: "도쿄 23구" },
-  { names: ["시나가와", "shinagawa", "品川"], cityNameKo: "시나가와구", cityNameJa: "品川区", prefectureCode: 13, category: "도쿄 23구" },
-  { names: ["긴자", "ginza", "銀座", "츠키지", "중구"], cityNameKo: "중앙구", cityNameJa: "中央区", prefectureCode: 13, category: "도쿄 23구" },
-  { names: ["아키하바라", "akihabara", "도쿄역", "치요다"], cityNameKo: "치요다구", cityNameJa: "千代田区", prefectureCode: 13, category: "도쿄 23구" },
-  { names: ["롯폰기", "roppongi", "도쿄타워", "오다이바", "미나토"], cityNameKo: "미나토구", cityNameJa: "港区", prefectureCode: 13, category: "도쿄 23구" },
-  { names: ["아사쿠사", "asakusa", "우에노", "ueno", "스카이트리"], cityNameKo: "다이토구", cityNameJa: "台東区", prefectureCode: 13, category: "도쿄 23구" },
-  { names: ["이케부쿠로", "ikebukuro", "池袋"], cityNameKo: "토시마구", cityNameJa: "豊島区", prefectureCode: 13, category: "도쿄 23구" },
-  { names: ["메구로", "meguro", "目黒"], cityNameKo: "메구로구", cityNameJa: "目黒区", prefectureCode: 13, category: "도쿄 23구" },
-  { names: ["세타가야", "setagaya", "世田谷", "시모키타자와"], cityNameKo: "세타가야구", cityNameJa: "世田谷区", prefectureCode: 13, category: "도쿄 23구" },
-  { names: ["하네다", "haneda", "하네다 공항", "오타구"], cityNameKo: "오타구", cityNameJa: "大田区", prefectureCode: 13, category: "도쿄 23구/공항" },
-  { names: ["나카노", "nakano", "中野"], cityNameKo: "나카노구", cityNameJa: "中野区", prefectureCode: 13, category: "도쿄 23구" },
-  { names: ["스기나미", "suginami", "杉並", "고엔지"], cityNameKo: "스기나미구", cityNameJa: "杉並区", prefectureCode: 13, category: "도쿄 23구" },
-  { names: ["키치죠지", "kichijoji", "무사시노", "지브리 미술관"], cityNameKo: "무사시노시", cityNameJa: "武蔵野市", prefectureCode: 13, category: "도쿄 다마지역" },
-  { names: ["미타카", "mitaka", "三鷹"], cityNameKo: "미타카시", cityNameJa: "三鷹市", prefectureCode: 13, category: "도쿄 다마지역" },
-  { names: ["하치오지", "hachioji", "타카오산"], cityNameKo: "하치오지시", cityNameJa: "八王子市", prefectureCode: 13, category: "도쿄 다마지역" },
+  { names: ["도쿄", "tokyo", "東京", "도쿄도", "도쿄시"], cityNameKo: "도쿄", cityNameJa: "東京都", prefectureCode: 13, category: "주요 도시" },
+  { names: ["신주쿠", "shinjuku", "新宿"], cityNameKo: "도쿄", cityNameJa: "東京都", prefectureCode: 13, category: "도쿄" },
+  { names: ["시부야", "shibuya", "渋谷", "하치코"], cityNameKo: "도쿄", cityNameJa: "東京都", prefectureCode: 13, category: "도쿄" },
+  { names: ["시나가와", "shinagawa", "品川"], cityNameKo: "도쿄", cityNameJa: "東京都", prefectureCode: 13, category: "도쿄" },
+  { names: ["긴자", "ginza", "銀座", "츠키지", "중구"], cityNameKo: "도쿄", cityNameJa: "東京都", prefectureCode: 13, category: "도쿄" },
+  { names: ["아키하바라", "akihabara", "도쿄역", "치요다"], cityNameKo: "도쿄", cityNameJa: "東京都", prefectureCode: 13, category: "도쿄" },
+  { names: ["롯폰기", "roppongi", "도쿄타워", "오다이바", "미나토"], cityNameKo: "도쿄", cityNameJa: "東京都", prefectureCode: 13, category: "도쿄" },
+  { names: ["아사쿠사", "asakusa", "우에노", "ueno", "스카이트리"], cityNameKo: "도쿄", cityNameJa: "東京都", prefectureCode: 13, category: "도쿄" },
+  { names: ["이케부쿠로", "ikebukuro", "池袋"], cityNameKo: "도쿄", cityNameJa: "東京都", prefectureCode: 13, category: "도쿄" },
+  { names: ["메구로", "meguro", "目黒"], cityNameKo: "도쿄", cityNameJa: "東京都", prefectureCode: 13, category: "도쿄" },
+  { names: ["세타가야", "setagaya", "世田谷", "시모키타자와"], cityNameKo: "도쿄", cityNameJa: "東京都", prefectureCode: 13, category: "도쿄" },
+  { names: ["하네다", "haneda", "하네다 공항", "오타구"], cityNameKo: "도쿄", cityNameJa: "東京都", prefectureCode: 13, category: "도쿄/공항" },
+  { names: ["나카노", "nakano", "中野"], cityNameKo: "도쿄", cityNameJa: "東京都", prefectureCode: 13, category: "도쿄" },
+  { names: ["스기나미", "suginami", "杉並", "고엔지"], cityNameKo: "도쿄", cityNameJa: "東京都", prefectureCode: 13, category: "도쿄" },
+  { names: ["키치죠지", "kichijoji", "무사시노", "지브리 미술관"], cityNameKo: "도쿄", cityNameJa: "東京都", prefectureCode: 13, category: "도쿄" },
+  { names: ["미타카", "mitaka", "三鷹"], cityNameKo: "도쿄", cityNameJa: "東京都", prefectureCode: 13, category: "도쿄" },
+  { names: ["하치오지", "hachioji", "타카오산"], cityNameKo: "도쿄", cityNameJa: "東京都", prefectureCode: 13, category: "도쿄" },
 
   // 14. 가나가와현 (Kanagawa) - Code 14
   { names: ["요코하마", "yokohama", "横浜", "미나토미라이"], cityNameKo: "요코하마시", cityNameJa: "横浜市", prefectureCode: 14, category: "주요 도시" },
