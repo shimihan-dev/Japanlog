@@ -530,29 +530,34 @@ const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) =>
                       const aerolopaUrl = getAeroLopaUrl(flight.airline, trimmedModel);
 
                       return (
-                        <React.Fragment key={mIdx}>
+                        <div
+                          key={mIdx}
+                          className="inline-flex items-center space-x-1 p-0.5 px-1.5 bg-[#FBF9F5] dark:bg-slate-950 rounded-lg border border-slate-200/80 dark:border-slate-800 shrink-0 whitespace-nowrap"
+                        >
                           <a
                             href={aerotypeUrl}
                             target="_blank"
                             rel="noopener noreferrer"
                             title={`Aerotype에서 ${trimmedModel} 기종 스펙 보기`}
-                            className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-md bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700 font-sans-outfit text-[9px] transition-all"
+                            className="inline-flex items-center space-x-0.5 px-1 py-0.5 text-slate-800 dark:text-slate-200 font-bold hover:text-[#E63946] transition-colors font-sans-outfit"
                           >
                             <span>{trimmedModel}</span>
                             <ExternalLink className="w-2 h-2 text-slate-400 shrink-0" />
                           </a>
+
+                          <span className="text-slate-300 dark:text-slate-700">|</span>
 
                           <a
                             href={aerolopaUrl}
                             target="_blank"
                             rel="noopener noreferrer"
                             title={`AeroLOPA에서 ${flight.airline} ${trimmedModel} 초고화질 좌석배치도 보기`}
-                            className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-md bg-red-50 hover:bg-red-100 dark:bg-red-950/70 dark:hover:bg-red-900/80 text-[#E63946] dark:text-[#FF5A65] border border-red-200/60 dark:border-red-900/60 font-bold text-[9px] transition-all"
+                            className="inline-flex items-center space-x-0.5 px-1 py-0.5 text-[#E63946] dark:text-[#FF5A65] font-bold hover:underline transition-colors"
                           >
                             <span>💺 AeroLOPA 좌석배치도</span>
                             <ExternalLink className="w-2 h-2 text-[#E63946] shrink-0" />
                           </a>
-                        </React.Fragment>
+                        </div>
                       );
                     })}
                   </div>
