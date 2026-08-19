@@ -93,6 +93,20 @@ export const App: React.FC = () => {
     } else {
       addTrip(tripData);
     }
+
+    // Auto-color map prefectures as "visited" (파란색 색칠) for selected trip prefectures
+    if (tripData.prefectures && tripData.prefectures.length > 0) {
+      tripData.prefectures.forEach((prefCode) => {
+        updateStatus(prefCode, "visited");
+      });
+    }
+
+    // Auto-pin cities on the map
+    if (tripData.cities && tripData.cities.length > 0) {
+      tripData.cities.forEach((c) => {
+        addCity(c.prefectureCode, { cityNameKo: c.cityNameKo });
+      });
+    }
   };
 
   const handleDataRestored = () => {
