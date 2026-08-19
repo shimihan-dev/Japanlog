@@ -86,8 +86,8 @@ export const TripDetailModal: React.FC<TripDetailModalProps> = ({
         {/* Modal Body with Left Info & Right Landing Passport Sticker */}
         <div className="flex-1 overflow-y-auto p-6 space-y-4">
           {/* Authentic Landing Permission Sticker */}
-          <div className="transform -rotate-1 shadow-md">
-            <LandingSticker trip={trip} />
+          <div className="flex justify-center py-1">
+            <LandingSticker trip={trip} className="transform -rotate-1 shadow-lg" />
           </div>
 
           {/* Prefectures Visited */}

@@ -1,10 +1,10 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
 import html2canvas from "html2canvas";
+import * as d3Geo from "d3-geo";
 import type { TravelStats } from "../utils/statistics";
 import type { TravelRecordsMap } from "../types/travel";
 import { PREFECTURES } from "../data/prefectures";
 import { X, Download, MapPin, Navigation, Copy, Check, Sparkles } from "lucide-react";
-import { LandingSticker } from "./LandingSticker";
 
 interface ShareCardModalProps {
   isOpen: boolean;
@@ -23,10 +23,79 @@ const REGION_DATA: { name: string; kanji: string }[] = [
   { name: "주부", kanji: "中部" },
   { name: "간사이", kanji: "関西" },
   { name: "주고쿠", kanji: "中国" },
-  { name: "시코쿠", kanji: "四국" },
+  { name: "시코쿠", kanji: "四国" },
   { name: "큐슈", kanji: "九州" },
   { name: "오키나와", kanji: "沖縄" },
 ];
+
+// Mini Highlighted Japan Map Component for the Exported Infographic PNG Card
+const MiniJapanMap: React.FC<{ records: TravelRecordsMap; theme: CardTheme }> = ({ records, theme }) => {
+  const [geoFeatures, setGeoFeatures] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch("/data/japan.geojson")
+      .then((res) => res.json())
+      .then((data) => setGeoFeatures(data.features || []))
+      .catch(() => {});
+  }, []);
+
+  const featurePaths = useMemo(() => {
+    if (geoFeatures.length === 0) return [];
+    const mainProj = d3Geo.geoMercator().center([137.5, 38.0]).scale(1450).translate([185, 125]);
+    const okiProj = d3Geo.geoMercator().center([127.98, 26.47]).scale(2600).translate([150, 240]);
+
+    const pathMain = d3Geo.geoPath().projection(mainProj);
+    const pathOki = d3Geo.geoPath().projection(okiProj);
+
+    return geoFeatures.map((feat: any) => {
+      let code = feat.properties.id || feat.id;
+      if (typeof code === "string") code = parseInt(code, 10);
+      const projPath = code === 47 ? pathOki : pathMain;
+      const d = projPath(feat);
+      return { code, d };
+    });
+  }, [geoFeatures]);
+
+  return (
+    <div className={`p-2.5 rounded-2xl border mb-4 flex flex-col items-center justify-center relative overflow-hidden transition-all ${
+      theme === "washi"
+        ? "bg-white/80 border-[#E8E3D8]"
+        : "bg-white/5 border-white/10"
+    }`}>
+      <div className="w-full flex items-center justify-between px-1 text-[10px] font-serif-jp font-bold opacity-80 mb-1">
+        <span>🗺️ 日本全土 探訪 MAP</span>
+        <span className="font-sans text-[9px] text-[#E63946]">● 방문 완료</span>
+      </div>
+
+      <svg className="w-full h-[220px]" viewBox="0 0 370 260">
+        {featurePaths.map(({ code, d }) => {
+          if (!d) return null;
+          const status = records[code]?.status || "unvisited";
+          let fill = theme === "washi" ? "#E2E8F0" : "#1E293B";
+          let stroke = theme === "washi" ? "#CBD5E1" : "#334155";
+
+          if (status === "visited") {
+            fill = "#E63946";
+            stroke = "#B91C1C";
+          } else if (status === "transit") {
+            fill = "#192F52";
+            stroke = "#0F172A";
+          }
+
+          return (
+            <path
+              key={code}
+              d={d}
+              fill={fill}
+              stroke={stroke}
+              strokeWidth="0.8"
+            />
+          );
+        })}
+      </svg>
+    </div>
+  );
+};
 
 export const ShareCardModal: React.FC<ShareCardModalProps> = ({
   isOpen,
@@ -98,7 +167,7 @@ export const ShareCardModal: React.FC<ShareCardModalProps> = ({
   };
 
   const handleCopyText = () => {
-    const summaryText = `🗾 Japanlog 나의 일본 여정 성취도: ${stats.achievementRate}% 달성!\n📍 방문: ${stats.visitedCount}/47개 현 (${visitedPrefNames.slice(0, 5).join(", ")}${visitedPrefNames.length > 5 ? " 외..." : ""})\n🚄 경유: ${stats.transitCount}개 현 | 🏙️ 기록 도시: ${stats.totalCitiesCount}개 탐방\n#Japanlog #일본여행 #도도부현 #여행지도`;
+    const summaryText = `🗾 Japanlog 나의 일본 여정 성취도: ${stats.achievementRate}% 달성!\n📍 방문: ${stats.visitedCount}/47개 현 (${visitedPrefNames.slice(0, 5).join(", ")}${visitedPrefNames.length > 5 ? " 외..." : ""})\n<ctrl42> 경유: ${stats.transitCount}개 현 | 🏙️ 기록 도시: ${stats.totalCitiesCount}개 탐방\n#Japanlog #일본여행 #도도부현 #여행지도`;
     navigator.clipboard.writeText(summaryText);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
@@ -118,7 +187,7 @@ export const ShareCardModal: React.FC<ShareCardModalProps> = ({
                 여행 성취 인포그래픽 여권 카드
               </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                나의 일본 탐방 기록을 에디토리얼 이미지 카드로 SNS에 공유해보세요!
+                나의 일본 탐방 지도와 탐방 기록을 에디토리얼 이미지 카드로 SNS에 공유해보세요!
               </p>
             </div>
           </div>
@@ -207,13 +276,8 @@ export const ShareCardModal: React.FC<ShareCardModalProps> = ({
               </div>
             </div>
 
-            {/* Official Japanese Passport Landing Permission Sticker Element */}
-            <div className="mb-4 transform -rotate-1 shadow-sm">
-              <LandingSticker dateStr={todayStr} />
-            </div>
-
             {/* Main Achievement Metric Hero */}
-            <div className={`p-4 rounded-2xl mb-4 border flex items-center justify-between ${
+            <div className={`p-4 rounded-2xl mb-3 border flex items-center justify-between ${
               theme === "washi"
                 ? "bg-white border-[#E8E3D8] shadow-2xs"
                 : "bg-white/5 border-white/10"
@@ -245,6 +309,9 @@ export const ShareCardModal: React.FC<ShareCardModalProps> = ({
                 </div>
               </div>
             </div>
+
+            {/* Replaced Landing Sticker with Live Highlighted Mini Japan Map Graphic */}
+            <MiniJapanMap records={records} theme={theme} />
 
             {/* Regional Progress Grid */}
             <div className="space-y-2 mb-4">
