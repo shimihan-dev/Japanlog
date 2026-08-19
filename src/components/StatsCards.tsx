@@ -1,92 +1,78 @@
 import React from "react";
 import type { TravelStats } from "../utils/statistics";
-import { MapPin, Navigation, Building2, Crown } from "lucide-react";
 
 interface StatsCardsProps {
   stats: TravelStats;
 }
 
 export const StatsCards: React.FC<StatsCardsProps> = ({ stats }) => {
+  const percentage = ((stats.visitedCount / 47) * 100).toFixed(1);
+
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 mb-6">
-      {/* 1. 방문한 현 */}
-      <div className="bg-white dark:bg-[#0E1628] p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:shadow-md transition-all">
-        <div className="flex items-center space-x-3">
-          <div className="p-2.5 rounded-xl bg-blue-50 dark:bg-cyan-950/60 text-blue-600 dark:text-cyan-400">
-            <MapPin className="w-5 h-5" />
+    <div className="mb-6 bg-[#FBF9F5] dark:bg-[#0C1017] rounded-2xl border border-[#E8E3D8] dark:border-slate-800 p-4 shadow-2xs transition-all">
+      <div className="grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-200/80 dark:divide-slate-800 gap-y-3 sm:gap-y-0">
+        {/* Metric 1: 방문한 현 */}
+        <div className="px-3 py-1 space-y-1">
+          <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block font-sans">
+            방문한 현
+          </span>
+          <div className="flex items-baseline space-x-1.5">
+            <span className="text-2xl sm:text-3xl font-bold font-serif-jp text-slate-900 dark:text-slate-100">
+              {stats.visitedCount}
+            </span>
+            <span className="text-xs font-semibold text-slate-400 font-sans-outfit">/ 47 현</span>
           </div>
-          <div>
-            <span className="text-xs font-medium text-slate-500 dark:text-slate-400 block">방문한 현</span>
-            <div className="flex items-baseline space-x-1 mt-0.5">
-              <span className="text-2xl font-bold text-slate-900 dark:text-slate-100">{stats.visitedCount}</span>
-              <span className="text-sm font-semibold text-slate-400 dark:text-slate-500">/ 47</span>
-            </div>
-          </div>
+          <p className="text-[10px] text-slate-400 dark:text-slate-500 truncate">직접 탐색 및 체류 지역</p>
         </div>
-        <div className="mt-2 text-[11px] text-slate-400 dark:text-slate-500 flex justify-between items-center">
-          <span>직접 도달하여 활동한 지역</span>
-          <span className="font-semibold text-blue-600 dark:text-cyan-400">{((stats.visitedCount / 47) * 100).toFixed(1)}%</span>
-        </div>
-      </div>
 
-      {/* 2. 경유한 현 */}
-      <div className="bg-white dark:bg-[#0E1628] p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:shadow-md transition-all">
-        <div className="flex items-center space-x-3">
-          <div className="p-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400">
-            <Navigation className="w-5 h-5" />
+        {/* Metric 2: 경유한 현 */}
+        <div className="px-3 py-1 space-y-1 sm:pl-4">
+          <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block font-sans">
+            경유한 현
+          </span>
+          <div className="flex items-baseline space-x-1.5">
+            <span className="text-2xl sm:text-3xl font-bold font-serif-jp text-emerald-700 dark:text-emerald-400">
+              {stats.transitCount}
+            </span>
+            <span className="text-xs font-semibold text-slate-400 font-sans-outfit">/ 47 현</span>
           </div>
-          <div>
-            <span className="text-xs font-medium text-slate-500 dark:text-slate-400 block">경유한 현</span>
-            <div className="flex items-baseline space-x-1 mt-0.5">
-              <span className="text-2xl font-bold text-slate-900 dark:text-slate-100">{stats.transitCount}</span>
-              <span className="text-sm font-semibold text-slate-400 dark:text-slate-500">/ 47</span>
-            </div>
-          </div>
+          <p className="text-[10px] text-slate-400 dark:text-slate-500 truncate">이동 중 경유 및 통과</p>
         </div>
-        <div className="mt-2 text-[11px] text-slate-400 dark:text-slate-500 flex justify-between items-center">
-          <span>이동 과정 중 통과한 지역</span>
-          <span className="font-semibold text-emerald-600 dark:text-emerald-400">{((stats.transitCount / 47) * 100).toFixed(1)}%</span>
-        </div>
-      </div>
 
-      {/* 3. 방문 도시 수 */}
-      <div className="bg-white dark:bg-[#0E1628] p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:shadow-md transition-all">
-        <div className="flex items-center space-x-3">
-          <div className="p-2.5 rounded-xl bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400">
-            <Building2 className="w-5 h-5" />
+        {/* Metric 3: 방문 도시 수 */}
+        <div className="px-3 py-1 space-y-1 sm:pl-4">
+          <span className="text-[11px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block font-sans">
+            기록된 방문 도시
+          </span>
+          <div className="flex items-baseline space-x-1">
+            <span className="text-2xl sm:text-3xl font-bold font-sans-outfit text-slate-900 dark:text-slate-100">
+              {stats.totalCitiesCount}
+            </span>
+            <span className="text-xs font-semibold text-slate-400 font-serif-jp">개 도시</span>
           </div>
-          <div>
-            <span className="text-xs font-medium text-slate-500 dark:text-slate-400 block">방문 도시 수</span>
-            <div className="flex items-baseline space-x-1 mt-0.5">
-              <span className="text-2xl font-bold text-slate-900 dark:text-slate-100">{stats.totalCitiesCount}</span>
-              <span className="text-xs font-medium text-slate-500 dark:text-slate-400">개</span>
-            </div>
-          </div>
+          <p className="text-[10px] text-slate-400 dark:text-slate-500 truncate">중복 없는 시/구/정/촌</p>
         </div>
-        <div className="mt-2 text-[11px] text-slate-400 dark:text-slate-500">
-          기록된 중복 없는 시/구/정
-        </div>
-      </div>
 
-      {/* 4. 방문 달성률 */}
-      <div className="bg-white dark:bg-[#0E1628] p-4 rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:shadow-md transition-all">
-        <div className="flex items-center space-x-3">
-          <div className="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400">
-            <Crown className="w-5 h-5" />
+        {/* Metric 4: 방문 달성률 */}
+        <div className="px-3 py-1 space-y-1 sm:pl-4">
+          <span className="text-[11px] font-bold text-[#E63946] dark:text-[#FF5A65] uppercase tracking-wider block font-sans">
+            일본 열도 달성률
+          </span>
+          <div className="flex items-baseline space-x-0.5">
+            <span className="text-2xl sm:text-3xl font-extrabold font-sans-outfit text-[#E63946] dark:text-[#FF5A65]">
+              {stats.achievementRate}
+            </span>
+            <span className="text-sm font-bold text-[#E63946] dark:text-[#FF5A65] font-sans-outfit">%</span>
           </div>
-          <div>
-            <span className="text-xs font-medium text-slate-500 dark:text-slate-400 block">방문 달성률</span>
-            <div className="flex items-baseline space-x-1 mt-0.5">
-              <span className="text-2xl font-bold text-amber-600 dark:text-amber-400">{stats.achievementRate}</span>
-              <span className="text-sm font-semibold text-amber-600 dark:text-amber-400">%</span>
-            </div>
+          {/* Subtle Progress Bar */}
+          <div className="w-full bg-slate-200/80 dark:bg-slate-800 rounded-full h-1.5 mt-1 overflow-hidden">
+            <div
+              className="bg-[#E63946] h-1.5 rounded-full transition-all duration-500"
+              style={{ width: `${percentage}%` }}
+            />
           </div>
-        </div>
-        <div className="mt-2 text-[11px] text-slate-400 dark:text-slate-500">
-          (방문한 현 기준, 경유 제외)
         </div>
       </div>
     </div>
   );
 };
-

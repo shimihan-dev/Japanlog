@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { findMatchingCity, searchCitySuggestions, type CityMatchResult } from "../utils/cityMatcher";
-import { Sparkles, MapPin, Plus, CheckCircle2, ArrowRight } from "lucide-react";
+import { Sparkles, MapPin, Plus, CheckCircle2, ArrowRight, Search } from "lucide-react";
 
 interface SmartQuickAddBarProps {
   onAddCity: (prefectureCode: number, cityData: { cityNameKo: string; cityNameJa?: string; notes?: string }) => void;
@@ -92,29 +92,29 @@ export const SmartQuickAddBar: React.FC<SmartQuickAddBarProps> = ({
         </div>
       )}
 
-      {/* AI Smart Search Input Bar */}
+      {/* Smart Search Input Bar */}
       <form onSubmit={handleSubmit} className="relative flex items-center">
         <div className="relative w-full">
-          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#E63946] dark:text-[#FF5A65]">
-            <Sparkles className="w-4 h-4" />
+          <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+            <Search className="w-4 h-4" />
           </div>
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onFocus={() => query.trim().length >= 1 && setIsDropdownOpen(true)}
-            placeholder="✨ 장소/도시 스마트 등록: (예: 신주쿠, 유후인, 하카타, 지브리, 도톤보리, 디즈니랜드...)"
-            className="w-full pl-10 pr-28 py-3 bg-[#FBF9F5] dark:bg-[#0C1017] text-slate-800 dark:text-slate-100 rounded-2xl border border-[#E8E3D8] dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-[#E63946]/40 text-xs sm:text-sm placeholder-slate-400 dark:placeholder-slate-500 transition-all font-sans"
+            placeholder="도시나 장소 이름을 검색하여 등록해보세요 (예: 신주쿠, 유후인, 도톤보리, 디즈니랜드...)"
+            className="w-full pl-10 pr-24 py-3 bg-[#FBF9F5] dark:bg-[#0C1017] text-slate-900 dark:text-slate-100 rounded-2xl border border-[#E8E3D8] dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-[#E63946]/40 text-xs sm:text-sm placeholder-slate-400 dark:placeholder-slate-500 transition-all font-sans"
           />
         </div>
 
         <button
           type="submit"
           disabled={!query.trim()}
-          className="absolute right-1.5 px-3.5 py-2 bg-[#E63946] hover:bg-[#D92534] disabled:opacity-40 text-white font-bold text-xs rounded-xl transition-all shadow-2xs flex items-center space-x-1 cursor-pointer"
+          className="absolute right-1.5 px-4 py-2 bg-[#E63946] hover:bg-[#D92534] disabled:opacity-40 text-white font-bold text-xs rounded-xl transition-all shadow-2xs flex items-center space-x-1 cursor-pointer font-sans"
         >
           <Plus className="w-3.5 h-3.5" />
-          <span className="hidden sm:inline">스마트 등록</span>
+          <span className="hidden sm:inline">빠른 등록</span>
         </button>
       </form>
 
