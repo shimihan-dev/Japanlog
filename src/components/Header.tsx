@@ -12,6 +12,7 @@ interface HeaderProps {
   onOpenAuthModal: () => void;
   onSignOut: () => void;
   onOpenShareModal?: () => void;
+  onOpenDataSyncModal?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -24,6 +25,7 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenAuthModal,
   onSignOut,
   onOpenShareModal,
+  onOpenDataSyncModal,
 }) => {
   const [isToolsOpen, setIsToolsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -128,6 +130,19 @@ export const Header: React.FC<HeaderProps> = ({
 
             {isToolsOpen && (
               <div className="absolute right-0 mt-1.5 w-44 bg-[#FBF9F5] dark:bg-[#0C1017] rounded-2xl border border-[#E8E3D8] dark:border-slate-800 shadow-xl py-1.5 z-40 space-y-0.5 animate-in fade-in duration-100 font-sans">
+                {onOpenDataSyncModal && (
+                  <button
+                    onClick={() => {
+                      onOpenDataSyncModal();
+                      setIsToolsOpen(false);
+                    }}
+                    className="w-full px-3 py-2 flex items-center space-x-2 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-red-50/60 dark:hover:bg-slate-800 text-left cursor-pointer"
+                  >
+                    <Cloud className="w-3.5 h-3.5 text-[#E63946] shrink-0" />
+                    <span>기기 간 백업 & 연동</span>
+                  </button>
+                )}
+
                 <button
                   onClick={() => {
                     onLoadSample();

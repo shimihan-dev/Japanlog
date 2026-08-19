@@ -229,28 +229,61 @@ export const JapanMap: React.FC<JapanMapProps> = ({
     }
   };
 
-  // Touch Drag Handlers for Mobile
+  // Touch Drag & Pinch-Zoom Handlers for Mobile (rAF Throttled for 60fps)
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
+  const touchPinchDistRef = useRef<number | null>(null);
+  const rafTouchIdRef = useRef<number | null>(null);
+
   const handleTouchStart = (e: React.TouchEvent) => {
     if (e.touches.length === 1) {
       touchStartRef.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
       panStartRef.current = { ...pan };
+      touchPinchDistRef.current = null;
+    } else if (e.touches.length === 2) {
+      const dist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      touchPinchDistRef.current = dist;
     }
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (touchStartRef.current && e.touches.length === 1) {
+    if (e.touches.length === 1 && touchStartRef.current) {
       const dx = e.touches[0].clientX - touchStartRef.current.x;
       const dy = e.touches[0].clientY - touchStartRef.current.y;
-      setPan({
-        x: panStartRef.current.x + dx,
-        y: panStartRef.current.y + dy,
+      
+      if (rafTouchIdRef.current) cancelAnimationFrame(rafTouchIdRef.current);
+      rafTouchIdRef.current = requestAnimationFrame(() => {
+        setPan({
+          x: panStartRef.current.x + dx,
+          y: panStartRef.current.y + dy,
+        });
       });
+    } else if (e.touches.length === 2 && touchPinchDistRef.current !== null) {
+      const newDist = Math.hypot(
+        e.touches[0].clientX - e.touches[1].clientX,
+        e.touches[0].clientY - e.touches[1].clientY
+      );
+      const ratio = newDist / touchPinchDistRef.current;
+      if (Math.abs(ratio - 1) > 0.05) {
+        touchPinchDistRef.current = newDist;
+        if (ratio > 1) {
+          handleZoomIn();
+        } else {
+          handleZoomOut();
+        }
+      }
     }
   };
 
   const handleTouchEnd = () => {
     touchStartRef.current = null;
+    touchPinchDistRef.current = null;
+    if (rafTouchIdRef.current) {
+      cancelAnimationFrame(rafTouchIdRef.current);
+      rafTouchIdRef.current = null;
+    }
   };
 
   const handleCityPinHover = (e: React.MouseEvent, pin: any) => {
