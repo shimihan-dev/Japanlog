@@ -86,6 +86,16 @@ export const TripList: React.FC<TripListProps> = ({
                     : "bg-[#FBF9F5] dark:bg-slate-900 border-[#E8E3D8] dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700"
                 }`}
               >
+                {/* Ticket Stamp Header */}
+                <div className="flex items-center justify-between text-[9px] font-sans-outfit border-b border-dashed border-slate-200 dark:border-slate-800 pb-1.5 mb-1.5 text-slate-400">
+                  <span className="font-mono tracking-wider text-[#E63946] dark:text-[#FF5A65] font-bold flex items-center gap-1">
+                    <span>🎫 JPN-PASS</span>
+                    <span>•</span>
+                    <span className="text-slate-500 font-normal">SER. {trip.id.substring(0, 6).toUpperCase()}</span>
+                  </span>
+                  <span className="font-serif-jp text-[10px] text-slate-400">일본 여정 승차권</span>
+                </div>
+
                 {/* Header: Emoji, Title & Action Menu */}
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-start space-x-2 min-w-0">
