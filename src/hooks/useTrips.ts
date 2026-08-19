@@ -45,13 +45,21 @@ export function useTrips(user: User | null = null) {
           .eq("user_id", user.id)
           .single();
 
-        if (!error && data?.trips && Array.isArray(data.trips) && data.trips.length > 0) {
-          if (isMounted) setTrips(data.trips);
+        if (!error && data?.trips && Array.isArray(data.trips)) {
+          // Filter out any leftover sample trips for logged-in users if user has custom trips
+          const realTrips = data.trips.filter((t: Trip) => !t.id.startsWith("trip-sample-"));
+          if (isMounted) {
+            setTrips(realTrips.length > 0 ? realTrips : data.trips);
+          }
         } else {
+          // If cloud has no trips, load local user trips or empty array (never sample trips for logged in users)
           const raw = localStorage.getItem(storageKey);
           if (raw) {
-            const localTrips = JSON.parse(raw);
-            if (isMounted) setTrips(localTrips);
+            const localTrips: Trip[] = JSON.parse(raw);
+            const userTrips = localTrips.filter((t) => !t.id.startsWith("trip-sample-"));
+            if (isMounted) setTrips(userTrips);
+          } else {
+            if (isMounted) setTrips([]);
           }
         }
       } catch (err) {
@@ -92,7 +100,7 @@ export function useTrips(user: User | null = null) {
         } catch (err) {
           console.error("Failed to save trips to Supabase cloud:", err);
         }
-      }, 500);
+      }, 300);
 
       return () => clearTimeout(timer);
     }
@@ -107,7 +115,7 @@ export function useTrips(user: User | null = null) {
       updatedAt: now,
     };
 
-    setTrips((prev) => [newTrip, ...prev]);
+    setTrips((prev) => [newTrip, ...prev.filter((t) => !t.id.startsWith("trip-sample-"))]);
     return newTrip;
   }, []);
 
