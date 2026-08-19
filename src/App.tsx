@@ -144,7 +144,7 @@ export const App: React.FC = () => {
   const [mobileTab, setMobileTab] = useState<"map" | "list">("map");
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F6F8FA] dark:bg-[#0B0F17] text-slate-800 dark:text-slate-100 font-sans transition-colors duration-200">
+    <div className="min-h-screen flex flex-col bg-washi-paper text-slate-900 dark:text-slate-100 font-sans transition-colors duration-250">
       {/* App Header */}
       <Header
         isDarkMode={isDarkMode}

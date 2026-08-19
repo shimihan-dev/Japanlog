@@ -4,36 +4,92 @@
 
 @layer base {
   body {
-    background-color: #f6f8fa;
-    color: #1e293b;
-    font-family: Pretendard, "Noto Sans KR", -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: #FBF9F5;
+    color: #111625;
+    font-family: 'Outfit', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
     -webkit-font-smoothing: antialiased;
     min-height: 100vh;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition: background-color 0.25s ease, color 0.25s ease;
   }
 
   html.dark body {
-    background-color: #070b14;
-    color: #f1f5f9;
+    background-color: #0C1017;
+    color: #F1F5F9;
   }
+}
+
+/* Custom Font Utilities */
+.font-serif-jp {
+  font-family: 'Shippori Mincho', 'Noto Serif JP', Georgia, serif;
+}
+
+.font-sans-outfit {
+  font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Japanese Washi Paper Texture Effect */
+.bg-washi-paper {
+  background-color: #FBF9F5;
+  background-image: radial-gradient(#E8E3D8 0.65px, transparent 0.65px), radial-gradient(#E8E3D8 0.65px, #FBF9F5 0.65px);
+  background-size: 26px 26px;
+  background-position: 0 0, 13px 13px;
+}
+
+.dark .bg-washi-paper {
+  background-color: #0C1017;
+  background-image: radial-gradient(#1E293B 0.65px, transparent 0.65px), radial-gradient(#1E293B 0.65px, #0C1017 0.65px);
+  background-size: 26px 26px;
+  background-position: 0 0, 13px 13px;
+}
+
+/* Hanko Japanese Pilgrimage Stamp Effect (御朱印) */
+.hanko-stamp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #E63946;
+  color: #E63946;
+  border-radius: 50%;
+  font-family: 'Shippori Mincho', serif;
+  font-weight: 800;
+  transform: rotate(-12deg);
+  box-shadow: 0 0 0 1px rgba(230, 57, 70, 0.2);
+  user-select: none;
+}
+
+.dark .hanko-stamp {
+  border-color: #FF5A65;
+  color: #FF5A65;
+  box-shadow: 0 0 12px rgba(255, 90, 101, 0.3);
 }
 
 /* Diagonal Stripe Pattern for Transit Status */
 .pattern-transit {
-  background-color: #d1fae5;
+  background-color: #ECFDF5;
   background-image: repeating-linear-gradient(
     45deg,
-    #10b981 0,
-    #10b981 3px,
+    #10B981 0,
+    #10B981 3px,
     transparent 0,
     transparent 8px
   );
 }
 
-/* Custom scrollbar styling */
+.dark .pattern-transit {
+  background-color: rgba(6, 78, 59, 0.4);
+  background-image: repeating-linear-gradient(
+    45deg,
+    #059669 0,
+    #059669 3px,
+    transparent 0,
+    transparent 8px
+  );
+}
+
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 ::-webkit-scrollbar-track {
@@ -41,10 +97,18 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: #D4CEBF;
   border-radius: 9999px;
 }
 
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
 ::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: #B8B09F;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
 }

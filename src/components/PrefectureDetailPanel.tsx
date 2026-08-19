@@ -35,9 +35,14 @@ export const PrefectureDetailPanel: React.FC<PrefectureDetailPanelProps> = ({
 
   if (!selectedCode) {
     return (
-      <div className="bg-white dark:bg-[#0E1628] rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm p-6 text-center text-slate-400 dark:text-slate-500 flex flex-col items-center justify-center min-h-[300px] h-full space-y-2 transition-colors duration-200">
-        <MapPin className="w-8 h-8 text-slate-300 dark:text-slate-600" />
-        <p className="text-xs font-medium">지도에서 도도부현을 선택하거나 목록에서 클릭해주세요.</p>
+      <div className="bg-[#FBF9F5] dark:bg-[#0C1017] rounded-2xl border border-[#E8E3D8] dark:border-slate-800/80 shadow-2xs p-6 text-center text-slate-400 dark:text-slate-500 flex flex-col items-center justify-center min-h-[300px] h-full space-y-3 transition-colors duration-250">
+        <div className="w-12 h-12 rounded-2xl bg-amber-50 dark:bg-slate-800 flex items-center justify-center text-amber-600 dark:text-slate-400 border border-amber-200/60 dark:border-slate-700">
+          <MapPin className="w-6 h-6" />
+        </div>
+        <div>
+          <h3 className="font-serif-jp text-sm font-bold text-slate-700 dark:text-slate-300">도도부현 선택</h3>
+          <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">지도에서 탐색할 현을 선택하여 감성 다이어리를 확인하세요.</p>
+        </div>
       </div>
     );
   }
@@ -67,28 +72,35 @@ export const PrefectureDetailPanel: React.FC<PrefectureDetailPanelProps> = ({
   };
 
   return (
-    <div className="bg-white dark:bg-[#0E1628] rounded-2xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm p-5 flex flex-col space-y-4 transition-all duration-200">
+    <div className="bg-[#FBF9F5] dark:bg-[#0C1017] rounded-2xl border border-[#E8E3D8] dark:border-slate-800/80 shadow-xs p-5 flex flex-col space-y-4 transition-all duration-250 relative overflow-hidden">
       {/* Header Info */}
-      <div className="flex items-start justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+      <div className="flex items-start justify-between border-b border-slate-200/80 dark:border-slate-800 pb-3">
         <div>
           <div className="flex items-center space-x-2">
-            <h2 className="text-lg font-bold text-slate-900 dark:text-slate-100">{prefMeta.nameKo}</h2>
-            <span className="text-xs text-slate-400 dark:text-slate-500 font-medium">{prefMeta.nameJa}</span>
+            <h2 className="text-xl font-bold font-serif-jp text-slate-900 dark:text-slate-100">{prefMeta.nameKo}</h2>
+            <span className="text-xs text-slate-500 dark:text-slate-400 font-serif-jp">{prefMeta.nameJa}</span>
           </div>
-          <span className="text-[11px] text-slate-500 dark:text-slate-400">{prefMeta.region} 지방 (No.{prefMeta.code})</span>
+          <span className="text-xs text-slate-500 dark:text-slate-400 font-sans tracking-wide">
+            {prefMeta.region} 지방 · Region No.{prefMeta.code}
+          </span>
         </div>
 
-        <span
-          className={`px-2.5 py-1 rounded-lg text-xs font-bold ${
-            currentStatus === "visited"
-              ? "bg-blue-100 dark:bg-blue-950/80 text-blue-800 dark:text-blue-300 border border-blue-200/50 dark:border-blue-800/50"
-              : currentStatus === "transit"
-              ? "bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-200/50 dark:border-emerald-800/50"
-              : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400"
-          }`}
-        >
-          {currentStatus === "visited" ? "방문" : currentStatus === "transit" ? "경유" : "미방문"}
-        </span>
+        {/* Hanko Stamp for Visited Status or Regular Badge */}
+        {currentStatus === "visited" ? (
+          <div className="hanko-stamp w-11 h-11 text-xs shrink-0" title="御朱印 (Goshuin) - 방문 완료 직인">
+            済
+          </div>
+        ) : (
+          <span
+            className={`px-3 py-1 rounded-xl text-xs font-bold ${
+              currentStatus === "transit"
+                ? "bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/60"
+                : "bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400"
+            }`}
+          >
+            {currentStatus === "transit" ? "경유 완료" : "미방문"}
+          </span>
+        )}
       </div>
 
       {/* Status Selector */}

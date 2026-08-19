@@ -562,36 +562,38 @@ export const JapanMap: React.FC<JapanMapProps> = ({
   return (
     <div
       ref={mapContainerRef}
-      className="relative w-full bg-white dark:bg-[#151D2A] rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm p-3 sm:p-4 transition-colors duration-200"
+      className="relative w-full bg-[#FBF9F5] dark:bg-[#0C1017] rounded-2xl border border-[#E8E3D8] dark:border-slate-800 shadow-2xs p-3 sm:p-4 transition-colors duration-250"
     >
       {/* Map Control Bar (Above SVG Map - Dedicated Header Bar to Never Overlap Hokkaido) */}
-      <div className="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-slate-100 dark:border-slate-800/80">
+      <div className="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-slate-200/80 dark:border-slate-800/80">
         <div className="flex flex-wrap items-center gap-2">
           <MapLegend />
+        </div>
 
-          {/* Shinkansen Layer Toggle */}
+        <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+          {/* Shinkansen Layer Toggle Switch */}
           <button
-            onClick={() => setShowShinkansen(!showShinkansen)}
-            className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-xl text-xs font-bold transition-all border shadow-2xs ${
+            onClick={() => setShowShinkansen((prev) => !prev)}
+            className={`flex items-center space-x-1.5 px-2.5 py-1.2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
               showShinkansen
-                ? "bg-emerald-600 dark:bg-emerald-500 text-white border-emerald-500 shadow-emerald-500/20"
-                : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700"
+                ? "bg-[#E63946] text-white border-[#E63946]"
+                : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700"
             }`}
-            title="신칸센 철도 노선 오버레이 표시/숨김"
+            title="신칸센 철도 노선 표시 토글"
           >
             <Train className="w-3.5 h-3.5" />
-            <span>신칸센 노선도</span>
+            <span>신칸센 노선</span>
           </button>
 
-          {/* City Pins Layer Toggle */}
+          {/* City Pin Display Toggle */}
           <button
-            onClick={() => setShowCityPins(!showCityPins)}
-            className={`flex items-center space-x-1.5 px-2.5 py-1 rounded-xl text-xs font-bold transition-all border shadow-2xs ${
+            onClick={() => setShowCityPins((prev) => !prev)}
+            className={`flex items-center space-x-1.5 px-2.5 py-1.2 rounded-xl text-xs font-bold transition-all border cursor-pointer ${
               showCityPins
-                ? "bg-rose-600 dark:bg-cyan-500 text-white dark:text-slate-900 border-rose-500 dark:border-cyan-400 shadow-rose-500/20"
-                : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700"
+                ? "bg-[#E63946] text-white border-[#E63946]"
+                : "bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700"
             }`}
-            title="방문 도시 핀 마커 표시/숨김"
+            title="방문 도시 핀 표시 토글"
           >
             <MapPin className="w-3.5 h-3.5" />
             <span>도시 핀 ({projectedCityPins.length})</span>

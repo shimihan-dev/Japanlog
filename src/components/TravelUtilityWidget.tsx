@@ -82,12 +82,12 @@ export const TravelUtilityWidget: React.FC<TravelUtilityWidgetProps> = ({ select
   return (
     <div className="space-y-4">
       {/* SECTION 1: Hana Bank JPY Exchange Rate Converter */}
-      <div className="bg-white dark:bg-[#151D2A] rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm p-4 transition-colors duration-200 space-y-3">
-        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
-          <div className="flex items-center space-x-2 text-blue-600 dark:text-blue-400 font-extrabold text-xs">
+      <div className="bg-[#FBF9F5] dark:bg-[#0C1017] rounded-2xl border border-[#E8E3D8] dark:border-slate-800 shadow-2xs p-4 transition-colors duration-250 space-y-3">
+        <div className="flex items-center justify-between border-b border-slate-200/80 dark:border-slate-800 pb-2.5">
+          <div className="flex items-center space-x-2 text-[#E63946] dark:text-[#FF5A65] font-extrabold text-xs font-serif-jp">
             <Calculator className="w-4 h-4" />
             <span className="text-slate-900 dark:text-slate-100">엔화 환율 계산기</span>
-            <span className="px-2 py-0.5 rounded-md bg-blue-50 dark:bg-blue-950/80 text-blue-700 dark:text-cyan-300 text-[10px] font-bold border border-blue-200/60 dark:border-cyan-800/60 flex items-center space-x-1">
+            <span className="px-2 py-0.5 rounded-md bg-red-50 dark:bg-red-950/60 text-[#E63946] dark:text-[#FF5A65] text-[10px] font-bold border border-red-200/60 dark:border-red-900/60 flex items-center space-x-1 font-sans">
               <Landmark className="w-3 h-3" />
               <span>{rateData?.providerName || "하나은행 고시"}</span>
             </span>
@@ -96,7 +96,7 @@ export const TravelUtilityWidget: React.FC<TravelUtilityWidgetProps> = ({ select
           <button
             onClick={loadExchangeRate}
             disabled={loadingRate}
-            className="p-1.5 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="p-1.5 text-slate-400 hover:text-[#E63946] rounded-lg hover:bg-white dark:hover:bg-slate-800 transition-colors cursor-pointer"
             title="환율 새로고침"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loadingRate ? "animate-spin" : ""}`} />
@@ -104,23 +104,23 @@ export const TravelUtilityWidget: React.FC<TravelUtilityWidgetProps> = ({ select
         </div>
 
         {/* Rate Display Badge */}
-        <div className="flex items-center justify-between text-xs bg-blue-50/80 dark:bg-slate-800/80 px-3 py-2 rounded-xl border border-blue-100 dark:border-slate-700/80">
-          <span className="font-bold text-slate-800 dark:text-blue-200">
-            매매기준율: 100 JPY ➔ <span className="text-blue-600 dark:text-cyan-400 font-extrabold">{rateData ? rateData.rate100Jpy.toFixed(2) : "895.00"} KRW</span>
+        <div className="flex items-center justify-between text-xs bg-white dark:bg-slate-900/80 px-3 py-2 rounded-xl border border-slate-200/70 dark:border-slate-800">
+          <span className="font-bold text-slate-800 dark:text-slate-200 font-serif-jp">
+            매매기준율: 100 JPY ➔ <span className="text-[#E63946] dark:text-[#FF5A65] font-black font-sans-outfit">{rateData ? rateData.rate100Jpy.toFixed(2) : "895.00"} KRW</span>
           </span>
-          <span className="text-[10px] text-slate-500 dark:text-slate-400">
+          <span className="text-[10px] text-slate-400 dark:text-slate-500 font-sans">
             {rateData?.lastUpdated}
           </span>
         </div>
 
         {/* Quick Presets */}
-        <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-semibold">
+        <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-semibold font-sans">
           <span className="text-slate-400 mr-1">자주 쓰는 금액:</span>
           {[1000, 5000, 10000, 30000, 50000].map((amt) => (
             <button
               key={amt}
               onClick={() => applyJpyPreset(amt)}
-              className="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-blue-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 hover:text-blue-700 dark:hover:text-cyan-300 transition-colors border border-slate-200/60 dark:border-slate-700/60"
+              className="px-2.5 py-1 rounded-lg bg-white dark:bg-slate-900 hover:bg-red-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 hover:text-[#E63946] transition-colors border border-slate-200/70 dark:border-slate-800 cursor-pointer font-sans-outfit"
             >
               {amt.toLocaleString()}엔
             </button>
@@ -128,10 +128,10 @@ export const TravelUtilityWidget: React.FC<TravelUtilityWidgetProps> = ({ select
         </div>
 
         {/* Input Converter Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 items-center font-sans">
           {/* JPY Input */}
           <div className="space-y-1">
-            <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 flex items-center justify-between">
+            <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 flex items-center justify-between font-serif-jp">
               <span>일본 엔화 (JPY)</span>
               <span>¥</span>
             </label>
@@ -141,15 +141,15 @@ export const TravelUtilityWidget: React.FC<TravelUtilityWidgetProps> = ({ select
                 value={jpyInput}
                 onChange={(e) => handleJpyChange(e.target.value)}
                 placeholder="0"
-                className="w-full pl-3 pr-8 py-2 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 font-bold text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full pl-3 pr-8 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 font-bold text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-[#E63946]/40 outline-none font-sans-outfit"
               />
-              <span className="absolute right-3 top-2.5 text-xs text-slate-400 font-bold">엔</span>
+              <span className="absolute right-3 top-2.5 text-xs text-slate-400 font-bold font-serif-jp">엔</span>
             </div>
           </div>
 
           {/* KRW Input */}
           <div className="space-y-1">
-            <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 flex items-center justify-between">
+            <label className="text-[11px] font-bold text-slate-500 dark:text-slate-400 flex items-center justify-between font-serif-jp">
               <span>한국 원화 (KRW)</span>
               <span>₩</span>
             </label>
@@ -159,26 +159,26 @@ export const TravelUtilityWidget: React.FC<TravelUtilityWidgetProps> = ({ select
                 value={krwInput}
                 onChange={(e) => handleKrwChange(e.target.value)}
                 placeholder="0"
-                className="w-full pl-3 pr-8 py-2 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 font-bold text-sm text-blue-600 dark:text-cyan-400 focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full pl-3 pr-8 py-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 font-bold text-sm text-[#E63946] dark:text-[#FF5A65] focus:ring-2 focus:ring-[#E63946]/40 outline-none font-sans-outfit"
               />
-              <span className="absolute right-3 top-2.5 text-xs text-slate-400 font-bold">원</span>
+              <span className="absolute right-3 top-2.5 text-xs text-slate-400 font-bold font-serif-jp">원</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* SECTION 2: Dedicated Real-Time City Weather & Outfit Tips Card */}
-      <div className="bg-white dark:bg-[#151D2A] rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm p-4 transition-colors duration-200 space-y-3">
-        <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-2.5">
-          <div className="flex items-center space-x-2 text-amber-600 dark:text-amber-400 font-extrabold text-xs">
-            <CloudSun className="w-4 h-4" />
+      <div className="bg-[#FBF9F5] dark:bg-[#0C1017] rounded-2xl border border-[#E8E3D8] dark:border-slate-800 shadow-2xs p-4 transition-colors duration-250 space-y-3">
+        <div className="flex items-center justify-between border-b border-slate-200/80 dark:border-slate-800 pb-2.5">
+          <div className="flex items-center space-x-2 text-amber-600 dark:text-amber-400 font-extrabold text-xs font-serif-jp">
+            <CloudSun className="w-4 h-4 text-amber-500" />
             <span className="text-slate-900 dark:text-slate-100">현지 실시간 날씨 & 여행 옷차림</span>
           </div>
 
           <button
             onClick={loadWeather}
             disabled={loadingWeather}
-            className="p-1.5 text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            className="p-1.5 text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 rounded-lg hover:bg-white dark:hover:bg-slate-800 transition-colors cursor-pointer"
             title="날씨 정보 새로고침"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loadingWeather ? "animate-spin" : ""}`} />
@@ -188,59 +188,59 @@ export const TravelUtilityWidget: React.FC<TravelUtilityWidgetProps> = ({ select
         {weatherData ? (
           <div className="space-y-2.5">
             {/* Main Weather Card */}
-            <div className="p-3.5 rounded-xl bg-gradient-to-br from-blue-500/10 via-indigo-500/5 to-transparent border border-blue-200/60 dark:border-blue-900/40 flex items-center justify-between">
+            <div className="p-3.5 rounded-xl bg-white dark:bg-slate-900/80 border border-slate-200/70 dark:border-slate-800 flex items-center justify-between">
               <div className="space-y-1">
                 <div className="flex items-center space-x-1.5">
-                  <span className="text-xs font-extrabold text-slate-800 dark:text-slate-100">
+                  <span className="text-xs font-extrabold text-slate-800 dark:text-slate-100 font-serif-jp">
                     📍 {weatherData.cityName}
                   </span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 font-bold">
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300 font-bold font-sans">
                     {weatherData.weatherText}
                   </span>
                 </div>
 
                 <div className="flex items-baseline space-x-2">
-                  <span className="text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+                  <span className="text-3xl font-black text-slate-900 dark:text-white tracking-tight font-sans-outfit">
                     {weatherData.temp}°C
                   </span>
-                  <span className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                  <span className="text-xs text-slate-500 dark:text-slate-400 font-medium font-sans">
                     최고 {weatherData.tempMax}° / 최저 {weatherData.tempMin}°
                   </span>
                 </div>
               </div>
 
-              <div className="text-4xl select-none animate-pulse">
+              <div className="text-4xl select-none">
                 {weatherData.icon}
               </div>
             </div>
 
             {/* Weather Details (Humidity & Wind) */}
-            <div className="grid grid-cols-2 gap-2 text-xs font-semibold">
-              <div className="flex items-center space-x-2 p-2 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800">
+            <div className="grid grid-cols-2 gap-2 text-xs font-semibold font-sans">
+              <div className="flex items-center space-x-2 p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800">
                 <Droplets className="w-4 h-4 text-blue-500 shrink-0" />
                 <div>
                   <span className="text-[10px] text-slate-400 block">습도</span>
-                  <span className="text-slate-800 dark:text-slate-200">{weatherData.humidity}%</span>
+                  <span className="text-slate-800 dark:text-slate-200 font-sans-outfit">{weatherData.humidity}%</span>
                 </div>
               </div>
 
-              <div className="flex items-center space-x-2 p-2 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800">
+              <div className="flex items-center space-x-2 p-2 rounded-xl bg-white dark:bg-slate-900 border border-slate-200/70 dark:border-slate-800">
                 <Wind className="w-4 h-4 text-emerald-500 shrink-0" />
                 <div>
                   <span className="text-[10px] text-slate-400 block">풍속</span>
-                  <span className="text-slate-800 dark:text-slate-200">{weatherData.windSpeed} m/s</span>
+                  <span className="text-slate-800 dark:text-slate-200 font-sans-outfit">{weatherData.windSpeed} m/s</span>
                 </div>
               </div>
             </div>
 
             {/* Clothing Tip Banner */}
-            <div className="p-2.5 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200/60 dark:border-amber-900/60 text-xs font-bold text-amber-900 dark:text-amber-200 flex items-center space-x-2">
+            <div className="p-2.5 rounded-xl bg-amber-50/70 dark:bg-amber-950/40 border border-amber-200/60 dark:border-amber-900/60 text-xs font-bold text-amber-900 dark:text-amber-200 flex items-center space-x-2 font-serif-jp">
               <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />
               <span>{weatherData.clothingTip}</span>
             </div>
           </div>
         ) : (
-          <div className="p-6 text-center text-xs text-slate-400">
+          <div className="p-6 text-center text-xs text-slate-400 font-sans">
             실시간 날씨 정보를 불러오는 중입니다...
           </div>
         )}

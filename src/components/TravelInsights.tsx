@@ -76,33 +76,33 @@ export const TravelInsights: React.FC<TravelInsightsProps> = ({
   }, [records]);
 
   return (
-    <div className="bg-white dark:bg-[#151D2A] rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm p-4 mt-4 space-y-3.5 transition-colors duration-200">
+    <div className="bg-[#FBF9F5] dark:bg-[#0C1017] rounded-2xl border border-[#E8E3D8] dark:border-slate-800 shadow-2xs p-4 mt-4 space-y-3.5 transition-colors duration-250">
       {/* Title Header */}
-      <div className="flex items-center space-x-2 border-b border-slate-100 dark:border-slate-800 pb-2.5">
-        <Trophy className="w-4 h-4 text-amber-500" />
-        <h3 className="text-xs font-bold text-slate-900 dark:text-slate-100">여행 칭호 & 인사이트</h3>
+      <div className="flex items-center space-x-2 border-b border-slate-200/80 dark:border-slate-800 pb-2.5">
+        <Trophy className="w-4 h-4 text-[#E63946]" />
+        <h3 className="text-xs font-bold font-serif-jp text-slate-900 dark:text-slate-100">여행 칭호 & 인사이트</h3>
       </div>
 
       {/* Title Badge Card */}
-      <div className="p-3 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/40 rounded-xl border border-amber-200/60 dark:border-amber-800/50 flex items-center justify-between">
+      <div className="p-3 bg-red-50/60 dark:bg-red-950/40 rounded-xl border border-red-200/60 dark:border-red-900/50 flex items-center justify-between">
         <div className="space-y-0.5">
-          <span className="text-[10px] font-semibold text-amber-700 dark:text-amber-400 block">달성한 칭호</span>
-          <span className="text-xs font-extrabold text-amber-900 dark:text-amber-200 block">{insights.titleBadge}</span>
+          <span className="text-[10px] font-bold text-[#E63946] dark:text-[#FF5A65] block font-serif-jp">달성한 여행 칭호</span>
+          <span className="text-xs font-extrabold text-slate-900 dark:text-slate-100 block font-serif-jp">{insights.titleBadge}</span>
         </div>
-        <Award className="w-6 h-6 text-amber-500 shrink-0" />
+        <Award className="w-6 h-6 text-[#E63946] shrink-0" />
       </div>
 
       {/* Highlights Grid */}
       <div className="grid grid-cols-2 gap-2 text-xs">
-        <div className="p-2.5 bg-slate-50 dark:bg-[#1A2332] rounded-xl border border-slate-100 dark:border-slate-800">
-          <span className="text-[10px] text-slate-400 dark:text-slate-500 block">최애 지방</span>
-          <span className="font-bold text-slate-800 dark:text-slate-200 block mt-0.5">
+        <div className="p-2.5 bg-white dark:bg-slate-900/60 rounded-xl border border-slate-200/70 dark:border-slate-800">
+          <span className="text-[10px] text-slate-400 dark:text-slate-500 block font-sans">최애 지방</span>
+          <span className="font-bold text-slate-800 dark:text-slate-200 block mt-0.5 font-serif-jp">
             {insights.topRegion !== "없음" ? `${insights.topRegion} (${insights.topRegionCount}곳)` : "기록 없음"}
           </span>
         </div>
-        <div className="p-2.5 bg-slate-50 dark:bg-[#1A2332] rounded-xl border border-slate-100 dark:border-slate-800">
-          <span className="text-[10px] text-slate-400 dark:text-slate-500 block">총 기록 도시</span>
-          <span className="font-bold text-blue-600 dark:text-cyan-400 block mt-0.5">
+        <div className="p-2.5 bg-white dark:bg-slate-900/60 rounded-xl border border-slate-200/70 dark:border-slate-800">
+          <span className="text-[10px] text-slate-400 dark:text-slate-500 block font-sans">총 기록 도시</span>
+          <span className="font-bold text-[#E63946] dark:text-[#FF5A65] block mt-0.5 font-sans-outfit">
             {insights.totalCities}개 도시
           </span>
         </div>
@@ -111,8 +111,8 @@ export const TravelInsights: React.FC<TravelInsightsProps> = ({
       {/* Unvisited Recommendation */}
       {insights.unvisitedRecs.length > 0 && (
         <div className="space-y-1.5 pt-1">
-          <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300 flex items-center space-x-1">
-            <Sparkles className="w-3.5 h-3.5 text-blue-500 dark:text-cyan-400" />
+          <span className="text-[11px] font-bold text-slate-700 dark:text-slate-300 flex items-center space-x-1 font-serif-jp">
+            <Sparkles className="w-3.5 h-3.5 text-[#E63946]" />
             <span>추천 미방문 핫플레이스</span>
           </span>
 
@@ -122,20 +122,20 @@ export const TravelInsights: React.FC<TravelInsightsProps> = ({
                 key={rec.code}
                 type="button"
                 onClick={() => onSelectPrefecture(rec.code)}
-                className="w-full p-2 bg-slate-50/80 dark:bg-slate-900/60 hover:bg-blue-50 dark:hover:bg-cyan-950/40 rounded-xl border border-slate-100 dark:border-slate-800 transition-colors flex items-center justify-between text-left group"
+                className="w-full p-2 bg-white dark:bg-slate-900/60 hover:bg-red-50/60 dark:hover:bg-slate-800 rounded-xl border border-slate-200/70 dark:border-slate-800 transition-colors flex items-center justify-between text-left group cursor-pointer"
               >
                 <div className="flex items-center space-x-2">
-                  <MapPin className="w-3.5 h-3.5 text-blue-500 dark:text-cyan-400 shrink-0" />
+                  <MapPin className="w-3.5 h-3.5 text-[#E63946] shrink-0" />
                   <div>
-                    <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block group-hover:text-blue-600 dark:group-hover:text-cyan-400 transition-colors">
+                    <span className="text-xs font-bold text-slate-800 dark:text-slate-200 block group-hover:text-[#E63946] transition-colors font-serif-jp">
                       {rec.name}
                     </span>
-                    <span className="text-[10px] text-slate-400 dark:text-slate-500 block">
+                    <span className="text-[10px] text-slate-400 dark:text-slate-500 block font-sans">
                       {rec.highlight}
                     </span>
                   </div>
                 </div>
-                <Compass className="w-3.5 h-3.5 text-slate-300 dark:text-slate-600 group-hover:text-blue-500 dark:group-hover:text-cyan-400 transition-colors shrink-0" />
+                <Compass className="w-3.5 h-3.5 text-slate-300 dark:text-slate-600 group-hover:text-[#E63946] transition-colors shrink-0" />
               </button>
             ))}
           </div>
