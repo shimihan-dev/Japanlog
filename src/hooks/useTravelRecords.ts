@@ -97,18 +97,28 @@ export function useTravelRecords(user: User | null = null) {
           console.error("Failed to fetch cloud records:", error);
         }
 
-        const localData = loadTravelRecords();
         const cloudData = (data?.records || {}) as TravelRecordsMap;
+        const localData = loadTravelRecords();
 
-        // Always merge local records and cloud records so zero visited cities/prefectures are lost
-        const merged = mergeRecords(localData, cloudData);
-        if (isMounted) setRecords(merged);
+        if (data && Object.keys(cloudData).length > 0) {
+          // Existing User Account: Load cloud records and merge local non-sample edits
+          const merged = mergeRecords(localData, cloudData);
+          if (isMounted) setRecords(merged);
+        } else {
+          // Brand New User Account: Start at clean ZERO state (0% visited, 0 cities)
+          const hasRealUserEdits = Object.values(localData).some((pref) =>
+            pref.status !== "unvisited" && !pref.cities?.some((c: CityVisit) => c.id.startsWith("sample-"))
+          );
 
-        await supabase.from("user_travel_records").upsert({
-          user_id: user!.id,
-          records: merged,
-          updated_at: new Date().toISOString(),
-        });
+          const initialRecords = hasRealUserEdits ? localData : {};
+          if (isMounted) setRecords(initialRecords);
+
+          await supabase.from("user_travel_records").upsert({
+            user_id: user!.id,
+            records: initialRecords,
+            updated_at: new Date().toISOString(),
+          });
+        }
       } catch (err) {
         console.error("Cloud sync error:", err);
       }
