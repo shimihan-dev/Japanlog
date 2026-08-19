@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import type { Trip } from "../types/travel";
 import { PREFECTURE_MAP_BY_CODE } from "../data/prefectures";
-import { Plus, Calendar, MapPin, Sparkles, Edit2, Trash2, Crosshair, Luggage, ListFilter } from "lucide-react";
-import { LandingSticker } from "./LandingSticker";
+import { Plus, Calendar, MapPin, Sparkles, Edit2, Trash2, Crosshair, Luggage, ListFilter, Eye } from "lucide-react";
+import { TripDetailModal } from "./TripDetailModal";
 
 interface TripListProps {
   trips: Trip[];
@@ -21,6 +21,8 @@ export const TripList: React.FC<TripListProps> = ({
   onEditTrip,
   onDeleteTrip,
 }) => {
+  const [detailTripModal, setDetailTripModal] = useState<Trip | null>(null);
+
   return (
     <div className="space-y-3 font-sans">
       {/* Top Action Bar with Dual Buttons */}
@@ -188,29 +190,46 @@ export const TripList: React.FC<TripListProps> = ({
                   </p>
                 )}
 
-                {/* Official Japanese Landing Permission Sticker */}
-                <div className="pt-1">
-                  <LandingSticker trip={trip} />
-                </div>
+                {/* Action Buttons: Open Landing Sticker Card Modal & Map Focus */}
+                <div className="grid grid-cols-2 gap-1.5 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => setDetailTripModal(trip)}
+                    className="py-1.5 px-2 bg-white dark:bg-slate-800 hover:bg-red-50 text-slate-700 dark:text-slate-200 hover:text-[#E63946] border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold transition-all flex items-center justify-center space-x-1 cursor-pointer font-serif-jp"
+                  >
+                    <Eye className="w-3.5 h-3.5 text-[#E63946]" />
+                    <span>상륙 스탬프 요약</span>
+                  </button>
 
-                {/* Map Focus Toggle Button */}
-                <button
-                  type="button"
-                  onClick={() => onSelectTrip(isSelected ? null : trip.id)}
-                  className={`w-full py-1.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center space-x-1.5 transition-all cursor-pointer font-serif-jp ${
-                    isSelected
-                      ? "bg-[#E63946] text-white shadow-2xs"
-                      : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:border-[#E63946] hover:text-[#E63946]"
-                  }`}
-                >
-                  <Crosshair className="w-3.5 h-3.5" />
-                  <span>{isSelected ? "지도 강조 해제" : "지도에서 이 여행만 강조"}</span>
-                </button>
+                  <button
+                    type="button"
+                    onClick={() => onSelectTrip(isSelected ? null : trip.id)}
+                    className={`py-1.5 px-2 rounded-xl text-xs font-bold flex items-center justify-center space-x-1 transition-all cursor-pointer font-serif-jp ${
+                      isSelected
+                        ? "bg-[#E63946] text-white shadow-2xs"
+                        : "bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 hover:border-[#E63946] hover:text-[#E63946]"
+                    }`}
+                  >
+                    <Crosshair className="w-3.5 h-3.5" />
+                    <span>{isSelected ? "강조 해제" : "지도 강조"}</span>
+                  </button>
+                </div>
               </div>
             );
           })}
         </div>
       )}
+
+      {/* Dedicated Trip Detail & Landing Permission Lightbox Modal */}
+      <TripDetailModal
+        trip={detailTripModal}
+        isOpen={Boolean(detailTripModal)}
+        onClose={() => setDetailTripModal(null)}
+        onSelectTrip={onSelectTrip}
+        isSelected={selectedTripId === detailTripModal?.id}
+        onEditTrip={onEditTrip}
+        onDeleteTrip={onDeleteTrip}
+      />
     </div>
   );
 };

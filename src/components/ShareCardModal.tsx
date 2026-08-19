@@ -209,7 +209,7 @@ export const ShareCardModal: React.FC<ShareCardModalProps> = ({
 
             {/* Official Japanese Passport Landing Permission Sticker Element */}
             <div className="mb-4 transform -rotate-1 shadow-sm">
-              <LandingSticker portName="JAPAN IMMIGRATION" dateStr={todayStr} />
+              <LandingSticker dateStr={todayStr} />
             </div>
 
             {/* Main Achievement Metric Hero */}
