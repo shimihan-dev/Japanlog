@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useMemo, useRef } from "react";
 import type { Trip, TravelRecordsMap, CityVisit } from "../types/travel";
 import { PREFECTURES, PREFECTURE_MAP_BY_CODE } from "../data/prefectures";
-import { X, Calendar, MapPin, Sparkles, Plus, CheckCircle2 } from "lucide-react";
+import { findMatchingCity, searchCitySuggestions, type CityMatchResult } from "../utils/cityMatcher";
+import { X, Calendar, MapPin, Sparkles, Plus, CheckCircle2, Search } from "lucide-react";
 
 interface TripModalProps {
   isOpen: boolean;
@@ -13,7 +14,7 @@ interface TripModalProps {
 }
 
 const EMOJI_OPTIONS = [
-  "🧳", "🌸", "🍜", "🚄", "⛩️", "❄️", "🍻", "✈️", "🌊", "温泉",
+  "🧳", "🌸", "🍜", "🚄", "⛩️", "❄️", "🍻", "✈️", "🌊", "♨️",
   "🏔️", "🎡", "🍣", "🍱", "🏯", "🗼", "🍡", "🍶", "🎏", "🛍️",
   "📸", "🗺️", "🎋", "🏮", "🍢", "🍵", "🍦", "🎆", "⛷️", "🎮",
   "🎒", "🚅", "🚗", "🍙", "🥟", "🍤", "🌷", "☀️", "🍁", "☃️"
@@ -64,7 +65,7 @@ const DateInputField: React.FC<{
 
   return (
     <div>
-      <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center justify-between">
+      <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center justify-between font-serif-jp">
         <span className="flex items-center space-x-1">
           <Calendar className="w-3.5 h-3.5 text-blue-500" />
           <span>{label}</span>
@@ -121,9 +122,11 @@ export const TripModal: React.FC<TripModalProps> = ({
   const [cities, setCities] = useState<{ prefectureCode: number; cityNameKo: string }[]>([]);
   const [mode, setMode] = useState<"existing" | "new">(initialMode);
 
-  // New City Input States
-  const [newCityName, setNewCityName] = useState("");
-  const [selectedCityPrefCode, setSelectedCityPrefCode] = useState<number | null>(null);
+  // Smart City Auto-Matching Input States
+  const [cityInputQuery, setCityInputQuery] = useState("");
+  const [citySuggestions, setCitySuggestions] = useState<CityMatchResult[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const cityInputContainerRef = useRef<HTMLDivElement>(null);
 
   const existingVisitedCities = useMemo(() => {
     const list: { prefectureCode: number; prefectureNameKo: string; city: CityVisit }[] = [];
@@ -141,6 +144,29 @@ export const TripModal: React.FC<TripModalProps> = ({
     });
     return list;
   }, [records]);
+
+  // Update suggestions on query change
+  useEffect(() => {
+    if (cityInputQuery.trim().length >= 1) {
+      const matched = searchCitySuggestions(cityInputQuery, 5);
+      setCitySuggestions(matched);
+      setShowSuggestions(true);
+    } else {
+      setCitySuggestions([]);
+      setShowSuggestions(false);
+    }
+  }, [cityInputQuery]);
+
+  // Click outside listener for suggestions dropdown
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (cityInputContainerRef.current && !cityInputContainerRef.current.contains(e.target as Node)) {
+        setShowSuggestions(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   useEffect(() => {
     setMode(initialMode);
@@ -166,35 +192,55 @@ export const TripModal: React.FC<TripModalProps> = ({
   if (!isOpen) return null;
 
   const togglePrefecture = (code: number) => {
-    setSelectedPrefectures((prev) => {
-      const isSelected = prev.includes(code);
-      if (isSelected) {
-        return prev.filter((c) => c !== code);
-      } else {
-        if (selectedCityPrefCode === null) {
-          setSelectedCityPrefCode(code);
-        }
-        return [...prev, code];
-      }
-    });
+    setSelectedPrefectures((prev) =>
+      prev.includes(code) ? prev.filter((c) => c !== code) : [...prev, code]
+    );
   };
 
-  const handleAddCustomCity = () => {
-    if (!newCityName.trim()) return;
-    const prefCode = selectedCityPrefCode || (selectedPrefectures.length > 0 ? selectedPrefectures[0] : 27);
+  // Add City with Automatic Prefecture Matching
+  const handleAddCityFromMatched = (matched: CityMatchResult) => {
+    const { prefectureCode, cityNameKo } = matched;
 
     const isDuplicate = cities.some(
-      (c) => c.prefectureCode === prefCode && c.cityNameKo.trim().toLowerCase() === newCityName.trim().toLowerCase()
+      (c) => c.prefectureCode === prefectureCode && c.cityNameKo.trim().toLowerCase() === cityNameKo.trim().toLowerCase()
     );
 
     if (!isDuplicate) {
-      setCities((prev) => [...prev, { prefectureCode: prefCode, cityNameKo: newCityName.trim() }]);
-      if (!selectedPrefectures.includes(prefCode)) {
-        setSelectedPrefectures((prev) => [...prev, prefCode]);
+      setCities((prev) => [...prev, { prefectureCode, cityNameKo }]);
+      if (!selectedPrefectures.includes(prefectureCode)) {
+        setSelectedPrefectures((prev) => [...prev, prefectureCode]);
       }
     }
 
-    setNewCityName("");
+    setCityInputQuery("");
+    setShowSuggestions(false);
+  };
+
+  const handleAddCitySubmit = () => {
+    if (!cityInputQuery.trim()) return;
+
+    // Try smart matching first
+    const matched = findMatchingCity(cityInputQuery.trim());
+    if (matched) {
+      handleAddCityFromMatched(matched);
+      return;
+    }
+
+    // Fallback: If no match in database, assign to first selected prefecture or Osaka (27)
+    const fallbackPrefCode = selectedPrefectures.length > 0 ? selectedPrefectures[0] : 27;
+    const isDuplicate = cities.some(
+      (c) => c.prefectureCode === fallbackPrefCode && c.cityNameKo.trim().toLowerCase() === cityInputQuery.trim().toLowerCase()
+    );
+
+    if (!isDuplicate) {
+      setCities((prev) => [...prev, { prefectureCode: fallbackPrefCode, cityNameKo: cityInputQuery.trim() }]);
+      if (!selectedPrefectures.includes(fallbackPrefCode)) {
+        setSelectedPrefectures((prev) => [...prev, fallbackPrefCode]);
+      }
+    }
+
+    setCityInputQuery("");
+    setShowSuggestions(false);
   };
 
   const toggleExistingCity = (prefCode: number, cityNameKo: string) => {
@@ -257,14 +303,14 @@ export const TripModal: React.FC<TripModalProps> = ({
         {/* Auto Sync Banner for New Mode */}
         <div className="mx-6 mt-3 p-3 bg-blue-50 dark:bg-cyan-950/60 rounded-2xl border border-blue-200/80 dark:border-cyan-800/80 text-xs font-semibold text-blue-900 dark:text-cyan-200 flex items-center space-x-2">
           <Sparkles className="w-4 h-4 text-blue-500 dark:text-cyan-400 shrink-0" />
-          <span>이 여행을 등록하면 선택한 도도부현이 <strong>지도 상에서 방문 완료(파란색)로 즉시 색칠되고 도시 핀(📍)이 자동 생성</strong>됩니다!</span>
+          <span>도시 이름을 입력하면 <strong>도도부현이 자동 인식되어 지도 상에서 파란색으로 자동 색칠</strong>되고 핀이 꽂힙니다!</span>
         </div>
 
         {/* Modal Form Body */}
         <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 space-y-5">
           {/* Emoji & Title */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 font-serif-jp">
               여행 테마 이모지 & 제목 <span className="text-red-500">*</span>
             </label>
             <div className="flex items-center space-x-2">
@@ -309,12 +355,103 @@ export const TripModal: React.FC<TripModalProps> = ({
             />
           </div>
 
-          {/* Visited Prefectures Selector */}
+          {/* SMART CITY INPUT FORM (NO PREFECTURE DROPDOWN NEEDED!) */}
+          <div className="space-y-2 bg-blue-50/60 dark:bg-slate-800/50 p-3.5 rounded-2xl border border-blue-200/60 dark:border-slate-700/80">
+            <label className="block text-xs font-extrabold text-blue-900 dark:text-cyan-300 flex items-center justify-between font-serif-jp">
+              <span className="flex items-center space-x-1">
+                <Search className="w-3.5 h-3.5 text-blue-600 dark:text-cyan-400" />
+                <span>방문 도시 자동 인식 추가 (도시명만 입력하세요!)</span>
+              </span>
+              <span className="text-[10px] font-normal text-slate-500 dark:text-slate-400">도도부현 자동 감지</span>
+            </label>
+
+            <div ref={cityInputContainerRef} className="relative">
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={cityInputQuery}
+                  onChange={(e) => setCityInputQuery(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleAddCitySubmit();
+                    }
+                  }}
+                  onFocus={() => {
+                    if (cityInputQuery.trim().length >= 1) setShowSuggestions(true);
+                  }}
+                  placeholder="도시/명소 입력 (예: 난바, 우메다, 나라, 삿포로, 시부야, 후쿠오카)"
+                  className="flex-1 px-3.5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-2xs"
+                />
+
+                <button
+                  type="button"
+                  onClick={handleAddCitySubmit}
+                  className="px-4 py-2.5 bg-[#E63946] hover:bg-[#D92534] text-white font-bold rounded-xl text-xs flex items-center space-x-1 cursor-pointer transition-all shadow-2xs shrink-0"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>추가</span>
+                </button>
+              </div>
+
+              {/* Autocomplete Dropdown */}
+              {showSuggestions && citySuggestions.length > 0 && (
+                <div className="absolute left-0 right-0 top-full mt-1.5 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-xl z-30 overflow-hidden divide-y divide-slate-100 dark:divide-slate-800">
+                  {citySuggestions.map((item, idx) => (
+                    <button
+                      key={`${item.prefectureCode}-${item.cityNameKo}-${idx}`}
+                      type="button"
+                      onClick={() => handleAddCityFromMatched(item)}
+                      className="w-full px-4 py-2.5 text-left text-xs hover:bg-blue-50 dark:hover:bg-slate-800 transition-colors flex items-center justify-between cursor-pointer"
+                    >
+                      <div className="flex items-center space-x-2">
+                        <MapPin className="w-3.5 h-3.5 text-blue-500 dark:text-cyan-400" />
+                        <span className="font-bold text-slate-900 dark:text-white">{item.cityNameKo}</span>
+                        {item.matchedName !== item.cityNameKo && (
+                          <span className="text-[10px] text-slate-400 dark:text-slate-500">({item.matchedName})</span>
+                        )}
+                      </div>
+
+                      <span className="px-2 py-0.5 rounded-lg bg-blue-100 dark:bg-cyan-950 text-blue-800 dark:text-cyan-200 text-[10px] font-extrabold">
+                        {item.prefectureNameKo}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Added Cities List Badges */}
+            {cities.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 pt-2">
+                {cities.map((c, idx) => {
+                  const p = PREFECTURE_MAP_BY_CODE.get(c.prefectureCode);
+                  return (
+                    <span
+                      key={`${c.prefectureCode}-${c.cityNameKo}-${idx}`}
+                      className="px-3 py-1 bg-blue-600 text-white dark:bg-cyan-500 dark:text-slate-900 rounded-xl text-xs font-bold flex items-center space-x-1.5 shadow-2xs"
+                    >
+                      <span>📍 [{p?.nameKo || ""}] {c.cityNameKo}</span>
+                      <button
+                        type="button"
+                        onClick={() => setCities((prev) => prev.filter((_, i) => i !== idx))}
+                        className="hover:text-amber-200 font-bold ml-1 cursor-pointer"
+                      >
+                        ✕
+                      </button>
+                    </span>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Visited Prefectures Selector (Auto-toggled when city is added) */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between">
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5 flex items-center justify-between font-serif-jp">
               <span className="flex items-center space-x-1">
                 <MapPin className="w-3.5 h-3.5 text-rose-500" />
-                <span>방문 도도부현 선택 ({selectedPrefectures.length}개 선택됨 - 클릭 시 지도 자동 색칠)</span>
+                <span>방문 도도부현 ({selectedPrefectures.length}개 선택됨 - 도시 입력 시 자동 선택됨)</span>
               </span>
             </label>
             <div className="max-h-36 overflow-y-auto p-3 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 grid grid-cols-3 sm:grid-cols-4 gap-1.5">
@@ -338,86 +475,10 @@ export const TripModal: React.FC<TripModalProps> = ({
             </div>
           </div>
 
-          {/* Visited Cities Input (NEW FEATURE) */}
-          <div className="space-y-2 bg-slate-50 dark:bg-slate-800/40 p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-700/80">
-            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 flex items-center justify-between">
-              <span className="flex items-center space-x-1">
-                <MapPin className="w-3.5 h-3.5 text-blue-500" />
-                <span>방문 도시 추가 (선택 사항 - 지도에 📍 핀 자동 꽂힘)</span>
-              </span>
-            </label>
-
-            <div className="flex gap-2">
-              {selectedPrefectures.length > 0 && (
-                <select
-                  value={selectedCityPrefCode || selectedPrefectures[0]}
-                  onChange={(e) => setSelectedCityPrefCode(Number(e.target.value))}
-                  className="px-3 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-semibold text-slate-800 dark:text-slate-200 focus:outline-none"
-                >
-                  {selectedPrefectures.map((code) => {
-                    const p = PREFECTURE_MAP_BY_CODE.get(code);
-                    return (
-                      <option key={code} value={code}>
-                        {p?.nameKo || `도도부현 ${code}`}
-                      </option>
-                    );
-                  })}
-                </select>
-              )}
-
-              <input
-                type="text"
-                value={newCityName}
-                onChange={(e) => setNewCityName(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleAddCustomCity();
-                  }
-                }}
-                placeholder="예: 오사카, 난바, 나라, 우메다"
-                className="flex-1 px-3.5 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-medium text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
-              />
-
-              <button
-                type="button"
-                onClick={handleAddCustomCity}
-                className="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs flex items-center space-x-1 cursor-pointer transition-all shadow-2xs"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                <span>도시 추가</span>
-              </button>
-            </div>
-
-            {/* Added Cities List Badges */}
-            {cities.length > 0 && (
-              <div className="flex flex-wrap gap-1.5 pt-1">
-                {cities.map((c, idx) => {
-                  const p = PREFECTURE_MAP_BY_CODE.get(c.prefectureCode);
-                  return (
-                    <span
-                      key={`${c.prefectureCode}-${c.cityNameKo}-${idx}`}
-                      className="px-2.5 py-1 bg-blue-100 dark:bg-blue-950/80 text-blue-800 dark:text-cyan-200 border border-blue-200 dark:border-cyan-800 rounded-xl text-xs font-bold flex items-center space-x-1"
-                    >
-                      <span>📍 [{p?.nameKo || ""}] {c.cityNameKo}</span>
-                      <button
-                        type="button"
-                        onClick={() => setCities((prev) => prev.filter((_, i) => i !== idx))}
-                        className="hover:text-red-500 font-bold ml-1 cursor-pointer"
-                      >
-                        ✕
-                      </button>
-                    </span>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-
           {/* Quick Picker for Existing Visited Cities (if existing mode) */}
           {existingVisitedCities.length > 0 && (
             <div className="p-3 bg-blue-50/70 dark:bg-slate-800/60 rounded-2xl border border-blue-100 dark:border-slate-700/80 space-y-2">
-              <label className="block text-xs font-extrabold text-blue-900 dark:text-cyan-300 flex items-center space-x-1">
+              <label className="block text-xs font-extrabold text-blue-900 dark:text-cyan-300 flex items-center space-x-1 font-serif-jp">
                 <CheckCircle2 className="w-3.5 h-3.5 text-blue-600 dark:text-cyan-400" />
                 <span>내 지도 기존 등록 도시에서 바로 선택하기</span>
               </label>
@@ -448,7 +509,7 @@ export const TripModal: React.FC<TripModalProps> = ({
 
           {/* Combined Travel Highlights & Notes */}
           <div>
-            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center space-x-1">
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 flex items-center space-x-1 font-serif-jp">
               <Sparkles className="w-3.5 h-3.5 text-amber-500" />
               <span>여행 하이라이트 & 메모 / 기억나는 순간</span>
             </label>
@@ -472,7 +533,7 @@ export const TripModal: React.FC<TripModalProps> = ({
             </button>
             <button
               type="submit"
-              className="px-6 py-2.5 bg-[#E63946] hover:bg-[#D92534] text-white text-xs font-bold rounded-2xl shadow-md transition-all cursor-pointer"
+              className="px-6 py-2.5 bg-[#E63946] hover:bg-[#D92534] text-white text-xs font-bold rounded-2xl shadow-md transition-all cursor-pointer font-serif-jp"
             >
               {editingTrip ? "저장하기" : "여행 등록 및 지도 자동 색칠하기"}
             </button>
