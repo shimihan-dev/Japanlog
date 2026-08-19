@@ -186,16 +186,16 @@ export const PrefectureDetailPanel: React.FC<PrefectureDetailPanelProps> = ({
 
       {/* Traffic & Airport Access Information Card */}
       {accessInfo && (
-        <div className="p-3 bg-slate-50/80 dark:bg-[#151D2A] rounded-xl border border-slate-200/60 dark:border-slate-800 space-y-2 text-xs transition-colors">
-          <div className="flex items-center justify-between border-b border-slate-200/60 dark:border-slate-800 pb-1.5">
-            <span className="font-bold text-slate-800 dark:text-slate-200 flex items-center space-x-1">
-              <Plane className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+        <div className="p-3.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800 space-y-2.5 text-xs transition-colors">
+          <div className="flex items-center justify-between border-b border-slate-200/80 dark:border-slate-800 pb-2">
+            <span className="font-bold text-slate-900 dark:text-slate-100 flex items-center space-x-1 font-serif-jp">
+              <Plane className="w-3.5 h-3.5 text-[#E63946]" />
               <span>교통 & 공항 접근 가이드</span>
             </span>
-            <span className={`text-[10px] px-1.5 py-0.5 rounded font-extrabold ${
+            <span className={`text-[10px] px-2 py-0.5 rounded-lg font-bold font-sans ${
               accessInfo.hasDirectFlight
-                ? "bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300"
-                : "bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-300"
+                ? "bg-red-50 dark:bg-red-950/60 text-[#E63946] dark:text-[#FF5A65] border border-red-200/60 dark:border-red-900/60"
+                : "bg-amber-50 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200/60 dark:border-amber-900/60"
             }`}>
               {accessInfo.hasDirectFlight ? "✈️ 한국 직항 유" : "🚄 신칸센/철도 연계"}
             </span>
@@ -203,27 +203,27 @@ export const PrefectureDetailPanel: React.FC<PrefectureDetailPanelProps> = ({
 
           {/* Airport Details */}
           {accessInfo.airportName && (
-            <div className="text-[11px] text-slate-700 dark:text-slate-300">
-              <span className="font-semibold text-slate-500 dark:text-slate-400">주요 공항: </span>
+            <div className="text-[11px] text-slate-700 dark:text-slate-300 font-sans">
+              <span className="font-semibold text-slate-400 dark:text-slate-500">주요 공항: </span>
               <span>{accessInfo.airportName}</span>
             </div>
           )}
 
           {accessInfo.nearestAirport && (
-            <div className="text-[11px] text-slate-700 dark:text-slate-300">
-              <span className="font-semibold text-slate-500 dark:text-slate-400">가까운 공항: </span>
+            <div className="text-[11px] text-slate-700 dark:text-slate-300 font-sans">
+              <span className="font-semibold text-slate-400 dark:text-slate-500">가까운 공항: </span>
               <span>{accessInfo.nearestAirport}</span>
             </div>
           )}
 
           {/* Shinkansen Stations */}
           {accessInfo.shinkansenStations && accessInfo.shinkansenStations.length > 0 && (
-            <div className="flex items-center space-x-1 text-[11px]">
-              <Train className="w-3 h-3 text-red-500 shrink-0" />
+            <div className="flex items-center space-x-1 text-[11px] font-serif-jp">
+              <Train className="w-3.5 h-3.5 text-[#E63946] shrink-0" />
               <span className="font-semibold text-slate-500 dark:text-slate-400 shrink-0">신칸센: </span>
               <div className="flex flex-wrap gap-1">
                 {accessInfo.shinkansenStations.map((st) => (
-                  <span key={st} className="px-1.5 py-0.2 bg-red-50 dark:bg-red-950/60 border border-red-200/60 dark:border-red-800/80 text-red-700 dark:text-red-300 rounded text-[10px]">
+                  <span key={st} className="px-2 py-0.5 bg-red-50 dark:bg-red-950/60 border border-red-200/60 dark:border-red-900/60 text-[#E63946] dark:text-[#FF5A65] rounded-md text-[10px] font-bold">
                     {st}
                   </span>
                 ))}
@@ -232,20 +232,20 @@ export const PrefectureDetailPanel: React.FC<PrefectureDetailPanelProps> = ({
           )}
 
           {/* Access Description */}
-          <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed bg-white/60 dark:bg-slate-800/60 p-2 rounded-lg border border-slate-100 dark:border-slate-800">
+          <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed bg-[#FBF9F5] dark:bg-slate-950 p-2.5 rounded-lg border border-[#E8E3D8] dark:border-slate-800 font-sans">
             {accessInfo.accessGuide}
           </p>
 
           {/* Major Representative Cities */}
           {accessInfo.representativeCities.length > 0 && (
             <div className="pt-0.5">
-              <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 flex items-center space-x-1 mb-1">
+              <span className="text-[10px] font-semibold text-slate-400 dark:text-slate-500 flex items-center space-x-1 mb-1 font-serif-jp">
                 <Building2 className="w-3 h-3 text-slate-400" />
                 <span>권역 대표 주요 도시:</span>
               </span>
               <div className="flex flex-wrap gap-1">
                 {accessInfo.representativeCities.map((c) => (
-                  <span key={c} className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-md text-[10px] font-medium border border-slate-200 dark:border-slate-700">
+                  <span key={c} className="px-2 py-0.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-md text-[10px] font-medium border border-slate-200/80 dark:border-slate-700 font-serif-jp">
                     {c}
                   </span>
                 ))}
@@ -378,34 +378,34 @@ const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) =>
 
       {/* 2. Multiple Airports Buttons Toggle */}
       {airportConfig.airports.length > 0 && (
-        <div className="flex flex-wrap gap-1 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl">
+        <div className="flex flex-wrap gap-1 bg-slate-100 dark:bg-slate-800/80 p-1 rounded-xl font-sans">
           {airportConfig.airports.map((ap) => (
             <button
               key={ap.code}
               type="button"
               onClick={() => setSelectedAirportCode(ap.code)}
-              className={`flex-1 py-1.5 px-2 rounded-lg text-[10px] font-extrabold transition-all flex items-center justify-center space-x-1 whitespace-nowrap ${
+              className={`flex-1 py-1.5 px-2 rounded-lg text-[10px] font-bold transition-all flex items-center justify-center space-x-1 whitespace-nowrap cursor-pointer ${
                 selectedAirportCode === ap.code
-                  ? "bg-blue-600 dark:bg-blue-600 text-white shadow-xs"
+                  ? "bg-[#E63946] text-white shadow-2xs"
                   : "bg-white dark:bg-slate-700/60 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700"
               }`}
             >
               <span>{ap.name}</span>
-              <span className="opacity-75">({ap.code})</span>
+              <span className="opacity-75 font-sans-outfit">({ap.code})</span>
             </button>
           ))}
         </div>
       )}
 
       {/* 3. Direction Filter Tabs (Round-Trip vs Outbound vs Inbound) */}
-      <div className="space-y-1">
-        <div className="flex bg-slate-100 dark:bg-slate-800/90 p-0.5 rounded-lg text-[10px] font-bold border border-slate-200/50 dark:border-slate-700/50">
+      <div className="space-y-1 font-sans">
+        <div className="flex bg-slate-100 dark:bg-slate-800/90 p-0.5 rounded-xl text-[10px] font-bold border border-slate-200/60 dark:border-slate-700/60">
           <button
             type="button"
             onClick={() => setDirectionFilter("ALL")}
-            className={`flex-1 py-1 px-1.5 rounded transition-all flex items-center justify-center space-x-1 whitespace-nowrap ${
+            className={`flex-1 py-1 px-1.5 rounded-lg transition-all flex items-center justify-center space-x-1 whitespace-nowrap cursor-pointer ${
               directionFilter === "ALL"
-                ? "bg-blue-600 text-white shadow-xs font-extrabold"
+                ? "bg-[#E63946] text-white font-extrabold shadow-2xs"
                 : "text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-700"
             }`}
           >
@@ -415,9 +415,9 @@ const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) =>
           <button
             type="button"
             onClick={() => setDirectionFilter("OUTBOUND")}
-            className={`flex-1 py-1 px-1.5 rounded transition-all flex items-center justify-center space-x-1 whitespace-nowrap ${
+            className={`flex-1 py-1 px-1.5 rounded-lg transition-all flex items-center justify-center space-x-1 whitespace-nowrap cursor-pointer ${
               directionFilter === "OUTBOUND"
-                ? "bg-blue-600 text-white shadow-xs font-extrabold"
+                ? "bg-[#E63946] text-white font-extrabold shadow-2xs"
                 : "text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-700"
             }`}
           >
@@ -427,9 +427,9 @@ const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) =>
           <button
             type="button"
             onClick={() => setDirectionFilter("INBOUND")}
-            className={`flex-1 py-1 px-1.5 rounded transition-all flex items-center justify-center space-x-1 whitespace-nowrap ${
+            className={`flex-1 py-1 px-1.5 rounded-lg transition-all flex items-center justify-center space-x-1 whitespace-nowrap cursor-pointer ${
               directionFilter === "INBOUND"
-                ? "bg-emerald-600 text-white shadow-xs font-extrabold"
+                ? "bg-[#192F52] text-white font-extrabold shadow-2xs"
                 : "text-slate-600 dark:text-slate-300 hover:bg-slate-200/60 dark:hover:bg-slate-700"
             }`}
           >
@@ -438,16 +438,16 @@ const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) =>
           </button>
         </div>
 
-        {/* 4. Korean Airport Filter Tabs (Gimpo tab hidden if airport has no Gimpo flights) */}
-        <div className="flex bg-slate-200/60 dark:bg-slate-800 p-0.5 rounded-lg text-[10px] font-semibold">
+        {/* 4. Korean Airport Filter Tabs */}
+        <div className="flex bg-slate-100 dark:bg-slate-800/60 p-0.5 rounded-xl text-[10px] font-semibold">
           {koreanAirportTabs.map((tab) => (
             <button
               key={tab.code}
               type="button"
               onClick={() => setDepFilter(tab.code)}
-              className={`flex-1 py-1 rounded transition-all whitespace-nowrap ${
+              className={`flex-1 py-1 rounded-lg transition-all whitespace-nowrap cursor-pointer ${
                 depFilter === tab.code
-                  ? "bg-white dark:bg-slate-700 text-blue-700 dark:text-blue-300 shadow-xs font-bold"
+                  ? "bg-white dark:bg-slate-700 text-[#E63946] dark:text-[#FF5A65] font-bold shadow-2xs"
                   : "text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200"
               }`}
             >
@@ -460,12 +460,12 @@ const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) =>
       {/* 5. Live Flight Cards List */}
       <div className="space-y-1.5 max-h-[260px] overflow-y-auto pr-1">
         {loading ? (
-          <div className="text-center py-6 text-[10px] text-blue-600 dark:text-blue-400 flex flex-col items-center justify-center space-y-1.5">
+          <div className="text-center py-6 text-[10px] text-[#E63946] dark:text-[#FF5A65] flex flex-col items-center justify-center space-y-1.5 font-sans">
             <RefreshCw className="w-4 h-4 animate-spin" />
-            <span className="font-semibold">{activeAirportObj?.name} 실시간 왕복 운항 데이터 가져오는 중...</span>
+            <span className="font-semibold">{activeAirportObj?.name} 실시간 운항 데이터 조회 중...</span>
           </div>
         ) : schedules.length === 0 ? (
-          <div className="text-center py-4 text-[10px] text-slate-400">
+          <div className="text-center py-4 text-[10px] text-slate-400 font-sans">
             선택한 조건의 직항/왕복 노선 스케줄이 없습니다.
           </div>
         ) : (
@@ -475,43 +475,43 @@ const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) =>
             return (
               <div
                 key={`${flight.flightNo}-${idx}`}
-                className="p-2 bg-white dark:bg-slate-800/80 rounded-lg border border-slate-100 dark:border-slate-700/80 hover:border-slate-300 dark:hover:border-slate-600 transition-colors space-y-1.5"
+                className="p-2.5 bg-white dark:bg-slate-900 rounded-xl border border-slate-200/80 dark:border-slate-800 hover:border-[#E63946]/40 transition-colors space-y-1.5 font-sans"
               >
                 <div className="flex items-center justify-between text-[10px] gap-2">
                   <div className="space-y-0.5 min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-1 font-bold text-slate-900 dark:text-slate-100">
                       <span
-                        className={`px-1.5 py-0.2 rounded text-[9px] font-black shrink-0 whitespace-nowrap ${
+                        className={`px-1.5 py-0.2 rounded-md text-[9px] font-bold shrink-0 whitespace-nowrap ${
                           isOutbound
-                            ? "bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300"
-                            : "bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300"
+                            ? "bg-red-50 dark:bg-red-950 text-[#E63946] dark:text-[#FF5A65] border border-red-200/60 dark:border-red-900/60"
+                            : "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700"
                         }`}
                       >
                         {isOutbound ? "🛫 한국➔일본" : "🛬 일본➔한국"}
                       </span>
-                      <span className="text-blue-600 dark:text-blue-400 font-bold shrink-0 whitespace-nowrap">{flight.airline}</span>
-                      <span className="px-1 py-0.2 bg-slate-100 dark:bg-slate-700 rounded text-slate-600 dark:text-slate-300 font-mono text-[9px] shrink-0 whitespace-nowrap">{flight.flightNo}</span>
+                      <span className="text-[#E63946] dark:text-[#FF5A65] font-bold font-serif-jp shrink-0 whitespace-nowrap">{flight.airline}</span>
+                      <span className="px-1.5 py-0.2 bg-slate-100 dark:bg-slate-800 rounded-md text-slate-600 dark:text-slate-300 font-sans-outfit font-mono text-[9px] shrink-0 whitespace-nowrap">{flight.flightNo}</span>
                       {flight.isLive && (
-                        <span className="px-1 py-0.2 bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 rounded text-[9px] shrink-0 whitespace-nowrap">LIVE</span>
+                        <span className="px-1.5 py-0.2 bg-amber-50 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border border-amber-200/60 rounded-md text-[9px] shrink-0 whitespace-nowrap font-bold">LIVE</span>
                       )}
                     </div>
                     <div className="text-slate-500 dark:text-slate-400 flex items-center space-x-1 font-medium text-[10px] whitespace-nowrap overflow-hidden text-ellipsis">
-                      <span className={isOutbound ? "font-semibold text-slate-700 dark:text-slate-300" : ""}>
+                      <span className={isOutbound ? "font-bold text-slate-800 dark:text-slate-200 font-serif-jp" : ""}>
                         {flight.depAirport} ({flight.depAirportCode})
                       </span>
                       <span>➔</span>
-                      <span className={!isOutbound ? "font-semibold text-slate-700 dark:text-slate-300" : ""}>
+                      <span className={!isOutbound ? "font-bold text-slate-800 dark:text-slate-200 font-serif-jp" : ""}>
                         {flight.arrAirport} ({flight.arrAirportCode})
                       </span>
                     </div>
                   </div>
 
                   <div className="text-right space-y-0.5 shrink-0 whitespace-nowrap pl-1">
-                    <div className="font-extrabold text-blue-700 dark:text-blue-300 flex items-center justify-end space-x-1 text-[11px] whitespace-nowrap">
-                      <Clock className="w-3 h-3 shrink-0" />
+                    <div className="font-bold text-slate-900 dark:text-slate-100 flex items-center justify-end space-x-1 text-[11px] whitespace-nowrap font-sans-outfit">
+                      <Clock className="w-3 h-3 text-[#E63946] shrink-0" />
                       <span className="whitespace-nowrap">{flight.departureTime} ~ {flight.arrivalTime}</span>
                     </div>
-                    <div className="text-[9px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center justify-end space-x-0.5 whitespace-nowrap">
+                    <div className="text-[9px] text-slate-500 dark:text-slate-400 font-medium flex items-center justify-end space-x-0.5 whitespace-nowrap">
                       <Calendar className="w-2.5 h-2.5 shrink-0" />
                       <span className="whitespace-nowrap">{flight.days}</span>
                     </div>
@@ -520,7 +520,7 @@ const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) =>
 
                 {/* Aerotype Aircraft Spec & AeroLOPA Seat Map Badges */}
                 {flight.aircraft && (
-                  <div className="flex flex-wrap items-center gap-1.5 pt-1 border-t border-slate-100 dark:border-slate-700/50 text-[9px]">
+                  <div className="flex flex-wrap items-center gap-1.5 pt-1.5 border-t border-slate-100 dark:border-slate-800 text-[9px]">
                     <span className="text-slate-400 dark:text-slate-500 font-medium shrink-0 flex items-center gap-0.5">
                       ✈️ 기종:
                     </span>
@@ -536,10 +536,10 @@ const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) =>
                             target="_blank"
                             rel="noopener noreferrer"
                             title={`Aerotype에서 ${trimmedModel} 기종 스펙 보기`}
-                            className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded bg-sky-50 hover:bg-sky-100 dark:bg-sky-950/70 dark:hover:bg-sky-900/80 text-sky-700 dark:text-sky-300 border border-sky-200/60 dark:border-sky-800/60 font-semibold text-[9px] transition-all hover:scale-105"
+                            className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-md bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200/80 dark:border-slate-700 font-sans-outfit text-[9px] transition-all"
                           >
                             <span>{trimmedModel}</span>
-                            <ExternalLink className="w-2 h-2 text-sky-500 shrink-0" />
+                            <ExternalLink className="w-2 h-2 text-slate-400 shrink-0" />
                           </a>
 
                           <a
@@ -547,10 +547,10 @@ const FlightSchedulesSection: React.FC<{ prefCode: number }> = ({ prefCode }) =>
                             target="_blank"
                             rel="noopener noreferrer"
                             title={`AeroLOPA에서 ${flight.airline} ${trimmedModel} 초고화질 좌석배치도 보기`}
-                            className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-950/70 dark:hover:bg-indigo-900/80 text-indigo-700 dark:text-indigo-300 border border-indigo-200/60 dark:border-indigo-800/60 font-extrabold text-[9px] transition-all hover:scale-105"
+                            className="inline-flex items-center gap-0.5 px-2 py-0.5 rounded-md bg-red-50 hover:bg-red-100 dark:bg-red-950/70 dark:hover:bg-red-900/80 text-[#E63946] dark:text-[#FF5A65] border border-red-200/60 dark:border-red-900/60 font-bold text-[9px] transition-all"
                           >
                             <span>💺 AeroLOPA 좌석배치도</span>
-                            <ExternalLink className="w-2 h-2 text-indigo-500 shrink-0" />
+                            <ExternalLink className="w-2 h-2 text-[#E63946] shrink-0" />
                           </a>
                         </React.Fragment>
                       );
