@@ -101,10 +101,10 @@ export const App: React.FC = () => {
       });
     }
 
-    // Auto-pin cities on the map
+    // Auto-pin cities on the map with trip date
     if (tripData.cities && tripData.cities.length > 0) {
       tripData.cities.forEach((c) => {
-        addCity(c.prefectureCode, { cityNameKo: c.cityNameKo });
+        addCity(c.prefectureCode, { cityNameKo: c.cityNameKo, visitedAt: tripData.startDate });
       });
     }
   };

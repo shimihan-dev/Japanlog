@@ -205,7 +205,7 @@ export function useTravelRecords(user: User | null = null) {
   }, []);
 
   const addCity = useCallback(
-    (prefectureCode: number, cityData: { cityNameKo: string; cityNameJa?: string; notes?: string }) => {
+    (prefectureCode: number, cityData: { cityNameKo: string; cityNameJa?: string; notes?: string; visitedAt?: string }) => {
       setRecords((prev) => {
         const existing = prev[prefectureCode] || {
           prefectureCode,
@@ -229,7 +229,7 @@ export function useTravelRecords(user: User | null = null) {
           cityNameKo: cityData.cityNameKo.trim(),
           cityNameJa: cityData.cityNameJa?.trim(),
           notes: cityData.notes?.trim(),
-          visitedAt: new Date().toISOString().slice(0, 10),
+          visitedAt: cityData.visitedAt || new Date().toISOString().slice(0, 10),
         };
 
         return {

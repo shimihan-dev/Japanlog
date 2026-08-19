@@ -1,4 +1,5 @@
 import type { PrefectureRecord, Trip } from "../types/travel";
+import { normalizeCityKey } from "./cityMatcher";
 
 export interface CityVisitHistoryItem {
   id: string;
@@ -24,14 +25,18 @@ export function getCityVisitHistory(
   record?: PrefectureRecord,
   trips: Trip[] = []
 ): CityVisitSummary {
-  const cleanTargetName = cityNameKo.trim().toLowerCase();
+  const normTarget = normalizeCityKey(cityNameKo, prefectureCode);
   const history: CityVisitHistoryItem[] = [];
 
   // 1. Collect matching trips containing this prefecture & city
   trips.forEach((t) => {
-    const hasCity = t.cities?.some(
-      (tc) => tc.prefectureCode === prefectureCode && tc.cityNameKo.trim().toLowerCase() === cleanTargetName
-    );
+    const hasCity =
+      t.prefectures?.includes(prefectureCode) &&
+      t.cities?.some(
+        (tc) =>
+          tc.prefectureCode === prefectureCode &&
+          normalizeCityKey(tc.cityNameKo, prefectureCode) === normTarget
+      );
 
     if (hasCity) {
       const dateRange = t.startDate && t.endDate ? `${t.startDate} ~ ${t.endDate}` : t.startDate || t.endDate;
@@ -48,15 +53,33 @@ export function getCityVisitHistory(
     }
   });
 
-  // 2. Check direct record city visit notes or date
-  const directCity = record?.cities?.find((c) => c.cityNameKo.trim().toLowerCase() === cleanTargetName);
-  if (directCity && (directCity.visitedAt || directCity.notes)) {
-    const exists = history.some((h) => h.notes === directCity.notes || h.dateRange === directCity.visitedAt);
-    if (!exists) {
+  // 2. Direct city record from map pins
+  const directCity = record?.cities?.find(
+    (c) => normalizeCityKey(c.cityNameKo, prefectureCode) === normTarget
+  );
+
+  // If there are ALREADY matching trips for this city, do NOT create a fake duplicate "개인 기록"
+  // unless the direct record has unique custom notes
+  if (directCity) {
+    const hasTripsForThisCity = history.length > 0;
+
+    if (!hasTripsForThisCity) {
+      // Standalone city pin visit
       history.push({
         id: `direct-${directCity.id}`,
         source: "direct",
-        title: directCity.notes || `${cityNameKo} 개인 기록`,
+        title: directCity.notes || `${cityNameKo} 방문 기록`,
+        dateRange: directCity.visitedAt,
+        startDate: directCity.visitedAt,
+        emoji: "📍",
+        notes: directCity.notes,
+      });
+    } else if (directCity.notes && !history.some((h) => h.notes === directCity.notes)) {
+      // Only add if there's distinct standalone notes not in the trip
+      history.push({
+        id: `direct-${directCity.id}`,
+        source: "direct",
+        title: directCity.notes,
         dateRange: directCity.visitedAt,
         startDate: directCity.visitedAt,
         emoji: "📍",
