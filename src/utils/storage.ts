@@ -84,12 +84,12 @@ const TRIPS_STORAGE_KEY = "japan-travel-map-trips";
 export function loadTrips(): Trip[] {
   try {
     const raw = localStorage.getItem(TRIPS_STORAGE_KEY);
-    if (!raw) return getSampleTrips();
+    if (!raw) return [];
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) && parsed.length > 0 ? parsed : getSampleTrips();
+    return Array.isArray(parsed) ? parsed : [];
   } catch (error) {
     console.error("Failed to load trips from localStorage", error);
-    return getSampleTrips();
+    return [];
   }
 }
 
