@@ -164,9 +164,16 @@ export function useTravelRecords(user: User | null = null) {
     if (isSupabaseConfigured && user) {
       const timer = setTimeout(async () => {
         try {
+          const { data } = await supabase
+            .from("user_travel_records")
+            .select("trips")
+            .eq("user_id", user.id)
+            .single();
+
           await supabase.from("user_travel_records").upsert({
             user_id: user.id,
             records,
+            trips: data?.trips || [],
             updated_at: new Date().toISOString(),
           });
         } catch (err) {

@@ -16,6 +16,7 @@ import { DataSyncModal } from "./components/DataSyncModal";
 import { useTravelRecords } from "./hooks/useTravelRecords";
 import { useTrips } from "./hooks/useTrips";
 import { calculateTravelStats } from "./utils/statistics";
+import { useAuth } from "./hooks/useAuth";
 import type { Trip } from "./types/travel";
 
 export const App: React.FC = () => {
@@ -28,9 +29,7 @@ export const App: React.FC = () => {
     return false;
   });
 
-  // User state placeholder for Supabase (if configured)
-  const user = null;
-  const isConfigured = false;
+  const { user, isConfigured, signInWithEmail, signUpWithEmail, sendMagicLink, signOut } = useAuth();
 
   const {
     records,
@@ -111,7 +110,7 @@ export const App: React.FC = () => {
         onReset={() => setShowResetModal(true)}
         onClearDates={() => setShowClearDatesModal(true)}
         onOpenAuthModal={() => setShowAuthModal(true)}
-        onSignOut={() => {}}
+        onSignOut={signOut}
         onOpenShareModal={() => setShowShareModal(true)}
         onOpenDataSyncModal={() => setShowDataSyncModal(true)}
       />
@@ -263,9 +262,9 @@ export const App: React.FC = () => {
         isOpen={showAuthModal}
         isConfigured={isConfigured}
         onClose={() => setShowAuthModal(false)}
-        onSignIn={async () => {}}
-        onSignUp={async () => {}}
-        onMagicLink={async () => {}}
+        onSignIn={signInWithEmail}
+        onSignUp={signUpWithEmail}
+        onMagicLink={sendMagicLink}
       />
 
       {/* Share Infographic Card Modal */}
