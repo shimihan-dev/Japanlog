@@ -8,6 +8,18 @@ export interface CityMatchResult {
   category?: string;
 }
 
+/**
+ * Normalizes city names for robust deduplication (e.g. '오사카' and '오사카시' -> '오사카')
+ */
+export function normalizeCityKey(name: string): string {
+  if (!name) return "";
+  return name
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, "")
+    .replace(/(특별시|광역시|특별자치시|특별자치도|시|부|도|정|촌|구)$/g, "");
+}
+
 interface LandmarkEntry {
   names: string[]; // Korean, English, Japanese variations
   cityNameKo: string;

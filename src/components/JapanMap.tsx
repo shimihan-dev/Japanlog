@@ -7,6 +7,7 @@ import { MapLegend } from "./MapLegend";
 import { X, Train, ZoomIn, ZoomOut, RotateCcw, MapPin, Luggage } from "lucide-react";
 import { getCityCoordinates } from "../data/cityCoordinates";
 import { getCityVisitHistory } from "../utils/visitHistory";
+import { normalizeCityKey } from "../utils/cityMatcher";
 
 interface JapanMapProps {
   records: TravelRecordsMap;
@@ -514,11 +515,11 @@ export const JapanMap: React.FC<JapanMapProps> = ({
       const baseCoords = PREFECTURE_MAINLAND_COORDS[rec.prefectureCode];
 
       rec.cities.forEach((c: any, idx: number) => {
-        const cleanName = c.cityNameKo?.trim()?.toLowerCase();
-        if (!cleanName) return;
+        const normKey = normalizeCityKey(c.cityNameKo);
+        if (!normKey) return;
 
-        // Deduplication key per prefecture code & city name
-        const pinKey = `${rec.prefectureCode}-${cleanName}`;
+        // Deduplication key per prefecture code & normalized city name ('오사카' & '오사카시' merge into 1 pin!)
+        const pinKey = `${rec.prefectureCode}-${normKey}`;
         if (seenPinKeys.has(pinKey)) return;
         seenPinKeys.add(pinKey);
 

@@ -3,6 +3,7 @@ import type { TravelRecordsMap, VisitStatus, CityVisit } from "../types/travel";
 import { loadTravelRecords, saveTravelRecords, getSampleTravelRecords, clearTravelRecords } from "../utils/storage";
 import { PREFECTURES } from "../data/prefectures";
 import { supabase, isSupabaseConfigured } from "../lib/supabase";
+import { normalizeCityKey } from "../utils/cityMatcher";
 import type { User } from "@supabase/supabase-js";
 
 function mergeRecords(local: TravelRecordsMap, cloud: TravelRecordsMap): TravelRecordsMap {
@@ -59,7 +60,7 @@ export function sanitizeDeduplicatedRecords(rawRecords: TravelRecordsMap): Trave
     const uniqueCities: CityVisit[] = [];
 
     prefRecord.cities.forEach((c: CityVisit) => {
-      const key = c.cityNameKo?.trim().toLowerCase();
+      const key = normalizeCityKey(c.cityNameKo);
       if (key && !seenNames.has(key)) {
         seenNames.add(key);
         uniqueCities.push(c);
@@ -214,8 +215,9 @@ export function useTravelRecords(user: User | null = null) {
         };
 
         const existingCities = existing.cities || [];
+        const newKey = normalizeCityKey(cityData.cityNameKo);
         const isDuplicate = existingCities.some(
-          (c) => c.cityNameKo.trim().toLowerCase() === cityData.cityNameKo.trim().toLowerCase()
+          (c) => normalizeCityKey(c.cityNameKo) === newKey
         );
 
         if (isDuplicate) {
