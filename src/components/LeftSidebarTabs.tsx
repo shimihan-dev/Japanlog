@@ -99,8 +99,11 @@ export const LeftSidebarTabs: React.FC<LeftSidebarTabsProps> = ({
       ) : (
         <TravelTimeline
           records={records}
+          trips={trips}
+          selectedTripId={selectedTripId}
           selectedCode={selectedCode}
           onSelectPrefecture={onSelectPrefecture}
+          onSelectTrip={onSelectTrip}
         />
       )}
     </div>
