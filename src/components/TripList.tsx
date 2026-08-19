@@ -2,6 +2,7 @@ import React from "react";
 import type { Trip } from "../types/travel";
 import { PREFECTURE_MAP_BY_CODE } from "../data/prefectures";
 import { Plus, Calendar, MapPin, Sparkles, Edit2, Trash2, Crosshair, Luggage, ListFilter } from "lucide-react";
+import { LandingSticker } from "./LandingSticker";
 
 interface TripListProps {
   trips: Trip[];
@@ -186,6 +187,11 @@ export const TripList: React.FC<TripListProps> = ({
                     "{trip.description}"
                   </p>
                 )}
+
+                {/* Official Japanese Landing Permission Sticker */}
+                <div className="pt-1">
+                  <LandingSticker trip={trip} />
+                </div>
 
                 {/* Map Focus Toggle Button */}
                 <button

@@ -4,6 +4,7 @@ import type { TravelStats } from "../utils/statistics";
 import type { TravelRecordsMap } from "../types/travel";
 import { PREFECTURES } from "../data/prefectures";
 import { X, Download, MapPin, Navigation, Copy, Check, Sparkles } from "lucide-react";
+import { LandingSticker } from "./LandingSticker";
 
 interface ShareCardModalProps {
   isOpen: boolean;
@@ -180,7 +181,7 @@ export const ShareCardModal: React.FC<ShareCardModalProps> = ({
             </div>
 
             {/* Card Header */}
-            <div className="flex items-center justify-between border-b border-slate-200/80 dark:border-white/10 pb-4 mb-4">
+            <div className="flex items-center justify-between border-b border-slate-200/80 dark:border-white/10 pb-4 mb-3">
               <div className="flex items-center space-x-2.5">
                 <div className="w-10 h-10 rounded-xl bg-[#E63946] text-white flex items-center justify-center shadow-md font-serif-jp text-lg font-bold">
                   旅
@@ -204,6 +205,11 @@ export const ShareCardModal: React.FC<ShareCardModalProps> = ({
                   済 ENTRY
                 </span>
               </div>
+            </div>
+
+            {/* Official Japanese Passport Landing Permission Sticker Element */}
+            <div className="mb-4 transform -rotate-1 shadow-sm">
+              <LandingSticker portName="JAPAN IMMIGRATION" dateStr={todayStr} />
             </div>
 
             {/* Main Achievement Metric Hero */}
