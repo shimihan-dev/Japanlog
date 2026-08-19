@@ -28,58 +28,118 @@ const REGION_DATA: { name: string; kanji: string }[] = [
   { name: "오키나와", kanji: "沖縄" },
 ];
 
-// Mini Highlighted Japan Map Component for the Exported Infographic PNG Card
+// Mini Highlighted Japan Map Component reusing main page projection logic
 const MiniJapanMap: React.FC<{ records: TravelRecordsMap; theme: CardTheme }> = ({ records, theme }) => {
   const [geoFeatures, setGeoFeatures] = useState<any[]>([]);
 
   useEffect(() => {
-    fetch("/data/japan.geojson")
+    fetch("/japan.geojson")
       .then((res) => res.json())
       .then((data) => setGeoFeatures(data.features || []))
-      .catch(() => {});
+      .catch((err) => console.error("Failed to load map for share card:", err));
   }, []);
 
-  const featurePaths = useMemo(() => {
-    if (geoFeatures.length === 0) return [];
-    const mainProj = d3Geo.geoMercator().center([137.5, 38.0]).scale(1450).translate([185, 125]);
-    const okiProj = d3Geo.geoMercator().center([127.98, 26.47]).scale(2600).translate([150, 240]);
-
-    const pathMain = d3Geo.geoPath().projection(mainProj);
-    const pathOki = d3Geo.geoPath().projection(okiProj);
-
+  // Filter distant islands (same logic as main JapanMap.tsx)
+  const processedGeoFeatures = useMemo(() => {
     return geoFeatures.map((feat: any) => {
       let code = feat.properties.id || feat.id;
       if (typeof code === "string") code = parseInt(code, 10);
-      const projPath = code === 47 ? pathOki : pathMain;
-      const d = projPath(feat);
-      return { code, d };
+      feat.properties.id = code;
+
+      if (code === 47 && feat.geometry.type === "MultiPolygon") {
+        const filteredCoords = feat.geometry.coordinates.filter((polygon: any) => {
+          const centroid = d3Geo.geoCentroid({ type: "Polygon", coordinates: polygon });
+          return centroid[0] > 126.5 && centroid[0] < 129.0 && centroid[1] > 25.5 && centroid[1] < 27.5;
+        });
+        return { ...feat, geometry: { ...feat.geometry, coordinates: filteredCoords } };
+      }
+
+      if (code === 13 && feat.geometry.type === "MultiPolygon") {
+        const filteredCoords = feat.geometry.coordinates.filter((polygon: any) => {
+          const centroid = d3Geo.geoCentroid({ type: "Polygon", coordinates: polygon });
+          return centroid[0] > 138.8 && centroid[0] < 140.0 && centroid[1] > 35.2 && centroid[1] < 36.0;
+        });
+        return { ...feat, geometry: { ...feat.geometry, coordinates: filteredCoords } };
+      }
+
+      if (code === 1 && feat.geometry.type === "MultiPolygon") {
+        const filteredCoords = feat.geometry.coordinates.filter((polygon: any) => {
+          const area = d3Geo.geoArea({ type: "Polygon", coordinates: polygon });
+          return area > 0.0005;
+        });
+        return { ...feat, geometry: { ...feat.geometry, coordinates: filteredCoords } };
+      }
+
+      return feat;
     });
   }, [geoFeatures]);
 
+  // Scaled projection for 370x270 viewBox inside Share Card
+  const featurePaths = useMemo(() => {
+    if (processedGeoFeatures.length === 0) return [];
+    const width = 370;
+    const height = 270;
+
+    const mainProjection = d3Geo
+      .geoMercator()
+      .center([137.5, 38.0])
+      .scale(1050)
+      .translate([width / 2 + 10, height / 2 - 10]);
+
+    const okinawaProjection = d3Geo
+      .geoMercator()
+      .center([127.98, 26.47])
+      .scale(2300)
+      .translate([300, 230]);
+
+    const mainPath = d3Geo.geoPath().projection(mainProjection);
+    const okinawaPath = d3Geo.geoPath().projection(okinawaProjection);
+
+    return processedGeoFeatures.map((feat: any) => {
+      const code = feat.properties.id;
+      const pathGenerator = code === 47 ? okinawaPath : mainPath;
+      const d = pathGenerator(feat as any) || "";
+      return { code, d };
+    });
+  }, [processedGeoFeatures]);
+
   return (
-    <div className={`p-2.5 rounded-2xl border mb-4 flex flex-col items-center justify-center relative overflow-hidden transition-all ${
+    <div className={`p-3 rounded-2xl border mb-4 flex flex-col items-center justify-center relative overflow-hidden transition-all ${
       theme === "washi"
-        ? "bg-white/80 border-[#E8E3D8]"
-        : "bg-white/5 border-white/10"
+        ? "bg-[#F5F2EB] border-[#E8E3D8]"
+        : theme === "midnight"
+        ? "bg-[#070C16] border-slate-800"
+        : "bg-[#1E0D1B] border-amber-900/40"
     }`}>
-      <div className="w-full flex items-center justify-between px-1 text-[10px] font-serif-jp font-bold opacity-80 mb-1">
-        <span>🗺️ 日本全土 探訪 MAP</span>
-        <span className="font-sans text-[9px] text-[#E63946]">● 방문 완료</span>
+      {/* Legend & Header */}
+      <div className="w-full flex items-center justify-between px-1 text-[10px] font-serif-jp font-bold mb-1">
+        <span className={theme === "washi" ? "text-slate-700" : "text-slate-200"}>
+          🗺️ 日本全土 探訪 MAP (일본 열도 탐방 지도)
+        </span>
+        <div className="flex items-center space-x-2 text-[9px] font-sans">
+          <span className="flex items-center gap-1 text-[#E63946]">
+            <span className="w-2 h-2 rounded-full bg-[#E63946]" /> 방문
+          </span>
+          <span className="flex items-center gap-1 text-[#192F52] dark:text-blue-300">
+            <span className="w-2 h-2 rounded-full bg-[#192F52] dark:bg-blue-300" /> 경유
+          </span>
+        </div>
       </div>
 
-      <svg className="w-full h-[220px]" viewBox="0 0 370 260">
+      {/* SVG Map Render */}
+      <svg className="w-full h-[250px] drop-shadow-xs" viewBox="0 0 370 270">
         {featurePaths.map(({ code, d }) => {
           if (!d) return null;
           const status = records[code]?.status || "unvisited";
-          let fill = theme === "washi" ? "#E2E8F0" : "#1E293B";
-          let stroke = theme === "washi" ? "#CBD5E1" : "#334155";
+          let fill = theme === "washi" ? "#E2E8F0" : "#1B2538";
+          let stroke = theme === "washi" ? "#CBD5E1" : "#2A364F";
 
           if (status === "visited") {
             fill = "#E63946";
             stroke = "#B91C1C";
           } else if (status === "transit") {
-            fill = "#192F52";
-            stroke = "#0F172A";
+            fill = theme === "washi" ? "#192F52" : "#3B82F6";
+            stroke = theme === "washi" ? "#0F172A" : "#1D4ED8";
           }
 
           return (
@@ -88,7 +148,8 @@ const MiniJapanMap: React.FC<{ records: TravelRecordsMap; theme: CardTheme }> = 
               d={d}
               fill={fill}
               stroke={stroke}
-              strokeWidth="0.8"
+              strokeWidth="0.75"
+              className="transition-all duration-300"
             />
           );
         })}
@@ -167,7 +228,7 @@ export const ShareCardModal: React.FC<ShareCardModalProps> = ({
   };
 
   const handleCopyText = () => {
-    const summaryText = `🗾 Japanlog 나의 일본 여정 성취도: ${stats.achievementRate}% 달성!\n📍 방문: ${stats.visitedCount}/47개 현 (${visitedPrefNames.slice(0, 5).join(", ")}${visitedPrefNames.length > 5 ? " 외..." : ""})\n<ctrl42> 경유: ${stats.transitCount}개 현 | 🏙️ 기록 도시: ${stats.totalCitiesCount}개 탐방\n#Japanlog #일본여행 #도도부현 #여행지도`;
+    const summaryText = `🗾 Japanlog 나의 일본 여정 성취도: ${stats.achievementRate}% 달성!\n📍 방문: ${stats.visitedCount}/47개 현 (${visitedPrefNames.slice(0, 5).join(", ")}${visitedPrefNames.length > 5 ? " 외..." : ""})\n🚄 경유: ${stats.transitCount}개 현 | 🏙️ 기록 도시: ${stats.totalCitiesCount}개 탐방\n#Japanlog #일본여행 #도도부현 #여행지도`;
     navigator.clipboard.writeText(summaryText);
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
@@ -310,7 +371,7 @@ export const ShareCardModal: React.FC<ShareCardModalProps> = ({
               </div>
             </div>
 
-            {/* Replaced Landing Sticker with Live Highlighted Mini Japan Map Graphic */}
+            {/* Embedded Live Japan Map with Color-Filled Prefectures */}
             <MiniJapanMap records={records} theme={theme} />
 
             {/* Regional Progress Grid */}
