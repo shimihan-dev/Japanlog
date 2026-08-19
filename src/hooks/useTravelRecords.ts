@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import type { TravelRecordsMap, VisitStatus, CityVisit, PrefectureRecord } from "../types/travel";
+import type { TravelRecordsMap, VisitStatus, CityVisit } from "../types/travel";
 import { loadTravelRecords, saveTravelRecords, getSampleTravelRecords, clearTravelRecords } from "../utils/storage";
 import { PREFECTURES } from "../data/prefectures";
 import { supabase, isSupabaseConfigured } from "../lib/supabase";
@@ -100,33 +100,15 @@ export function useTravelRecords(user: User | null = null) {
         const localData = loadTravelRecords();
         const cloudData = (data?.records || {}) as TravelRecordsMap;
 
-        // Check if local data is just sample data
-        const isSampleLocalData = Object.values(localData).some((pref) =>
-          pref.cities?.some((c: CityVisit) => c.id.startsWith("sample-"))
-        );
+        // Always merge local records and cloud records so zero visited cities/prefectures are lost
+        const merged = mergeRecords(localData, cloudData);
+        if (isMounted) setRecords(merged);
 
-        if (Object.keys(cloudData).length > 0) {
-          // Merge local (if non-sample) and cloud records
-          const dataToMerge = isSampleLocalData ? {} : localData;
-          const merged = mergeRecords(dataToMerge, cloudData);
-          if (isMounted) setRecords(merged);
-
-          await supabase.from("user_travel_records").upsert({
-            user_id: user!.id,
-            records: merged,
-            updated_at: new Date().toISOString(),
-          });
-        } else {
-          // New user logging in: if local data was just sample data, start with clean empty records
-          const initialRecords = isSampleLocalData ? {} : localData;
-          if (isMounted) setRecords(initialRecords);
-
-          await supabase.from("user_travel_records").upsert({
-            user_id: user!.id,
-            records: initialRecords,
-            updated_at: new Date().toISOString(),
-          });
-        }
+        await supabase.from("user_travel_records").upsert({
+          user_id: user!.id,
+          records: merged,
+          updated_at: new Date().toISOString(),
+        });
       } catch (err) {
         console.error("Cloud sync error:", err);
       }
@@ -211,69 +193,78 @@ export function useTravelRecords(user: User | null = null) {
     });
   }, []);
 
-  const addCity = useCallback((code: number, cityData: Omit<CityVisit, "id">) => {
-    setRecords((prev) => {
-      const existing = prev[code] || {
-        prefectureCode: code,
-        status: "visited",
-        cities: [],
-        updatedAt: new Date().toISOString(),
-      };
-
-      // Prevent adding duplicate city entries with the same name in the same prefecture
-      const isDuplicate = existing.cities.some(
-        (c: CityVisit) => c.cityNameKo.trim().toLowerCase() === cityData.cityNameKo.trim().toLowerCase()
-      );
-
-      if (isDuplicate) {
-        return prev;
-      }
-
-      const newCity: CityVisit = {
-        id: `city-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
-        ...cityData,
-      };
-
-      return {
-        ...prev,
-        [code]: {
-          ...existing,
+  const addCity = useCallback(
+    (prefectureCode: number, cityData: { cityNameKo: string; cityNameJa?: string; notes?: string }) => {
+      setRecords((prev) => {
+        const existing = prev[prefectureCode] || {
+          prefectureCode,
           status: "visited",
-          cities: [...existing.cities, newCity],
+          cities: [],
           updatedAt: new Date().toISOString(),
-        },
-      };
-    });
-  }, []);
+        };
 
-  const updateCity = useCallback((code: number, cityId: string, updatedFields: Partial<CityVisit>) => {
+        const existingCities = existing.cities || [];
+        const isDuplicate = existingCities.some(
+          (c) => c.cityNameKo.trim().toLowerCase() === cityData.cityNameKo.trim().toLowerCase()
+        );
+
+        if (isDuplicate) {
+          return prev;
+        }
+
+        const newCity: CityVisit = {
+          id: `city-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+          cityNameKo: cityData.cityNameKo.trim(),
+          cityNameJa: cityData.cityNameJa?.trim(),
+          notes: cityData.notes?.trim(),
+          visitedAt: new Date().toISOString().slice(0, 10),
+        };
+
+        return {
+          ...prev,
+          [prefectureCode]: {
+            ...existing,
+            status: "visited",
+            cities: [...existingCities, newCity],
+            updatedAt: new Date().toISOString(),
+          },
+        };
+      });
+    },
+    []
+  );
+
+  const updateCity = useCallback(
+    (prefectureCode: number, cityId: string, updatedFields: Partial<Omit<CityVisit, "id">>) => {
+      setRecords((prev) => {
+        const existing = prev[prefectureCode];
+        if (!existing) return prev;
+
+        const updatedCities = existing.cities.map((c) => (c.id === cityId ? { ...c, ...updatedFields } : c));
+
+        return {
+          ...prev,
+          [prefectureCode]: {
+            ...existing,
+            cities: updatedCities,
+            updatedAt: new Date().toISOString(),
+          },
+        };
+      });
+    },
+    []
+  );
+
+  const deleteCity = useCallback((prefectureCode: number, cityId: string) => {
     setRecords((prev) => {
-      const existing = prev[code];
+      const existing = prev[prefectureCode];
       if (!existing) return prev;
 
-      const updatedCities = existing.cities.map((c: CityVisit) => (c.id === cityId ? { ...c, ...updatedFields } : c));
+      const updatedCities = existing.cities.filter((c) => c.id !== cityId);
 
       return {
         ...prev,
-        [code]: {
-          ...existing,
-          cities: updatedCities,
-          updatedAt: new Date().toISOString(),
-        },
-      };
-    });
-  }, []);
-
-  const deleteCity = useCallback((code: number, cityId: string) => {
-    setRecords((prev) => {
-      const existing = prev[code];
-      if (!existing) return prev;
-
-      const updatedCities = existing.cities.filter((c: CityVisit) => c.id !== cityId);
-
-      return {
-        ...prev,
-        [code]: {
+        [prefectureCode]: {
           ...existing,
           cities: updatedCities,
           updatedAt: new Date().toISOString(),
@@ -283,10 +274,10 @@ export function useTravelRecords(user: User | null = null) {
   }, []);
 
   const updatePrefectureDetails = useCallback(
-    (code: number, details: Partial<Omit<PrefectureRecord, "prefectureCode" | "cities">>) => {
+    (prefectureCode: number, details: { notes?: string; rating?: number; isFavorite?: boolean }) => {
       setRecords((prev) => {
-        const existing = prev[code] || {
-          prefectureCode: code,
+        const existing = prev[prefectureCode] || {
+          prefectureCode,
           status: "unvisited",
           cities: [],
           updatedAt: new Date().toISOString(),
@@ -294,7 +285,7 @@ export function useTravelRecords(user: User | null = null) {
 
         return {
           ...prev,
-          [code]: {
+          [prefectureCode]: {
             ...existing,
             ...details,
             updatedAt: new Date().toISOString(),
@@ -306,29 +297,28 @@ export function useTravelRecords(user: User | null = null) {
   );
 
   const loadSample = useCallback(() => {
-    const sample = getSampleTravelRecords();
-    setRecords(sample);
+    const sampleData = getSampleTravelRecords();
+    setRecords(sampleData);
+    saveTravelRecords(sampleData);
   }, []);
 
   const resetAll = useCallback(() => {
-    clearTravelRecords();
-    setRecords({});
+    const cleared = clearTravelRecords();
+    setRecords(cleared);
   }, []);
 
   const clearAllCityVisitDates = useCallback(() => {
     setRecords((prev) => {
       const updated: TravelRecordsMap = {};
-      Object.entries(prev).forEach(([codeStr, prefRecord]) => {
-        if (!prefRecord) return;
+      Object.entries(prev).forEach(([codeStr, pref]) => {
         const code = Number(codeStr);
         updated[code] = {
-          ...prefRecord,
-          firstVisitedAt: undefined,
-          lastVisitedAt: undefined,
-          cities: (prefRecord.cities || []).map((c: CityVisit) => ({
+          ...pref,
+          cities: pref.cities.map((c: CityVisit) => ({
             ...c,
             visitedAt: undefined,
           })),
+          lastVisitedAt: undefined,
           updatedAt: new Date().toISOString(),
         };
       });
@@ -340,7 +330,6 @@ export function useTravelRecords(user: User | null = null) {
     setRecords((prev) => sanitizeDeduplicatedRecords(prev));
   }, []);
 
-  // Compute recent additions/modifications (last 5)
   const recentVisits = useMemo(() => {
     const list: { cityName: string; prefectureCode: number; visitedAt?: string; updatedAt: string }[] = [];
 

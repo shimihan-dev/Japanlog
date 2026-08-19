@@ -6,11 +6,15 @@ const STORAGE_KEY = "japan-travel-map-records";
 export function loadTravelRecords(): TravelRecordsMap {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return {};
-    return JSON.parse(raw);
+    if (!raw) return getSampleTravelRecords();
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === "object" && Object.keys(parsed).length > 0) {
+      return parsed;
+    }
+    return getSampleTravelRecords();
   } catch (error) {
     console.error("Failed to load travel records from localStorage", error);
-    return {};
+    return getSampleTravelRecords();
   }
 }
 
@@ -102,60 +106,5 @@ export function saveTrips(trips: Trip[]): void {
 }
 
 export function getSampleTrips(): Trip[] {
-  const now = new Date().toISOString();
-  return [
-    {
-      id: "trip-sample-1",
-      title: "2024 여름 홋카이도 4박 5일 힐링 여행",
-      startDate: "2024.08.10",
-      endDate: "2024.08.14",
-      emoji: "❄️",
-      description: "삿포로 맥주 박물관, 오타루 운하 야경, 후라노 라벤더 밭 투어",
-      prefectures: [1], // Hokkaido
-      cities: [
-        { prefectureCode: 1, cityNameKo: "삿포로" },
-        { prefectureCode: 1, cityNameKo: "오타루" },
-        { prefectureCode: 1, cityNameKo: "후라노" },
-        { prefectureCode: 1, cityNameKo: "하코다테" },
-      ],
-      highlights: ["오타루 운하 미니 크루즈", "삿포로 징기스칸 숯불구이", "후라노 팜 토미타 라벤더"],
-      createdAt: now,
-      updatedAt: now,
-    },
-    {
-      id: "trip-sample-2",
-      title: "2025 봄 도쿄 & 디즈니랜드 벚꽃 여행",
-      startDate: "2025.04.01",
-      endDate: "2025.04.05",
-      emoji: "🌸",
-      description: "도쿄 신주쿠 미구엔 벚꽃 구경, 디즈니랜드 및 요코하마 야경 투어",
-      prefectures: [13, 14, 12], // Tokyo, Kanagawa, Chiba
-      cities: [
-        { prefectureCode: 13, cityNameKo: "신주쿠구" },
-        { prefectureCode: 13, cityNameKo: "시부야구" },
-        { prefectureCode: 14, cityNameKo: "요코하마" },
-        { prefectureCode: 14, cityNameKo: "가마쿠라" },
-      ],
-      highlights: ["신주쿠 교엔 벚꽃 피크닉", "요코하마 미나토미라이 야경", "가마쿠라 에노덴 에노시마"],
-      createdAt: now,
-      updatedAt: now,
-    },
-    {
-      id: "trip-sample-3",
-      title: "2023 가을 간사이 식도락 탐방 여행",
-      startDate: "2023.11.15",
-      endDate: "2023.11.19",
-      emoji: "🍡",
-      description: "오사카 도톤보리 타코야키, 교토 아라시야마 단풍, 나라 사슴 공원",
-      prefectures: [27, 26, 29], // Osaka, Kyoto, Nara
-      cities: [
-        { prefectureCode: 27, cityNameKo: "오사카" },
-        { prefectureCode: 26, cityNameKo: "교토" },
-        { prefectureCode: 29, cityNameKo: "나라" },
-      ],
-      highlights: ["교토 청수사(키요미즈데라) 단풍", "도톤보리 먹방 로드", "나라 사슴센베 주기"],
-      createdAt: now,
-      updatedAt: now,
-    },
-  ];
+  return [];
 }
